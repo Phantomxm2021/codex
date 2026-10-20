@@ -29,7 +29,8 @@ pub fn get_upgrade_version(config: &Config) -> Option<String> {
         return None;
     }
 
-    let action = update_action::get_update_action();
+    // No official release lookup or replacement prompt for a BGS source build.
+    let action = Some(update_action::get_update_action()?);
     let version_file = version_filepath(config);
     let info = read_version_info(&version_file).ok();
 

@@ -1,8 +1,8 @@
-#[cfg(any(not(debug_assertions), test))]
+#[cfg(test)]
 use codex_install_context::InstallContext;
-#[cfg(any(not(debug_assertions), test))]
+#[cfg(test)]
 use codex_install_context::InstallMethod;
-#[cfg(any(not(debug_assertions), test))]
+#[cfg(test)]
 use codex_install_context::StandalonePlatform;
 
 /// Update action the CLI should perform after the TUI exits.
@@ -27,7 +27,7 @@ pub enum UpdateAction {
 }
 
 impl UpdateAction {
-    #[cfg(any(not(debug_assertions), test))]
+    #[cfg(test)]
     pub(crate) fn from_install_context(context: &InstallContext) -> Option<Self> {
         match &context.method {
             InstallMethod::Npm => Some(UpdateAction::NpmGlobalLatest),
@@ -81,7 +81,8 @@ impl UpdateAction {
 
 #[cfg(not(debug_assertions))]
 pub fn get_update_action() -> Option<UpdateAction> {
-    UpdateAction::from_install_context(InstallContext::current())
+    // Branded releases are built from the maintained BGS source branch.
+    None
 }
 
 #[cfg(test)]
