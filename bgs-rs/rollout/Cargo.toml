@@ -1,0 +1,56 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-rollout"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "bgs_rollout"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-utils-process = { workspace = true }
+anyhow = { workspace = true }
+chrono = { workspace = true, features = ["serde"] }
+bgs-extension-items = { workspace = true }
+bgs-file-search = { workspace = true }
+bgs-git-utils = { workspace = true }
+bgs-history = { workspace = true }
+bgs-otel = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-state = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-output-truncation = { workspace = true }
+bgs-utils-path = { workspace = true }
+bgs-utils-string = { workspace = true }
+memchr = { workspace = true }
+regex = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+tempfile = { workspace = true }
+time = { workspace = true, features = [
+    "formatting",
+    "local-offset",
+    "macros",
+    "parsing",
+] }
+tokio = { workspace = true, features = [
+    "fs",
+    "io-util",
+    "macros",
+    "process",
+    "rt",
+    "sync",
+    "time",
+] }
+tracing = { workspace = true }
+uuid = { workspace = true }
+zstd = { workspace = true }
+
+[dev-dependencies]
+bgs-utils-absolute-path = { workspace = true }
+pretty_assertions = { workspace = true }

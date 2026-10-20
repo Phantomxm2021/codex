@@ -1,0 +1,36 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-guardian-reviewer"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "bgs_guardian_reviewer"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+bgs-analytics = { workspace = true }
+bgs-extension-api = { workspace = true }
+bgs-feedback = { workspace = true }
+bgs-guardian-context = { workspace = true }
+bgs-mcp = { workspace = true }
+bgs-otel = { workspace = true }
+bgs-prompts = { workspace = true }
+bgs-protocol = { workspace = true }
+rand = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+tokio-util = { workspace = true, features = ["rt"] }
+tracing = { workspace = true }
+
+[dev-dependencies]
+opentelemetry = { workspace = true }
+opentelemetry_sdk = { workspace = true, features = ["experimental_metrics_custom_reader", "metrics"] }
+test-case = "3.3.1"
+pretty_assertions = { workspace = true }

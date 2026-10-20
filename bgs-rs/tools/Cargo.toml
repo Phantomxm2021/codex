@@ -1,0 +1,38 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-tools"
+version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+bitflags = { workspace = true }
+bgs-code-mode = { workspace = true }
+bgs-connectors = { workspace = true }
+bgs-features = { workspace = true }
+bgs-file-system = { workspace = true }
+bgs-extension-items = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-utils-output-truncation = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+bgs-utils-string = { workspace = true }
+jsonptr = { workspace = true }
+rmcp = { workspace = true, default-features = false, features = [
+    "base64",
+    "macros",
+    "schemars",
+    "server",
+] }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true, features = ["raw_value"] }
+thiserror = { workspace = true }
+urlencoding = { workspace = true }
+
+[dev-dependencies]
+bgs-utils-cargo-bin = { workspace = true }
+pretty_assertions = { workspace = true }
+
+[lib]
+doctest = false

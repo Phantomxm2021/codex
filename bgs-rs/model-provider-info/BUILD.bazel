@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "model-provider-info",
+    crate_name = "bgs_model_provider_info",
+)

@@ -1,0 +1,25 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-features"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "bgs_features"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-network-proxy = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-utils-redacted-string = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+toml = { workspace = true }
+tracing = { workspace = true, features = ["log"] }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

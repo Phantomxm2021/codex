@@ -11,7 +11,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
-from openai_codex import CodexConfig
+from openai_bgs import BgsConfig
 
 Json = dict[str, Any]
 
@@ -209,13 +209,13 @@ class AppServerHarness:
 
     def __init__(self, tmp_path: Path, *, requires_openai_auth: bool = False) -> None:
         self.tmp_path = tmp_path
-        self.codex_home = tmp_path / "codex-home"
+        self.bgs_home = tmp_path / "bgs-home"
         self.workspace = tmp_path / "workspace"
         self.requires_openai_auth = requires_openai_auth
         self.responses = MockResponsesServer()
 
     def __enter__(self) -> AppServerHarness:
-        self.codex_home.mkdir()
+        self.bgs_home.mkdir()
         self.workspace.mkdir()
         self.responses.__enter__()
         self._write_config()
@@ -223,29 +223,29 @@ class AppServerHarness:
 
     def __exit__(self, _exc_type: object, _exc: object, _tb: object) -> None:
         self.responses.__exit__(_exc_type, _exc, _tb)
-        shutil.rmtree(self.codex_home, ignore_errors=True)
+        shutil.rmtree(self.bgs_home, ignore_errors=True)
         shutil.rmtree(self.workspace, ignore_errors=True)
 
-    def app_server_config(self) -> CodexConfig:
+    def app_server_config(self) -> BgsConfig:
         """Prefer the CI binary, then a local debug build, then the installed runtime."""
-        binary_name = "codex.exe" if os.name == "nt" else "codex"
-        debug_binary = Path(__file__).resolve().parents[3] / "codex-rs/target/debug" / binary_name
-        codex_bin = os.environ.get("CODEX_EXEC_PATH")
-        if codex_bin is None and debug_binary.is_file():
-            codex_bin = str(debug_binary)
-        return CodexConfig(
-            codex_bin=codex_bin,
+        binary_name = "bgs.exe" if os.name == "nt" else "bgs"
+        debug_binary = Path(__file__).resolve().parents[3] / "bgs-rs/target/debug" / binary_name
+        bgs_bin = os.environ.get("BGS_EXEC_PATH")
+        if bgs_bin is None and debug_binary.is_file():
+            bgs_bin = str(debug_binary)
+        return BgsConfig(
+            bgs_bin=bgs_bin,
             cwd=str(self.workspace),
             env={
-                "CODEX_HOME": str(self.codex_home),
-                "CODEX_APP_SERVER_DISABLE_MANAGED_CONFIG": "1",
+                "BGS_HOME": str(self.bgs_home),
+                "BGS_APP_SERVER_DISABLE_MANAGED_CONFIG": "1",
                 "RUST_LOG": "warn",
             },
         )
 
     def _write_config(self) -> None:
         """Write config.toml that routes model calls to the mock server."""
-        config_toml = self.codex_home / "config.toml"
+        config_toml = self.bgs_home / "config.toml"
         requires_openai_auth = "requires_openai_auth = true\n" if self.requires_openai_auth else ""
         config_toml.write_text(
             f"""
@@ -311,7 +311,7 @@ class _ResponsesHandler(BaseHTTPRequestHandler):
         """Serve queued SSE responses for `/v1/responses` requests."""
         length = int(self.headers.get("content-length", "0"))
         body = self.rfile.read(length)
-        if self.path.endswith("/analytics/codex/turn-costs"):
+        if self.path.endswith("/analytics/bgs/turn-costs"):
             # Optional cost probes are not model requests.
             self.send_error(404, "turn costs are unavailable for the mock provider")
             return

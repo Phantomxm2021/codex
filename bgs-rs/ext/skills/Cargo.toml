@@ -1,0 +1,50 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-skills-extension"
+version.workspace = true
+
+[lib]
+name = "bgs_skills_extension"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+blake3 = { workspace = true }
+bgs-analytics = { workspace = true }
+bgs-config = { workspace = true }
+bgs-exec-server = { workspace = true }
+bgs-extension-api = { workspace = true }
+bgs-mcp = { workspace = true }
+bgs-otel = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-skills = { workspace = true }
+bgs-tools = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+bgs-utils-plugins = { workspace = true }
+bgs-utils-string = { workspace = true }
+dirs = { workspace = true }
+futures = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+tokio = { workspace = true, features = ["rt", "sync", "time"] }
+toml = { workspace = true }
+tracing = { workspace = true }
+
+[dev-dependencies]
+assert_matches = { workspace = true }
+bgs-models-manager = { workspace = true }
+bgs-utils-cargo-bin = { workspace = true }
+dunce = { workspace = true }
+insta = { workspace = true }
+opentelemetry_sdk = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+tracing-subscriber = { workspace = true }

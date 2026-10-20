@@ -7,7 +7,7 @@ exclude-newer = "0001-01-01T00:00:00Z" # This has no effect and is included for 
 exclude-newer-span = "P7D"
 
 [options.exclude-newer-package]
-openai-codex-cli-bin = "2026-09-09T06:06:45Z"
+openai-bgs-cli-bin = "2026-09-09T06:06:45Z"
 
 [[package]]
 name = "annotated-types"
@@ -281,11 +281,11 @@ wheels = [
 ]
 
 [[package]]
-name = "openai-codex"
+name = "openai-bgs"
 version = "0.0.0.dev0"
 source = { editable = "." }
 dependencies = [
-    { name = "openai-codex-cli-bin" },
+    { name = "openai-bgs-cli-bin" },
     { name = "packaging" },
     { name = "pydantic" },
 ]
@@ -307,7 +307,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "openai-codex-cli-bin", specifier = "==0.153.4" },
+    { name = "openai-bgs-cli-bin", specifier = "==0.153.4" },
     { name = "packaging", specifier = ">=26.2" },
     { name = "pydantic", specifier = ">=2.12" },
 ]
@@ -326,7 +326,7 @@ test = [
 ]
 
 [[package]]
-name = "openai-codex-cli-bin"
+name = "openai-bgs-cli-bin"
 version = "0.153.4"
 source = { registry = "https://pypi.org/simple" }
 wheels = [

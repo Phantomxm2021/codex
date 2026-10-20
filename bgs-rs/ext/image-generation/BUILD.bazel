@@ -1,0 +1,9 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "image-generation",
+    compile_data = [
+        "imagegen_description.md",
+    ],
+    crate_name = "bgs_image_generation_extension",
+)

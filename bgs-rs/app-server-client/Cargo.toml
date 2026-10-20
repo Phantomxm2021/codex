@@ -1,0 +1,40 @@
+[package]
+name = "bgs-app-server-client"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "bgs_app_server_client"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-app-server = { workspace = true }
+bgs-app-server-protocol = { workspace = true }
+bgs-arg0 = { workspace = true }
+bgs-config = { workspace = true }
+bgs-core = { workspace = true }
+bgs-exec-server = { workspace = true }
+bgs-feedback = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-uds = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-rustls-provider = { workspace = true }
+futures = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true, features = ["sync", "time", "rt"] }
+tokio-tungstenite = { workspace = true }
+toml = { workspace = true }
+tracing = { workspace = true }
+url = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }
+serde_json = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }

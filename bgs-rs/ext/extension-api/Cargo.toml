@@ -1,0 +1,34 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-extension-api"
+version.workspace = true
+
+[lib]
+name = "bgs_extension_api"
+path = "src/lib.rs"
+test = false
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-api = { workspace = true }
+futures = { workspace = true }
+bgs-guardian-context = { workspace = true }
+bgs-history = { workspace = true }
+bgs-config = { workspace = true }
+bgs-context-fragments = { workspace = true }
+bgs-exec-server-protocol = { workspace = true }
+bgs-file-system = { workspace = true }
+bgs-mcp = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-tools = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+serde_json = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }

@@ -1,0 +1,23 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-guardian-context"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "bgs_guardian_context"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-context-fragments = { workspace = true }
+bgs-history = { workspace = true }
+bgs-protocol = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

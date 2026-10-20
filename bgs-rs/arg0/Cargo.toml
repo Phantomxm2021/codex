@@ -1,0 +1,36 @@
+[package]
+name = "bgs-arg0"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "bgs_arg0"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+bgs-apply-patch = { workspace = true }
+bgs-async-utils = { workspace = true }
+bgs-exec-server = { workspace = true }
+bgs-install-context = { workspace = true }
+bgs-linux-sandbox = { workspace = true }
+bgs-sandboxing = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-home-dir = { workspace = true }
+bgs-utils-pty = { workspace = true }
+dotenvy = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["rt-multi-thread"] }
+
+[target.'cfg(windows)'.dependencies]
+bgs-windows-sandbox = { workspace = true }
+pathdiff = { workspace = true }
+
+[dev-dependencies]
+bgs-utils-cargo-bin = { workspace = true }
+pretty_assertions = { workspace = true }

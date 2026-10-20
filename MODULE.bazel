@@ -1,4 +1,4 @@
-module(name = "codex")
+module(name = "bgs")
 
 bazel_dep(name = "bazel_lib", version = "3.2.2")
 bazel_dep(name = "bazel_skylib", version = "1.9.0")
@@ -9,7 +9,7 @@ bazel_dep(name = "protobuf", version = "34.0.bcr.1", repo_name = "com_google_pro
 bazel_dep(name = "llvm", version = "0.8.11")
 bazel_dep(name = "windows_support", version = "0.2.0")
 
-# Patch hermetic LLVM for Codex's custom libc++ and Windows gnullvm runtime
+# Patch hermetic LLVM for Bgs's custom libc++ and Windows gnullvm runtime
 # needs that have not landed upstream.
 single_version_override(
     module_name = "llvm",
@@ -330,8 +330,8 @@ register_toolchains("//bazel/toolchains/prost:toolchain")
 
 crate = use_extension("@rules_rs//rs:extensions.bzl", "crate")
 crate.from_cargo(
-    cargo_lock = "//codex-rs:Cargo.lock",
-    cargo_toml = "//codex-rs:Cargo.toml",
+    cargo_lock = "//bgs-rs:Cargo.lock",
+    cargo_toml = "//bgs-rs:Cargo.toml",
     platform_triples = [
         "aarch64-unknown-linux-gnu",
         "aarch64-unknown-linux-musl",
@@ -511,22 +511,22 @@ crate.annotation(
 
 http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-codex_release_archive = use_extension(
-    "//bazel/extensions:codex_release_archive.bzl",
-    "codex_release_archive",
+bgs_release_archive = use_extension(
+    "//bazel/extensions:bgs_release_archive.bzl",
+    "bgs_release_archive",
 )
-codex_release_archive.release(
+bgs_release_archive.release(
     sha256 = "a676f5722aae0d86cbe3764332f08eab1fdd89dc0a300b3ad4ffbf48611fa3e3",
     version = "0.162.1",
 )
-codex_release_archive.release(
+bgs_release_archive.release(
     sha256 = "71a28d362c96ac9829bf8203a2c71be451aeb726adb843167fdaf0eae8fe7dd9",
     version = "0.145.0",
 )
 use_repo(
-    codex_release_archive,
-    "codex_release_0.145.0_linux_x86_64",
-    "codex_release_0.162.1_linux_x86_64",
+    bgs_release_archive,
+    "bgs_release_0.145.0_linux_x86_64",
+    "bgs_release_0.162.1_linux_x86_64",
 )
 
 http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
@@ -639,7 +639,7 @@ crate.annotation(
         "CMAKE": "$${pwd}/$(CMAKE)",
         "CMAKE_GENERATOR": "Ninja",
         "CMAKE_TOOLCHAIN_FILE": "$(execpath @@//third_party/voice:opus-toolchain.cmake)",
-        "CODEX_VOICE_NINJA": "$${pwd}/$(NINJA)",
+        "BGS_VOICE_NINJA": "$${pwd}/$(NINJA)",
     },
     build_script_toolchains = [
         "@rules_foreign_cc//toolchains:current_cmake_toolchain",

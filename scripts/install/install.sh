@@ -2,28 +2,28 @@
 
 set -eu
 
-RELEASE="${CODEX_RELEASE:-latest}"
-NON_INTERACTIVE="${CODEX_NON_INTERACTIVE:-false}"
-DAEMON_ONLY="${CODEX_INSTALL_DAEMON_ONLY:-0}"
+RELEASE="${BGS_RELEASE:-latest}"
+NON_INTERACTIVE="${BGS_NON_INTERACTIVE:-false}"
+DAEMON_ONLY="${BGS_INSTALL_DAEMON_ONLY:-0}"
 DEFAULT_PREFER_RELEASES_OPENAI_COM="true"
-PREFER_RELEASES_OPENAI_COM="${CODEX_INSTALLER_USE_RELEASES_OPENAI_COM:-$DEFAULT_PREFER_RELEASES_OPENAI_COM}"
+PREFER_RELEASES_OPENAI_COM="${BGS_INSTALLER_USE_RELEASES_OPENAI_COM:-$DEFAULT_PREFER_RELEASES_OPENAI_COM}"
 RELEASES_BASE_URL="https://releases.openai.com/codex"
 RELEASES_CONNECT_TIMEOUT=10
 RELEASES_METADATA_TIMEOUT=30
 RELEASES_ASSET_TIMEOUT=300
 release_source="github"
 
-BIN_DIR="${CODEX_INSTALL_DIR:-$HOME/.local/bin}"
-BIN_PATH="$BIN_DIR/codex"
-CODE_MODE_HOST_BIN_PATH="$BIN_DIR/codex-code-mode-host"
-CODEX_HOME_DIR="${CODEX_HOME:-$HOME/.codex}"
-STANDALONE_ROOT="$CODEX_HOME_DIR/packages/standalone"
+BIN_DIR="${BGS_INSTALL_DIR:-$HOME/.local/bin}"
+BIN_PATH="$BIN_DIR/bgs"
+CODE_MODE_HOST_BIN_PATH="$BIN_DIR/bgs-code-mode-host"
+BGS_HOME_DIR="${BGS_HOME:-$HOME/.bgs}"
+STANDALONE_ROOT="$BGS_HOME_DIR/packages/standalone"
 if [ "$DAEMON_ONLY" = "1" ]; then
-  STANDALONE_ROOT="$CODEX_HOME_DIR/packages/app-server-daemon"
+  STANDALONE_ROOT="$BGS_HOME_DIR/packages/app-server-daemon"
 fi
 RELEASES_DIR="$STANDALONE_ROOT/releases"
 CURRENT_LINK="$STANDALONE_ROOT/current"
-if [ "${CODEX_INSTALL_DEFER_SELECTION:-0}" = "1" ]; then
+if [ "${BGS_INSTALL_DEFER_SELECTION:-0}" = "1" ]; then
   if [ "$DAEMON_ONLY" != "1" ]; then
     echo "Deferred selection requires a daemon-only installation." >&2
     exit 1
@@ -75,7 +75,7 @@ validate_version() {
   fi
 
   if ! printf '%s\n' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-alpha(\.[0-9]+){0,2}|-beta(\.[0-9]+)?)?$'; then
-    echo "Invalid Codex release version: $version. Expected latest or x.y.z[-alpha[.N[.M]]|-beta[.N]]." >&2
+    echo "Invalid Bgs release version: $version. Expected latest or x.y.z[-alpha[.N[.M]]|-beta[.N]]." >&2
     return 1
   fi
 }
@@ -96,9 +96,9 @@ parse_args() {
 Usage: install.sh [--release VERSION]
 
 Environment:
-  CODEX_RELEASE          Version to install; overridden by --release.
-  CODEX_NON_INTERACTIVE  Set to 1, true, or yes to skip prompts.
-  CODEX_INSTALLER_USE_RELEASES_OPENAI_COM
+  BGS_RELEASE          Version to install; overridden by --release.
+  BGS_NON_INTERACTIVE  Set to 1, true, or yes to skip prompts.
+  BGS_INSTALLER_USE_RELEASES_OPENAI_COM
                          Set to 0, false, or no to use GitHub Releases.
 EOF
         exit 0
@@ -140,7 +140,7 @@ download_file() {
     return
   fi
 
-  echo "curl or wget is required to install Codex." >&2
+  echo "curl or wget is required to install Bgs." >&2
   exit 1
 }
 
@@ -171,7 +171,7 @@ download_text() {
     return
   fi
 
-  echo "curl or wget is required to install Codex." >&2
+  echo "curl or wget is required to install Bgs." >&2
   exit 1
 }
 
@@ -339,7 +339,7 @@ parse_downloaded_release_metadata() {
   requested_release="$1"
   source_name="$2"
   if ! release_metadata="$(printf '%s\n' "$release_json" | parse_release_metadata)"; then
-    echo "Could not parse $source_name release metadata for Codex $requested_release." >&2
+    echo "Could not parse $source_name release metadata for Bgs $requested_release." >&2
     return 1
   fi
 }
@@ -351,7 +351,7 @@ resolve_metadata_version() {
     *) metadata_version="" ;;
   esac
   if [ -z "$metadata_version" ]; then
-    echo "Failed to resolve the latest Codex release version." >&2
+    echo "Failed to resolve the latest Bgs release version." >&2
     return 1
   fi
   validate_version "$metadata_version"
@@ -369,7 +369,7 @@ resolve_release_from_github() {
   fi
 
   if ! release_json="$(download_text "$metadata_url")"; then
-    echo "Could not fetch GitHub release metadata for Codex $requested_release. GitHub API may be unavailable or rate limited." >&2
+    echo "Could not fetch GitHub release metadata for Bgs $requested_release. GitHub API may be unavailable or rate limited." >&2
     exit 1
   fi
 
@@ -405,7 +405,7 @@ resolve_release_from_releases() {
     return 1
   fi
   if [ "$normalized_version" != "latest" ] && [ "$metadata_version" != "$normalized_version" ]; then
-    echo "Release metadata version did not match requested Codex version $normalized_version." >&2
+    echo "Release metadata version did not match requested Bgs version $normalized_version." >&2
     return 1
   fi
   resolved_version="$metadata_version"
@@ -473,8 +473,8 @@ release_asset_digest() {
 }
 
 select_release_assets() {
-  package_asset="codex-package-$vendor_target.tar.gz"
-  checksum_asset="codex-package_SHA256SUMS"
+  package_asset="bgs-package-$vendor_target.tar.gz"
+  checksum_asset="bgs-package_SHA256SUMS"
   download_fallback_url=""
   checksum_fallback_url=""
 
@@ -482,11 +482,11 @@ select_release_assets() {
     release_asset_exists "$checksum_asset"; then
     install_layout="package"
     asset="$package_asset"
-  elif release_asset_exists "codex-npm-$npm_tag-$resolved_version.tgz"; then
+  elif release_asset_exists "bgs-npm-$npm_tag-$resolved_version.tgz"; then
     install_layout="legacy-platform-npm"
-    asset="codex-npm-$npm_tag-$resolved_version.tgz"
+    asset="bgs-npm-$npm_tag-$resolved_version.tgz"
   else
-    echo "Could not find Codex package or platform npm release assets for Codex $resolved_version." >&2
+    echo "Could not find Bgs package or platform npm release assets for Bgs $resolved_version." >&2
     return 1
   fi
 
@@ -523,7 +523,7 @@ package_archive_digest() {
   ' "$manifest_path" 2>/dev/null || true)"
 
   if [ -z "$digest" ]; then
-    echo "Could not find SHA-256 digest for $asset in codex-package_SHA256SUMS." >&2
+    echo "Could not find SHA-256 digest for $asset in bgs-package_SHA256SUMS." >&2
     return 1
   fi
 
@@ -548,7 +548,7 @@ file_sha256() {
     return
   fi
 
-  echo "sha256sum, shasum, or openssl is required to verify the Codex download." >&2
+  echo "sha256sum, shasum, or openssl is required to verify the Bgs download." >&2
   exit 1
 }
 
@@ -558,7 +558,7 @@ verify_archive_digest() {
   actual_digest="$(file_sha256 "$archive_path")"
 
   if [ "$actual_digest" != "$expected_digest" ]; then
-    echo "Downloaded Codex archive checksum did not match expected digest." >&2
+    echo "Downloaded Bgs archive checksum did not match expected digest." >&2
     echo "expected: $expected_digest" >&2
     echo "actual:   $actual_digest" >&2
     return 1
@@ -567,7 +567,7 @@ verify_archive_digest() {
 
 require_command() {
   if ! command -v "$1" >/dev/null 2>&1; then
-    echo "$1 is required to install Codex." >&2
+    echo "$1 is required to install Bgs." >&2
     exit 1
   fi
 }
@@ -608,8 +608,8 @@ add_to_path() {
 
   profile="$(pick_profile)"
   path_profile="$profile"
-  begin_marker="# >>> Codex installer >>>"
-  end_marker="# <<< Codex installer <<<"
+  begin_marker="# >>> Bgs installer >>>"
+  end_marker="# <<< Bgs installer <<<"
   path_line="export PATH=\"$BIN_DIR:\$PATH\""
 
   if [ -f "$profile" ] && grep -F "$begin_marker" "$profile" >/dev/null 2>&1; then
@@ -754,7 +754,7 @@ cleanup_stale_install_artifacts() {
   find "$STANDALONE_ROOT" -mindepth 1 -maxdepth 1 -name '.current.*' -exec rm -f {} +
 
   if [ "$DAEMON_ONLY" != "1" ] && [ -d "$BIN_DIR" ]; then
-    find "$BIN_DIR" -mindepth 1 -maxdepth 1 -name '.codex.*' -exec rm -f {} +
+    find "$BIN_DIR" -mindepth 1 -maxdepth 1 -name '.bgs.*' -exec rm -f {} +
   fi
 }
 
@@ -779,23 +779,23 @@ replace_path_with_symlink() {
 }
 
 version_from_binary() {
-  codex_path="$1"
+  bgs_path="$1"
 
-  if [ ! -x "$codex_path" ]; then
+  if [ ! -x "$bgs_path" ]; then
     return 1
   fi
 
-  "$codex_path" --version 2>/dev/null | sed -n 's/.* \([0-9][0-9A-Za-z.+-]*\)$/\1/p' | head -n 1
+  "$bgs_path" --version 2>/dev/null | sed -n 's/.* \([0-9][0-9A-Za-z.+-]*\)$/\1/p' | head -n 1
 }
 
 current_installed_version() {
-  version="$(version_from_binary "$CURRENT_LINK/bin/codex" || true)"
+  version="$(version_from_binary "$CURRENT_LINK/bin/bgs" || true)"
   if [ -n "$version" ]; then
     printf '%s\n' "$version"
     return 0
   fi
 
-  version="$(version_from_binary "$CURRENT_LINK/codex" || true)"
+  version="$(version_from_binary "$CURRENT_LINK/bgs" || true)"
   if [ -n "$version" ]; then
     printf '%s\n' "$version"
     return 0
@@ -804,11 +804,11 @@ current_installed_version() {
   return 0
 }
 
-resolve_existing_codex() {
-  command -v codex 2>/dev/null || true
+resolve_existing_bgs() {
+  command -v bgs 2>/dev/null || true
 }
 
-classify_existing_codex() {
+classify_existing_bgs() {
   existing_path="$1"
 
   if [ -z "$existing_path" ] || [ "$existing_path" = "$BIN_PATH" ]; then
@@ -875,37 +875,37 @@ prompt_yes_no() {
 print_launch_instructions() {
   case "$path_action" in
     added)
-      step "Current terminal: export PATH=\"$BIN_DIR:\$PATH\" && codex"
-      step "Future terminals: open a new terminal and run: codex"
+      step "Current terminal: export PATH=\"$BIN_DIR:\$PATH\" && bgs"
+      step "Future terminals: open a new terminal and run: bgs"
       step "PATH was added to $path_profile"
       ;;
     updated)
-      step "Current terminal: export PATH=\"$BIN_DIR:\$PATH\" && codex"
-      step "Future terminals: open a new terminal and run: codex"
+      step "Current terminal: export PATH=\"$BIN_DIR:\$PATH\" && bgs"
+      step "Future terminals: open a new terminal and run: bgs"
       step "PATH was updated in $path_profile"
       ;;
     configured)
-      step "Current terminal: export PATH=\"$BIN_DIR:\$PATH\" && codex"
-      step "Future terminals: open a new terminal and run: codex"
+      step "Current terminal: export PATH=\"$BIN_DIR:\$PATH\" && bgs"
+      step "Future terminals: open a new terminal and run: bgs"
       step "PATH is already configured in $path_profile"
       ;;
     *)
-      step "Current terminal: codex"
-      step "Future terminals: open a new terminal and run: codex"
+      step "Current terminal: bgs"
+      step "Future terminals: open a new terminal and run: bgs"
       ;;
   esac
 }
 
-maybe_launch_codex_now() {
-  if prompt_yes_no "Start Codex now?"; then
-    step "Launching Codex"
+maybe_launch_bgs_now() {
+  if prompt_yes_no "Start Bgs now?"; then
+    step "Launching Bgs"
     "$BIN_PATH"
   fi
 }
 
 detect_conflicting_install() {
-  existing_path="$(resolve_existing_codex)"
-  manager="$(classify_existing_codex "$existing_path" || true)"
+  existing_path="$(resolve_existing_bgs)"
+  manager="$(classify_existing_bgs "$existing_path" || true)"
 
   if [ -z "$manager" ]; then
     return
@@ -913,8 +913,8 @@ detect_conflicting_install() {
 
   conflict_manager="$manager"
   conflict_path="$existing_path"
-  step "Detected existing $manager-managed Codex at $existing_path"
-  warn "Multiple managed Codex installs can be ambiguous because PATH order decides which one runs."
+  step "Detected existing $manager-managed Bgs at $existing_path"
+  warn "Multiple managed Bgs installs can be ambiguous because PATH order decides which one runs."
 }
 
 handle_conflicting_install() {
@@ -924,23 +924,23 @@ handle_conflicting_install() {
 
   case "$conflict_manager" in
     brew)
-      uninstall_cmd="brew uninstall --cask codex"
+      uninstall_cmd="brew uninstall --cask bgs"
       ;;
     bun)
-      uninstall_cmd="bun remove -g @openai/codex"
+      uninstall_cmd="bun remove -g @openai/bgs"
       ;;
     *)
-      uninstall_cmd="npm uninstall -g @openai/codex"
+      uninstall_cmd="npm uninstall -g @openai/bgs"
       ;;
   esac
 
-  if prompt_yes_no "Uninstall the existing $conflict_manager-managed Codex now?"; then
+  if prompt_yes_no "Uninstall the existing $conflict_manager-managed Bgs now?"; then
     step "Running: $uninstall_cmd"
     if ! sh -c "$uninstall_cmd"; then
-      warn "Failed to uninstall the existing $conflict_manager-managed Codex. Continuing with the standalone install."
+      warn "Failed to uninstall the existing $conflict_manager-managed Bgs. Continuing with the standalone install."
     fi
   else
-    warn "Leaving the existing $conflict_manager-managed Codex installed. PATH order will determine which codex runs."
+    warn "Leaving the existing $conflict_manager-managed Bgs installed. PATH order will determine which bgs runs."
   fi
 }
 
@@ -954,13 +954,13 @@ install_package_release() {
   mkdir -p "$stage_release"
   tar -xzf "$archive_path" -C "$stage_release"
   chmod 0755 \
-    "$stage_release/bin/codex" \
-    "$stage_release/bin/codex-code-mode-host" \
-    "$stage_release/codex-path/rg"
-  if [ -f "$stage_release/codex-resources/bwrap" ]; then
-    chmod 0755 "$stage_release/codex-resources/bwrap"
+    "$stage_release/bin/bgs" \
+    "$stage_release/bin/bgs-code-mode-host" \
+    "$stage_release/bgs-path/rg"
+  if [ -f "$stage_release/bgs-resources/bwrap" ]; then
+    chmod 0755 "$stage_release/bgs-resources/bwrap"
   fi
-  ln -sf "bin/codex" "$stage_release/codex"
+  ln -sf "bin/bgs" "$stage_release/bgs"
 
   if [ -e "$release_dir" ] || [ -L "$release_dir" ]; then
     rm -rf "$release_dir"
@@ -978,15 +978,15 @@ install_legacy_platform_npm_release() {
 
   mkdir -p "$RELEASES_DIR"
   rm -rf "$stage_release" "$extract_dir"
-  mkdir -p "$stage_release/codex-resources" "$extract_dir"
+  mkdir -p "$stage_release/bgs-resources" "$extract_dir"
   tar -xzf "$archive_path" -C "$extract_dir"
 
-  cp "$vendor_root/codex/codex" "$stage_release/codex"
-  cp "$vendor_root/path/rg" "$stage_release/codex-resources/rg"
-  chmod 0755 "$stage_release/codex" "$stage_release/codex-resources/rg"
-  if [ -f "$vendor_root/codex-resources/bwrap" ]; then
-    cp "$vendor_root/codex-resources/bwrap" "$stage_release/codex-resources/bwrap"
-    chmod 0755 "$stage_release/codex-resources/bwrap"
+  cp "$vendor_root/bgs/bgs" "$stage_release/bgs"
+  cp "$vendor_root/path/rg" "$stage_release/bgs-resources/rg"
+  chmod 0755 "$stage_release/bgs" "$stage_release/bgs-resources/rg"
+  if [ -f "$vendor_root/bgs-resources/bwrap" ]; then
+    cp "$vendor_root/bgs-resources/bwrap" "$stage_release/bgs-resources/bwrap"
+    chmod 0755 "$stage_release/bgs-resources/bwrap"
   fi
 
   if [ -e "$release_dir" ] || [ -L "$release_dir" ]; then
@@ -1007,16 +1007,16 @@ release_dir_is_complete() {
 
   case "$layout" in
     package)
-      [ -f "$release_dir/codex-package.json" ] &&
-        [ -x "$release_dir/bin/codex" ] &&
-        [ -x "$release_dir/bin/codex-code-mode-host" ] &&
-        [ -x "$release_dir/codex" ] &&
-        [ -x "$release_dir/codex-path/rg" ] ||
+      [ -f "$release_dir/bgs-package.json" ] &&
+        [ -x "$release_dir/bin/bgs" ] &&
+        [ -x "$release_dir/bin/bgs-code-mode-host" ] &&
+        [ -x "$release_dir/bgs" ] &&
+        [ -x "$release_dir/bgs-path/rg" ] ||
         return 1
       ;;
     legacy-platform-npm)
-      [ -x "$release_dir/codex" ] &&
-        [ -x "$release_dir/codex-resources/rg" ] ||
+      [ -x "$release_dir/bgs" ] &&
+        [ -x "$release_dir/bgs-resources/rg" ] ||
         return 1
       ;;
     *)
@@ -1026,11 +1026,11 @@ release_dir_is_complete() {
 
   case "$layout:$expected_target" in
     package:*linux* | legacy-platform-npm:*linux*)
-      [ -x "$release_dir/codex-resources/bwrap" ] || return 1
+      [ -x "$release_dir/bgs-resources/bwrap" ] || return 1
       ;;
   esac
 
-  installed_version="$(version_from_binary "$release_dir/bin/codex" || version_from_binary "$release_dir/codex" || true)"
+  installed_version="$(version_from_binary "$release_dir/bin/bgs" || version_from_binary "$release_dir/bgs" || true)"
   [ "$installed_version" = "$expected_version" ]
 }
 
@@ -1041,31 +1041,31 @@ update_current_link() {
   replace_path_with_symlink "$CURRENT_LINK" "$release_dir" "$tmp_link"
 }
 
-release_codex_relative_path() {
+release_bgs_relative_path() {
   release_dir="$1"
 
-  if [ -x "$release_dir/bin/codex" ]; then
-    printf 'bin/codex\n'
+  if [ -x "$release_dir/bin/bgs" ]; then
+    printf 'bin/bgs\n'
   else
-    printf 'codex\n'
+    printf 'bgs\n'
   fi
 }
 
 update_visible_command() {
   release_dir="$1"
   mkdir -p "$BIN_DIR"
-  tmp_link="$BIN_DIR/.codex.$$"
-  codex_relative_path="$(release_codex_relative_path "$release_dir")"
+  tmp_link="$BIN_DIR/.bgs.$$"
+  bgs_relative_path="$(release_bgs_relative_path "$release_dir")"
 
-  replace_path_with_symlink "$BIN_PATH" "$CURRENT_LINK/$codex_relative_path" "$tmp_link"
+  replace_path_with_symlink "$BIN_PATH" "$CURRENT_LINK/$bgs_relative_path" "$tmp_link"
 
-  if [ "$os" = "darwin" ] && [ -x "$release_dir/bin/codex-code-mode-host" ]; then
+  if [ "$os" = "darwin" ] && [ -x "$release_dir/bin/bgs-code-mode-host" ]; then
     replace_path_with_symlink \
       "$CODE_MODE_HOST_BIN_PATH" \
-      "$CURRENT_LINK/bin/codex-code-mode-host" \
+      "$CURRENT_LINK/bin/bgs-code-mode-host" \
       "$tmp_link"
   elif [ "$(readlink "$CODE_MODE_HOST_BIN_PATH" 2>/dev/null || true)" = \
-    "$CURRENT_LINK/bin/codex-code-mode-host" ]; then
+    "$CURRENT_LINK/bin/bgs-code-mode-host" ]; then
     rm -f "$CODE_MODE_HOST_BIN_PATH"
   fi
 }
@@ -1142,11 +1142,11 @@ release_dir="$RELEASES_DIR/$release_name"
 current_version="$(current_installed_version)"
 
 if [ -n "$current_version" ] && [ "$current_version" != "$resolved_version" ]; then
-  step "Updating Codex CLI from $current_version to $resolved_version"
+  step "Updating BGS CLI from $current_version to $resolved_version"
 elif [ -n "$current_version" ]; then
-  step "Updating Codex CLI"
+  step "Updating BGS CLI"
 else
-  step "Installing Codex CLI"
+  step "Installing BGS CLI"
 fi
 step "Detected platform: $platform_label"
 step "Resolved version: $resolved_version"
@@ -1167,17 +1167,17 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 
 acquire_install_lock
-if [ "${CODEX_INSTALL_DEFER_SELECTION:-0}" = "1" ] &&
+if [ "${BGS_INSTALL_DEFER_SELECTION:-0}" = "1" ] &&
   { [ -e "$STANDALONE_ROOT/current" ] || [ -L "$STANDALONE_ROOT/current" ]; }; then
   echo "A dedicated daemon is already selected; retry the update." >&2
   exit 1
 fi
-updater_record="$CODEX_HOME_DIR/app-server-daemon/app-server-updater.pid"
+updater_record="$BGS_HOME_DIR/app-server-daemon/app-server-updater.pid"
 if [ "$DAEMON_ONLY" = "1" ]; then
-  updater_record="$CODEX_HOME_DIR/app-server-daemon/daemon-updater.pid"
+  updater_record="$BGS_HOME_DIR/app-server-daemon/daemon-updater.pid"
 fi
 old_updater_parent="false"
-if [ "${CODEX_INSTALL_IF_LATEST:-}" != "1" ] && [ "${CODEX_INSTALL_IF_CURRENT:-}" != "1" ] && [ -f "$updater_record" ]; then
+if [ "${BGS_INSTALL_IF_LATEST:-}" != "1" ] && [ "${BGS_INSTALL_IF_CURRENT:-}" != "1" ] && [ -f "$updater_record" ]; then
   updater_pid="$(sed -n 's/.*"pid"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' "$updater_record" | head -n 1)"
   recorded_start="$(sed -n 's/.*"processStartTime"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$updater_record" | head -n 1)"
   if [ -r "/proc/$$/stat" ]; then
@@ -1201,8 +1201,8 @@ if [ "${CODEX_INSTALL_IF_LATEST:-}" != "1" ] && [ "${CODEX_INSTALL_IF_CURRENT:-}
     exit 0
   fi
 fi
-if [ "${CODEX_INSTALL_IF_LATEST:-}" = "1" ] || [ "${CODEX_INSTALL_IF_CURRENT:-}" = "1" ] || [ "$old_updater_parent" = "true" ]; then
-  guarded_release="${CODEX_UPDATE_FROM_RELEASE:-}"
+if [ "${BGS_INSTALL_IF_LATEST:-}" = "1" ] || [ "${BGS_INSTALL_IF_CURRENT:-}" = "1" ] || [ "$old_updater_parent" = "true" ]; then
+  guarded_release="${BGS_UPDATE_FROM_RELEASE:-}"
   if [ "$old_updater_parent" = "true" ]; then
     guarded_release="$(cat "$AUTO_UPDATE_VERSION" 2>/dev/null || true)"
   fi
@@ -1210,7 +1210,7 @@ if [ "${CODEX_INSTALL_IF_LATEST:-}" = "1" ] || [ "${CODEX_INSTALL_IF_CURRENT:-}"
   releases_dir="$(cd -P "$RELEASES_DIR" 2>/dev/null && pwd)" || exit 0
   if [ "$RELEASE" != "latest" ] || [ -z "$guarded_release" ] ||
     [ "$current_release_dir" != "$releases_dir/$guarded_release" ]; then
-    if [ "${CODEX_INSTALL_IF_CURRENT:-}" = "1" ]; then
+    if [ "${BGS_INSTALL_IF_CURRENT:-}" = "1" ]; then
       echo "Daemon selection changed; retry the update." >&2
       exit 1
     fi
@@ -1218,7 +1218,7 @@ if [ "${CODEX_INSTALL_IF_LATEST:-}" = "1" ] || [ "${CODEX_INSTALL_IF_CURRENT:-}"
   fi
   # An explicit daemon update may leave a local or pinned release. Scheduled
   # updates still require the selected release to follow the latest channel.
-  if [ "${CODEX_INSTALL_IF_CURRENT:-}" != "1" ] &&
+  if [ "${BGS_INSTALL_IF_CURRENT:-}" != "1" ] &&
     [ "$(cat "$AUTO_UPDATE_VERSION" 2>/dev/null || true)" != "$guarded_release" ]; then
     exit 0
   fi
@@ -1237,7 +1237,7 @@ if ! release_dir_is_complete "$release_dir" "$resolved_version" "$vendor_target"
   archive_path="$tmp_dir/$asset"
   checksum_path="$tmp_dir/$checksum_asset"
 
-  step "Downloading Codex CLI"
+  step "Downloading BGS CLI"
   if [ "$install_layout" = "package" ]; then
     checksum_digest="$(release_asset_digest "$checksum_asset")"
     download_file_with_fallback "$checksum_url" "$checksum_fallback_url" "$checksum_path" "$checksum_digest" "$checksum_asset" "$asset"
@@ -1255,15 +1255,15 @@ if ! release_dir_is_complete "$release_dir" "$resolved_version" "$vendor_target"
   fi
 fi
 if ! release_dir_is_complete "$release_dir" "$resolved_version" "$vendor_target" "$install_layout"; then
-  echo "Installed Codex command did not report expected version $resolved_version." >&2
+  echo "Installed Bgs command did not report expected version $resolved_version." >&2
   exit 1
 fi
-if [ "$DAEMON_ONLY" = "1" ] && [ "${CODEX_INSTALL_DEFER_SELECTION:-0}" != "1" ]; then
-  installed_codex="$release_dir/codex"
+if [ "$DAEMON_ONLY" = "1" ] && [ "${BGS_INSTALL_DEFER_SELECTION:-0}" != "1" ]; then
+  installed_bgs="$release_dir/bgs"
   if [ "$install_layout" = "package" ]; then
-    installed_codex="$release_dir/bin/codex"
+    installed_bgs="$release_dir/bin/bgs"
   fi
-  if ! "$installed_codex" app-server daemon pid-update-loop --check-package-ownership >/dev/null 2>&1; then
+  if ! "$installed_bgs" app-server daemon pid-update-loop --check-package-ownership >/dev/null 2>&1; then
     echo "The production release does not support daemon-owned packages; the current selection was left unchanged." >&2
     exit 1
   fi
@@ -1301,5 +1301,5 @@ case "$path_action" in
     ;;
 esac
 
-printf 'Codex CLI %s installed successfully.\n' "$resolved_version"
-maybe_launch_codex_now
+printf 'BGS CLI %s installed successfully.\n' "$resolved_version"
+maybe_launch_bgs_now

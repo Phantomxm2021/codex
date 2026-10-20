@@ -1,0 +1,8 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "support",
+    crate_name = "bgs_windows_sandbox_test_support",
+    # This support library has no tests of its own.
+    test_tags = ["manual"],
+)

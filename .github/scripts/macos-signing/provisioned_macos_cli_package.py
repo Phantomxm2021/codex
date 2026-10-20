@@ -12,14 +12,14 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
-BUNDLE_ID = "com.openai.codex.cli"
+BUNDLE_ID = "com.phantomlab.bgs.cli"
 # Existing login-keychain ACLs identify the CLI by its code-signing identifier.
 # Keep this stable independently of the bundle and provisioned App ID.
-CODE_SIGNING_ID = "codex"
-APP = Path("CodexCLI.app")
-EXECUTABLE = APP / "Contents/MacOS/codex"
+CODE_SIGNING_ID = "bgs"
+APP = Path("BgsCLI.app")
+EXECUTABLE = APP / "Contents/MacOS/bgs"
 SIGNING = Path(__file__).resolve().parent
-HELPERS = ("bin/codex-code-mode-host", "codex-path/rg")
+HELPERS = ("bin/bgs-code-mode-host", "bgs-path/rg")
 LAUNCHER = """#!/bin/sh
 set -eu
 entry="$0"
@@ -29,7 +29,7 @@ while [ -L "$entry" ]; do
   case "$entry" in /*) ;; *) entry="$parent/$entry" ;; esac
 done
 bin_dir=$(CDPATH= cd -P -- "$(dirname -- "$entry")" && pwd)
-exec "$bin_dir/../CodexCLI.app/Contents/MacOS/codex" "$@"
+exec "$bin_dir/../BgsCLI.app/Contents/MacOS/bgs" "$@"
 """
 
 
@@ -107,7 +107,7 @@ def validate_profile(profile, configuration: ProfileConfiguration):
 
 
 def entitlements(configuration: ProfileConfiguration):
-    base = plistlib.loads((SIGNING / "codex.entitlements.plist").read_bytes())
+    base = plistlib.loads((SIGNING / "bgs.entitlements.plist").read_bytes())
     return {
         **base,
         "com.apple.application-identifier": f"{configuration.team_id}.{BUNDLE_ID}",
@@ -118,23 +118,23 @@ def entitlements(configuration: ProfileConfiguration):
 
 def prepare(package, reports, configuration: ProfileConfiguration):
     load_profile(configuration)
-    metadata = json.loads((package / "codex-package.json").read_text())
+    metadata = json.loads((package / "bgs-package.json").read_text())
     if (
-        metadata["variant"] != "codex"
+        metadata["variant"] != "bgs"
         or metadata["layoutVersion"] != 1
         or metadata["target"] not in ("aarch64-apple-darwin", "x86_64-apple-darwin")
-        or metadata["entrypoint"] != "bin/codex"
+        or metadata["entrypoint"] != "bin/bgs"
     ):
         raise ValueError("Expected a canonical macOS CLI package")
-    for relative in ("bin/codex", *HELPERS):
+    for relative in ("bin/bgs", *HELPERS):
         path = package / relative
         if path.is_symlink() or not path.is_file() or not os.access(path, os.X_OK):
             raise ValueError(f"Expected a regular executable: {relative}")
     # Refuse to overwrite a previously prepared or signed bundle.
     (package / EXECUTABLE).parent.mkdir(parents=True, exist_ok=False)
-    (package / "bin/codex").rename(package / EXECUTABLE)
-    (package / "bin/codex").write_text(LAUNCHER)
-    (package / "bin/codex").chmod(0o755)
+    (package / "bin/bgs").rename(package / EXECUTABLE)
+    (package / "bin/bgs").write_text(LAUNCHER)
+    (package / "bin/bgs").chmod(0o755)
     contents = package / APP / "Contents"
     shutil.copyfile(configuration.profile, contents / "embedded.provisionprofile")
     (contents / "Info.plist").write_bytes(
@@ -142,7 +142,7 @@ def prepare(package, reports, configuration: ProfileConfiguration):
             {
                 "CFBundleIdentifier": BUNDLE_ID,
                 "CFBundleDisplayName": "ChatGPT",
-                "CFBundleExecutable": "codex",
+                "CFBundleExecutable": "bgs",
                 "CFBundleName": "ChatGPT",
                 "CFBundlePackageType": "APPL",
                 "CFBundleVersion": "1",
@@ -151,8 +151,8 @@ def prepare(package, reports, configuration: ProfileConfiguration):
     )
     reports.mkdir(parents=True, exist_ok=True)
     # Keep expected entitlements separate from the shared verifier's extracted
-    # codex-entitlements.plist, otherwise it would overwrite its own expectation.
-    (reports / "codex-provisioned-entitlements.plist").write_bytes(
+    # bgs-entitlements.plist, otherwise it would overwrite its own expectation.
+    (reports / "bgs-provisioned-entitlements.plist").write_bytes(
         plistlib.dumps(entitlements(configuration))
     )
 
@@ -171,15 +171,15 @@ def verify(package, reports, expected_target, configuration: ProfileConfiguratio
         package / APP / "Contents/embedded.provisionprofile"
     ).read_bytes() != configuration.profile.read_bytes():
         raise ValueError("Embedded profile differs from the reviewed profile")
-    if (package / "bin/codex").read_text() != LAUNCHER:
+    if (package / "bin/bgs").read_text() != LAUNCHER:
         raise ValueError("Unexpected CLI launcher")
-    metadata = json.loads((package / "codex-package.json").read_text())
+    metadata = json.loads((package / "bgs-package.json").read_text())
     if metadata["target"] != expected_target:
         raise ValueError(
             "Package target differs from the requested verification target"
         )
     reports.mkdir(parents=True, exist_ok=True)
-    (reports / "codex-provisioned-entitlements.plist").write_bytes(
+    (reports / "bgs-provisioned-entitlements.plist").write_bytes(
         plistlib.dumps(entitlements(configuration))
     )
     # sign_macos_cli_package.py owns shared architecture, signature and entitlement

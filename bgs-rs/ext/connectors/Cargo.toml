@@ -1,0 +1,24 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-connectors-extension"
+version.workspace = true
+
+[lib]
+name = "bgs_connectors_extension"
+path = "src/lib.rs"
+doctest = false
+test = false
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-connectors = { workspace = true }
+bgs-core-plugins = { workspace = true }
+bgs-file-system = { workspace = true }
+bgs-plugin = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
