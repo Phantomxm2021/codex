@@ -1,3 +1,24 @@
+# BGS CLI
+
+BeeGameStudio's source distribution, maintained by PhantomLab and based on
+[OpenAI Codex](https://github.com/openai/codex). BGS branding is maintained as
+Git commits on the `bgs/0.163.0` branch while official releases remain the update source.
+
+Build from the parent BeeGameStudio repository:
+
+```sh
+bun run bgs:build
+bun run bgs:verify
+```
+
+The executable is `dist/bgs-runtime/bgs`. See [BGS.md](BGS.md) and the parent
+repository's `docs/bgs-runtime-upgrades.md` for the merge, verification and release
+workflow. Official installers below produce the upstream product, not this BGS build.
+The original [LICENSE](LICENSE) and [NOTICE](NOTICE) are retained.
+
+<details>
+<summary>Upstream documentation (reference)</summary>
+
 <p align="center"><strong>Codex CLI</strong> is a coding agent from OpenAI that runs locally on your computer.
 <p align="center">
   <img src="https://github.com/openai/codex/blob/main/.github/codex-cli-splash.png" alt="Codex CLI splash" width="80%" />
@@ -79,3 +100,5 @@ You can also use Codex with an API key, but this requires [additional setup](htt
 - [**Open source fund**](./docs/open-source-fund.md)
 
 This repository is licensed under the [Apache-2.0 License](LICENSE).
+
+</details>
