@@ -919,7 +919,7 @@ async fn merge_additional_context_input(
     };
     additional_context_input
         .into_iter()
-        .map(|item| session.annotate_client_response_item(item))
+        .map(|(item, kind)| session.annotate_additional_context_item(item, kind))
         .map(TurnInput::ResponseItem)
         .collect()
 }

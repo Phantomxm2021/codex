@@ -65,6 +65,14 @@ pub struct ResponseItemEnvelope {
 ///
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq, Eq, JsonSchema)]
 pub struct CodexHarnessMetadata {
+    /// This item was created from a trusted application-kind additional-context entry.
+    ///
+    /// The flag is host-owned and is used when rebuilding the native additional-context
+    /// deduplication state from persisted history. A matching developer-looking string by
+    /// itself is never sufficient to suppress a future application context value.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub additional_context_application: bool,
+
     /// Complete retained records actually delivered by this Guardian message. Host-only.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub guardian_sources: Vec<RetainedSource>,

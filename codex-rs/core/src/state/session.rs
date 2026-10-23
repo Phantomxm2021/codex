@@ -218,6 +218,8 @@ impl SessionState {
         }
         self.history
             .set_reference_context_item(reference_context_item);
+        self.additional_context
+            .restore_from_history(self.history.annotated_items());
         self.auto_compact_window.clear_prefill();
     }
 
