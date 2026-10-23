@@ -7,6 +7,7 @@ use bgs_history::BgsHarnessMetadata;
 use bgs_history::ResponseItemEnvelope;
 use bgs_protocol::models::ResponseItem;
 use bgs_protocol::openai_models::ModelInfo;
+use bgs_protocol::protocol::AdditionalContextKind;
 
 impl Session {
     /// Returns the input if there is no active turn to inject into.
@@ -111,6 +112,21 @@ impl Session {
         });
 
         ResponseItemEnvelope { item, metadata }
+    }
+
+    pub(crate) fn annotate_additional_context_item(
+        &self,
+        item: ResponseItem,
+        kind: AdditionalContextKind,
+    ) -> ResponseItemEnvelope {
+        let mut envelope = self.annotate_client_response_item(item);
+        if matches!(kind, AdditionalContextKind::Application) {
+            envelope
+                .metadata
+                .get_or_insert_default()
+                .additional_context_application = true;
+        }
+        envelope
     }
 
     pub(crate) async fn record_annotated_conversation_items(

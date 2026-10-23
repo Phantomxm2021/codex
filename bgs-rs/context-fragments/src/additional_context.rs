@@ -69,6 +69,22 @@ impl AdditionalContextDeveloperFragment {
     pub fn new(key: String, value: String) -> Self {
         Self { key, value }
     }
+
+    /// Parses the exact developer-fragment shape emitted by [`Self::render`].
+    ///
+    /// The caller must still validate the response role, content classification, and
+    /// producer attribution. The text shape alone is intentionally not a trust signal.
+    pub fn parse_text(text: &str) -> Option<(String, String)> {
+        let text = text.trim();
+        let body = text.strip_prefix('<')?;
+        let (key, value_and_close) = body.split_once('>')?;
+        if key.is_empty() || key.contains('<') || key.contains('/') {
+            return None;
+        }
+        let close = format!("</{key}>");
+        let value = value_and_close.strip_suffix(&close)?;
+        Some((key.to_string(), value.to_string()))
+    }
 }
 
 impl ContextualUserFragment for AdditionalContextDeveloperFragment {
