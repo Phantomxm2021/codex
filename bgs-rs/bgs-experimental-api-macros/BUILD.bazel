@@ -1,0 +1,7 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "bgs-experimental-api-macros",
+    crate_name = "bgs_experimental_api_macros",
+    proc_macro = True,
+)

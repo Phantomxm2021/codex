@@ -1,0 +1,35 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-message-board"
+version.workspace = true
+
+[lib]
+name = "bgs_message_board"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+base64 = { workspace = true }
+caseless = { workspace = true }
+chrono = { workspace = true, features = ["serde"] }
+bgs-protocol = { workspace = true }
+bgs-state = { workspace = true }
+bgs-tools = { workspace = true }
+futures = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+sqlx = { workspace = true }
+tokio = { workspace = true, features = ["fs", "rt", "sync"] }
+tracing = { workspace = true }
+uuid = { workspace = true, features = ["serde", "v7"] }
+
+[dev-dependencies]
+bgs-attachment-store = { workspace = true }
+bgs-utils-output-truncation = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }

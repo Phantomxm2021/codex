@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "agent-message-board-client",
+    crate_name = "bgs_agent_message_board_client",
+)

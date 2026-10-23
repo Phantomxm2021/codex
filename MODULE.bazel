@@ -1,4 +1,4 @@
-module(name = "codex")
+module(name = "bgs")
 
 bazel_dep(name = "bazel_lib", version = "3.2.2")
 bazel_dep(name = "bazel_skylib", version = "1.9.0")
@@ -9,7 +9,7 @@ bazel_dep(name = "protobuf", version = "34.0.bcr.1", repo_name = "com_google_pro
 bazel_dep(name = "llvm", version = "0.8.11")
 bazel_dep(name = "windows_support", version = "0.2.0")
 
-# Patch hermetic LLVM for Codex's custom libc++ and Windows gnullvm runtime
+# Patch hermetic LLVM for Bgs's custom libc++ and Windows gnullvm runtime
 # needs that have not landed upstream.
 single_version_override(
     module_name = "llvm",
@@ -347,8 +347,8 @@ register_toolchains("//bazel/toolchains/prost:toolchain")
 
 crate = use_extension("@rules_rs//rs:extensions.bzl", "crate")
 crate.from_cargo(
-    cargo_lock = "//codex-rs:Cargo.lock",
-    cargo_toml = "//codex-rs:Cargo.toml",
+    cargo_lock = "//bgs-rs:Cargo.lock",
+    cargo_toml = "//bgs-rs:Cargo.toml",
     platform_triples = [
         "aarch64-unknown-linux-gnu",
         "aarch64-unknown-linux-musl",
@@ -386,7 +386,7 @@ crate.from_cargo(
 bazel_dep(name = "zstd", version = "1.5.7")
 
 crate.annotation(
-    # Keep Windows proxy authentication aligned with codex-rs/.cargo/config.toml.
+    # Keep Windows proxy authentication aligned with bgs-rs/.cargo/config.toml.
     build_script_env = {"CFLAGS": "-DCURL_ENABLE_NTLM"},
     crate = "curl-sys",
 )
@@ -534,15 +534,15 @@ crate.annotation(
 
 http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-codex_release_archive = use_repo_rule("//bazel/extensions:codex_release_archive.bzl", "codex_release_archive")
+bgs_release_archive = use_repo_rule("//bazel/extensions:bgs_release_archive.bzl", "bgs_release_archive")
 
-codex_release_archive(
-    name = "codex_release_latest_stable",
+bgs_release_archive(
+    name = "bgs_release_latest_stable",
     release = "latest",
 )
 
-codex_release_archive(
-    name = "codex_release_historical_stable",
+bgs_release_archive(
+    name = "bgs_release_historical_stable",
     release = "historical",
 )
 
@@ -655,7 +655,7 @@ crate.annotation(
         "CMAKE": "$${pwd}/$(CMAKE)",
         "CMAKE_GENERATOR": "Ninja",
         "CMAKE_TOOLCHAIN_FILE": "$(execpath @@//third_party/voice:opus-toolchain.cmake)",
-        "CODEX_VOICE_NINJA": "$${pwd}/$(NINJA)",
+        "BGS_VOICE_NINJA": "$${pwd}/$(NINJA)",
     },
     build_script_toolchains = [
         "@rules_foreign_cc//toolchains:current_cmake_toolchain",

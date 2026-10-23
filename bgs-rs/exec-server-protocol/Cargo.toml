@@ -1,0 +1,31 @@
+[package]
+name = "bgs-exec-server-protocol"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "bgs_exec_server_protocol"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+base64 = { workspace = true }
+bgs-file-system = { workspace = true }
+bgs-install-context = { workspace = true }
+bgs-network-proxy = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-shell-command = { workspace = true }
+bgs-skills = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true, features = ["arbitrary_precision", "raw_value"] }
+
+[target.'cfg(windows)'.dependencies]
+bgs-mxc-sandbox = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

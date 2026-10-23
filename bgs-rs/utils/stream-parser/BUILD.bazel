@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "stream-parser",
+    crate_name = "bgs_utils_stream_parser",
+)

@@ -2,8 +2,8 @@
 
 ## Is the Python SDK stable?
 
-`openai-codex` publishes stable releases. Install the latest one with
-`pip install openai-codex`.
+`openai-bgs` publishes stable releases. Install the latest one with
+`pip install openai-bgs`.
 
 ## Why does the SDK install a runtime package?
 
@@ -29,20 +29,20 @@ Choose `run()` for most apps. Choose `stream()` for progress UIs, custom timeout
 
 ## Sync vs async clients
 
-- `Codex` is the sync public API.
-- `AsyncCodex` is an async replica of the same public API shape.
-- Prefer `async with AsyncCodex()` for async code. It is the standard path for
-  explicit startup/shutdown, and `AsyncCodex` initializes lazily on context
+- `Bgs` is the sync public API.
+- `AsyncBgs` is an async replica of the same public API shape.
+- Prefer `async with AsyncBgs()` for async code. It is the standard path for
+  explicit startup/shutdown, and `AsyncBgs` initializes lazily on context
   entry or first awaited API use.
 
-If your app is not already async, stay with `Codex`.
+If your app is not already async, stay with `Bgs`.
 
 ## How do I pass untrusted external content?
 
 Use `ExternalMessage` for messages from other agents, tools, or applications:
 
 ```python
-from openai_codex import ExternalMessage
+from openai_bgs import ExternalMessage
 
 result = thread.run(ExternalMessage(
     tool_name="notifications",
@@ -64,7 +64,7 @@ preserved in history. Pass it as the entire input to `thread.run(...)` or
 
 External messages and the new `include_turns`, `turn_service_tier`, and `source`
 options require CLI 0.151.0 or newer. If a custom executable is too old, the SDK
-raises `CodexError` before sending the request. Upgrade that executable or use
+raises `BgsError` before sending the request. Upgrade that executable or use
 the runtime installed with a matching SDK release.
 
 ## Does `include_turns=False` remove the conversation's context?
@@ -113,9 +113,9 @@ If you are migrating older code, update these names:
 Use the same `sandbox=` keyword for threads and turns:
 
 ```python
-from openai_codex import Sandbox
+from openai_bgs import Sandbox
 
-thread = codex.thread_start(sandbox=Sandbox.workspace_write)
+thread = bgs.thread_start(sandbox=Sandbox.workspace_write)
 result = thread.run("Review only.", sandbox=Sandbox.read_only)
 ```
 
@@ -125,7 +125,7 @@ The presets are:
 - `Sandbox.workspace_write`: the normal default for projects with a recorded trust decision; read files and write inside the workspace and configured writable roots.
 - `Sandbox.full_access`: run without filesystem access restrictions.
 
-When `sandbox=` is omitted, Codex uses its configured default. A turn
+When `sandbox=` is omitted, Bgs uses its configured default. A turn
 sandbox override applies to that turn and subsequent turns.
 
 ## Why only `thread_start(...)` and `thread_resume(...)`?
@@ -139,13 +139,13 @@ This avoids duplicate ways to do the same operation and keeps behavior explicit.
 
 ## Why does constructor fail?
 
-`Codex()` is eager: it starts transport and calls `initialize` in `__init__`.
+`Bgs()` is eager: it starts transport and calls `initialize` in `__init__`.
 
 Common causes:
 
-- installation is incomplete and the pinned `openai-codex-cli-bin` dependency is missing
-- local `codex_bin` override points to a missing file
-- a custom local Codex executable does not support the SDK operation being used
+- installation is incomplete and the pinned `openai-bgs-cli-bin` dependency is missing
+- local `bgs_bin` override points to a missing file
+- a custom local Bgs executable does not support the SDK operation being used
 
 ## Why does a turn "hang"?
 

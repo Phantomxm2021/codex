@@ -1,0 +1,15 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "core-plugins",
+    compile_data = glob(
+        include = ["**"],
+        allow_empty = True,
+        exclude = [
+            "**/* *",
+            "BUILD.bazel",
+            "Cargo.toml",
+        ],
+    ),
+    crate_name = "bgs_core_plugins",
+)

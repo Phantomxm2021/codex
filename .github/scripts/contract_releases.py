@@ -1,4 +1,4 @@
-"""Discover and download published Codex packages for contract runners."""
+"""Discover and download published Bgs packages for contract runners."""
 
 import json
 import re
@@ -11,7 +11,7 @@ from pathlib import Path
 ALPHA_TAG = re.compile(r"rust-v[0-9]+\.[0-9]+\.[0-9]+-alpha(?:\.[0-9]+){0,2}")
 RELEASE_TAG = re.compile(r"rust-v[0-9]+\.[0-9]+\.[0-9]+(?:-alpha(?:\.[0-9]+){0,2})?")
 STABLE_TAG = re.compile(r"rust-v[0-9]+\.[0-9]+\.[0-9]+")
-PACKAGE = "codex-package-x86_64-unknown-linux-musl.tar.gz"
+PACKAGE = "bgs-package-x86_64-unknown-linux-musl.tar.gz"
 
 
 def github_read(args: list[str]) -> str:
@@ -69,7 +69,7 @@ def list_releases(*, exclude_prereleases: bool = False) -> list[dict]:
         "release",
         "list",
         "--repo",
-        "openai/codex",
+        "openai/bgs",
         "--limit",
         "100",
         "--json",
@@ -88,7 +88,7 @@ def download_release(tag: str, directory: Path) -> Path:
             "download",
             tag,
             "--repo",
-            "openai/codex",
+            "openai/bgs",
             "--pattern",
             PACKAGE,
             "--dir",

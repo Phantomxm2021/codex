@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "cache",
+    crate_name = "bgs_utils_cache",
+)

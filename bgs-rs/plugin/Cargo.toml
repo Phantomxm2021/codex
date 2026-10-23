@@ -1,0 +1,26 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-plugin"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "bgs_plugin"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-config = { workspace = true }
+bgs-core-plugin-common = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+bgs-utils-plugins = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

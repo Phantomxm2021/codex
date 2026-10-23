@@ -1,0 +1,21 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-memories-read"
+version.workspace = true
+
+[lib]
+name = "bgs_memories_read"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-protocol = { workspace = true }
+bgs-shell-command = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

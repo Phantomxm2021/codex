@@ -1,0 +1,85 @@
+[package]
+name = "bgs-exec"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+autotests = false
+
+[[bin]]
+name = "bgs-exec"
+path = "src/main.rs"
+
+[lib]
+name = "bgs_exec"
+path = "src/lib.rs"
+doctest = false
+
+[[test]]
+name = "all"
+path = "tests/all.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true, features = ["derive"] }
+bgs-arg0 = { workspace = true }
+bgs-app-server-client = { workspace = true }
+bgs-app-server-protocol = { workspace = true }
+bgs-cloud-config = { workspace = true }
+bgs-config = { workspace = true }
+bgs-core = { workspace = true }
+bgs-features = { workspace = true }
+bgs-feedback = { workspace = true }
+bgs-git-utils = { workspace = true }
+bgs-history = { workspace = true }
+bgs-login = { workspace = true }
+bgs-model-provider-info = { workspace = true }
+bgs-otel = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-rollout = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-cli = { workspace = true }
+bgs-utils-oss = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+bgs-utils-sandbox-summary = { workspace = true }
+bgs-worktree = { workspace = true }
+owo-colors = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+supports-color = { workspace = true }
+tokio = { workspace = true, features = [
+    "io-std",
+    "macros",
+    "process",
+    "rt-multi-thread",
+    "signal",
+] }
+tracing = { workspace = true, features = ["log"] }
+tracing-subscriber = { workspace = true, features = ["env-filter"] }
+ts-rs = { workspace = true, features = [
+    "uuid-impl",
+    "serde-json-impl",
+    "no-serde-warnings",
+] }
+uuid = { workspace = true }
+
+
+[dev-dependencies]
+assert_cmd = { workspace = true }
+bgs-apply-patch = { workspace = true }
+bgs-utils-cargo-bin = { workspace = true }
+core_test_support = { workspace = true }
+insta = { workspace = true }
+libc = { workspace = true }
+opentelemetry = { workspace = true }
+opentelemetry_sdk = { workspace = true }
+predicates = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tracing-opentelemetry = { workspace = true }
+uuid = { workspace = true }
+walkdir = { workspace = true }
+wiremock = { workspace = true }
+zstd = { workspace = true }

@@ -3,13 +3,13 @@ load("//bazel/rules:schema_bundle.bzl", "schema_bundle")
 schema_bundle(
     name = "public-schema-bundle",
     testonly = True,
-    generator = "//codex-rs/app-server-protocol:schema-generator",
+    generator = "//bgs-rs/app-server-protocol:schema-generator",
     tags = ["manual"],
 )
 
 schema_bundle(
     name = "app-server",
-    generator = "//codex-rs/app-server-protocol:schema-generator-on-demand",
+    generator = "//bgs-rs/app-server-protocol:schema-generator-on-demand",
     tags = ["manual"],
     visibility = ["//visibility:public"],
 )

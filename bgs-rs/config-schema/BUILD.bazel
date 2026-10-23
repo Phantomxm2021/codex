@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "config-schema",
+    crate_name = "bgs_config_schema",
+)

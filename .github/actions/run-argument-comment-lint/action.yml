@@ -1,5 +1,5 @@
 name: Run argument comment lint
-description: Run argument-comment-lint on codex-rs via Bazel.
+description: Run argument-comment-lint on bgs-rs via Bazel.
 
 inputs:
   target:
@@ -32,9 +32,9 @@ runs:
       shell: bash
       run: |
         releases="$(python3 .github/scripts/resolve_exec_server_releases.py)"
-        echo "CODEX_COMPAT_RELEASES=$releases" >> "$GITHUB_ENV"
+        echo "BGS_COMPAT_RELEASES=$releases" >> "$GITHUB_ENV"
 
-    - name: Run argument comment lint on codex-rs via Bazel
+    - name: Run argument comment lint on bgs-rs via Bazel
       if: ${{ runner.os != 'Windows' }}
       env:
         BUILDBUDDY_API_KEY: ${{ inputs.buildbuddy-api-key }}
@@ -50,7 +50,7 @@ runs:
           -- \
           ${bazel_targets}
 
-    - name: Run argument comment lint on codex-rs via Bazel
+    - name: Run argument comment lint on bgs-rs via Bazel
       if: ${{ runner.os == 'Windows' }}
       env:
         BUILDBUDDY_API_KEY: ${{ inputs.buildbuddy-api-key }}

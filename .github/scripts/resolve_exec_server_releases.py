@@ -1,6 +1,6 @@
-"""Print CODEX_COMPAT_RELEASES JSON for the existing Bazel compatibility tests.
+"""Print BGS_COMPAT_RELEASES JSON for the existing Bazel compatibility tests.
 
-For local runs, export CODEX_COMPAT_RELEASES="$(python3 <path-to-this-script>)"
+For local runs, export BGS_COMPAT_RELEASES="$(python3 <path-to-this-script>)"
 before invoking Bazel. CI resolves it once before building the test targets.
 """
 
@@ -20,7 +20,7 @@ def main() -> None:
     releases = {}
     for tag in tags:
         metadata = json.loads(
-            github_read(["gh", "api", f"repos/openai/codex/releases/tags/{tag}"])
+            github_read(["gh", "api", f"repos/openai/bgs/releases/tags/{tag}"])
         )
         asset = next(asset for asset in metadata["assets"] if asset["name"] == PACKAGE)
         digest = asset.get("digest") or ""

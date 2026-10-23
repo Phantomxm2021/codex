@@ -1,0 +1,57 @@
+[package]
+name = "core_test_support"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+path = "lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+assert_cmd = { workspace = true }
+base64 = { workspace = true }
+bgs-analytics = { workspace = true }
+bgs-arg0 = { workspace = true }
+bgs-attachment-store = { workspace = true }
+bgs-config = { workspace = true }
+bgs-core = { workspace = true }
+bgs-extension-api = { workspace = true }
+bgs-exec-server = { workspace = true }
+bgs-guardian-v2 = { workspace = true }
+bgs-home = { workspace = true }
+bgs-features = { workspace = true }
+bgs-hooks = { workspace = true }
+bgs-login = { workspace = true }
+bgs-model-provider-info = { workspace = true }
+bgs-models-manager = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-thread-store = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-cargo-bin = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+ctor = { workspace = true }
+futures = { workspace = true }
+notify = { workspace = true }
+opentelemetry = { workspace = true }
+opentelemetry_sdk = { workspace = true }
+regex-lite = { workspace = true }
+serde_json = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["net", "test-util", "time"] }
+tokio-tungstenite = { workspace = true }
+tracing = { workspace = true }
+tracing-opentelemetry = { workspace = true }
+tracing-subscriber = { workspace = true }
+walkdir = { workspace = true }
+wiremock = { workspace = true }
+shlex = { workspace = true }
+zstd = { workspace = true }
+
+[dev-dependencies]
+bgs-http-client = { workspace = true }
+pretty_assertions = { workspace = true }

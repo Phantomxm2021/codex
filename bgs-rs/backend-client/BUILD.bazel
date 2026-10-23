@@ -1,0 +1,7 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "backend-client",
+    compile_data = glob(["tests/fixtures/**"]),
+    crate_name = "bgs_backend_client",
+)

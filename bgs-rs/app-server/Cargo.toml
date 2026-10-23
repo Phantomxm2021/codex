@@ -1,0 +1,168 @@
+[package]
+name = "bgs-app-server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "bgs-app-server"
+path = "src/main.rs"
+
+[[bin]]
+name = "bgs-app-server-test-notify-capture"
+path = "src/bin/notify_capture.rs"
+
+[[bin]]
+name = "exec-server"
+path = "src/bin/exec_server.rs"
+
+[lib]
+name = "bgs_app_server"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-utils-process = { workspace = true }
+anyhow = { workspace = true }
+base64 = { workspace = true }
+axum = { workspace = true, default-features = false, features = [
+    "http1",
+    "json",
+    "tokio",
+    "ws",
+] }
+bgs-analytics = { workspace = true }
+bgs-app-server-daemon = { workspace = true }
+bgs-agent-extension = { workspace = true }
+bgs-arg0 = { workspace = true }
+bgs-aws-auth = { workspace = true }
+bgs-cloud-config = { workspace = true }
+bgs-code-mode = { workspace = true }
+bgs-config = { workspace = true }
+bgs-network-proxy = { workspace = true }
+bgs-connectors = { workspace = true }
+bgs-core = { workspace = true }
+bgs-core-plugins = { workspace = true }
+bgs-diagnostics = { workspace = true }
+bgs-home = { workspace = true }
+bgs-exec-server = { workspace = true }
+bgs-extension-api = { workspace = true }
+bgs-external-agent-migration = { workspace = true }
+bgs-features = { workspace = true }
+bgs-multi-env-copy-file = { workspace = true }
+bgs-goal-extension = { workspace = true }
+bgs-git-attribution = { workspace = true }
+bgs-guardian-v2 = { workspace = true }
+bgs-git-utils = { workspace = true }
+bgs-file-watcher = { workspace = true }
+bgs-hooks = { workspace = true }
+bgs-history-notes-extension = { workspace = true }
+bgs-http-client = { workspace = true }
+bgs-otel = { workspace = true }
+bgs-plugin = { workspace = true }
+bgs-shell-command = { workspace = true }
+bgs-skills = { workspace = true }
+bgs-skills-extension = { workspace = true }
+bgs-utils-cli = { workspace = true }
+bgs-user-verification = { workspace = true }
+bgs-utils-pty = { workspace = true }
+bgs-backend-client = { workspace = true }
+bgs-file-search = { workspace = true }
+bgs-chatgpt = { workspace = true }
+bgs-login = { workspace = true }
+bgs-image-generation-extension = { workspace = true }
+bgs-memories-extension = { workspace = true }
+bgs-web-search-extension = { workspace = true }
+bgs-websocket-auth = { workspace = true }
+bgs-memories-write = { workspace = true }
+bgs-mcp = { workspace = true }
+bgs-mcp-extension = { workspace = true }
+bgs-model-provider = { workspace = true }
+bgs-model-provider-info = { workspace = true }
+bgs-models-manager = { workspace = true }
+bgs-prompts = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-queue-extension = { workspace = true }
+bgs-app-server-protocol = { workspace = true }
+bgs-app-server-transport = { workspace = true }
+bgs-feedback = { workspace = true }
+bgs-rmcp-client = { workspace = true }
+bgs-rollout = { workspace = true }
+bgs-sandboxing = { workspace = true }
+bgs-state = { workspace = true }
+bgs-thread-store = { workspace = true }
+bgs-tools = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-json-to-toml = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+chrono = { workspace = true }
+clap = { workspace = true, features = ["derive"] }
+futures = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
+tempfile = { workspace = true }
+thiserror = { workspace = true }
+time = { workspace = true }
+toml = { workspace = true }
+toml_edit = { workspace = true }
+tokio = { workspace = true, features = [
+    "io-std",
+    "macros",
+    "process",
+    "rt-multi-thread",
+    "signal",
+] }
+tokio-util = { workspace = true }
+tracing = { workspace = true, features = ["log"] }
+tracing-subscriber = { workspace = true, features = ["env-filter", "fmt", "json"] }
+url = { workspace = true }
+uuid = { workspace = true, features = ["serde", "v7"] }
+
+[target.'cfg(all(target_os = "linux", target_env = "musl", any(target_arch = "x86_64", target_arch = "aarch64")))'.dependencies]
+tikv-jemallocator = { workspace = true }
+
+[target.'cfg(unix)'.dependencies]
+libc = { workspace = true }
+
+[target.'cfg(windows)'.dependencies]
+bgs-windows-sandbox = { workspace = true }
+
+[dev-dependencies]
+zip = { workspace = true }
+bgs-uds = { workspace = true }
+app_test_support = { workspace = true }
+axum = { workspace = true, default-features = false, features = [
+    "http1",
+    "json",
+    "tokio",
+] }
+base64 = { workspace = true }
+bgs-utils-cargo-bin = { workspace = true }
+core_test_support = { workspace = true }
+flate2 = { workspace = true }
+hmac = { workspace = true }
+http = { workspace = true }
+insta = { workspace = true }
+keyring = { workspace = true }
+opentelemetry = { workspace = true }
+opentelemetry_sdk = { workspace = true }
+pretty_assertions = { workspace = true }
+rcgen = { workspace = true }
+rmcp = { workspace = true, default-features = false, features = [
+    "elicitation",
+    "server",
+    "transport-streamable-http-server",
+] }
+serial_test = { workspace = true }
+shlex = { workspace = true }
+sqlx = { workspace = true }
+tar = { workspace = true }
+test-case = "3.3.1"
+tokio-rustls = { workspace = true }
+tokio-tungstenite = { workspace = true }
+tracing-opentelemetry = { workspace = true }
+wiremock = { workspace = true }

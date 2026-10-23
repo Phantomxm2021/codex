@@ -1,0 +1,8 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "bgs-mcp",
+    crate_name = "bgs_mcp",
+    extra_binaries = ["//bgs-rs/cli:bgs"],
+    test_data_extra = glob(["src/**/snapshots/**"]),
+)
