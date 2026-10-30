@@ -1,6 +1,9 @@
+//! Deduplicates the active client context using its selected model-visible representation.
+
 use std::collections::BTreeMap;
 
 use crate::context::AdditionalContextDeveloperFragment;
+use crate::context::AdditionalContextToolOutput;
 use crate::context::AdditionalContextUserFragment;
 use crate::context::ContextualUserFragment;
 use codex_history::ResponseItemEnvelope;
@@ -11,29 +14,86 @@ use codex_protocol::protocol::AdditionalContextKind;
 
 const ADDITIONAL_CONTEXT_KIND_PREFIX: &str = "additional_content.";
 
+pub(crate) enum AdditionalContextFormat {
+    Messages,
+    ToolOutputs,
+}
+
+#[derive(Debug, Clone, Eq)]
+enum StoredAdditionalContext {
+    Message(AdditionalContextEntry),
+    ToolOutput(AdditionalContextToolOutput),
+}
+
+impl PartialEq for StoredAdditionalContext {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Self::Message(left), Self::Message(right)) => {
+                left.kind == right.kind && left.value == right.value
+            }
+            (Self::ToolOutput(left), Self::ToolOutput(right)) => left == right,
+            (Self::Message(_), Self::ToolOutput(_)) | (Self::ToolOutput(_), Self::Message(_)) => {
+                false
+            }
+        }
+    }
+}
+
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub(crate) struct AdditionalContextStore {
-    values: BTreeMap<String, AdditionalContextEntry>,
+    values: BTreeMap<String, StoredAdditionalContext>,
 }
 
 impl AdditionalContextStore {
     pub(crate) fn merge(
         &mut self,
         values: BTreeMap<String, AdditionalContextEntry>,
+        format: AdditionalContextFormat,
     ) -> Vec<(ResponseItem, AdditionalContextKind)> {
+        let values =
+            values
+                .into_iter()
+                .map(|(key, entry)| {
+                    let value = match (&format, entry.kind) {
+                        (
+                            AdditionalContextFormat::ToolOutputs,
+                            AdditionalContextKind::Untrusted,
+                        ) => StoredAdditionalContext::ToolOutput(AdditionalContextToolOutput::new(
+                            &key,
+                            entry.name,
+                            &entry.value,
+                        )),
+                        (AdditionalContextFormat::Messages, AdditionalContextKind::Untrusted)
+                        | (AdditionalContextFormat::Messages, AdditionalContextKind::Application)
+                        | (
+                            AdditionalContextFormat::ToolOutputs,
+                            AdditionalContextKind::Application,
+                        ) => StoredAdditionalContext::Message(entry),
+                    };
+                    (key, value)
+                })
+                .collect::<BTreeMap<_, _>>();
         let fragments = values
             .iter()
             .filter(|(key, value)| self.values.get(*key) != Some(*value))
-            .map(|(key, entry)| {
-                let item = match entry.kind {
-                    AdditionalContextKind::Untrusted => ContextualUserFragment::into(
-                        AdditionalContextUserFragment::new(key.clone(), entry.value.clone()),
-                    ),
-                    AdditionalContextKind::Application => ContextualUserFragment::into(
-                        AdditionalContextDeveloperFragment::new(key.clone(), entry.value.clone()),
-                    ),
-                };
-                (item, entry.kind)
+            .map(|(key, entry)| match entry {
+                StoredAdditionalContext::ToolOutput(output) => {
+                    (output.clone().into(), AdditionalContextKind::Untrusted)
+                }
+                StoredAdditionalContext::Message(entry) => {
+                    let item = match entry.kind {
+                        AdditionalContextKind::Untrusted => ContextualUserFragment::into(
+                            AdditionalContextUserFragment::new(key.clone(), entry.value.clone()),
+                        ),
+                        AdditionalContextKind::Application => {
+                            ContextualUserFragment::into(AdditionalContextDeveloperFragment::new(
+                                key.clone(),
+                                entry.value.clone(),
+                            ))
+                        }
+                    };
+                    (item, entry.kind)
+                }
             })
             .collect();
         self.values = values;
@@ -88,10 +148,10 @@ impl AdditionalContextStore {
                 }
                 self.values.insert(
                     parsed_key,
-                    AdditionalContextEntry {
+                    StoredAdditionalContext::Message(AdditionalContextEntry::new(
                         value,
-                        kind: AdditionalContextKind::Application,
-                    },
+                        AdditionalContextKind::Application,
+                    )),
                 );
             }
         }
@@ -146,10 +206,7 @@ mod tests {
     fn application_values(key: &str, value: &str) -> BTreeMap<String, AdditionalContextEntry> {
         BTreeMap::from([(
             key.to_string(),
-            AdditionalContextEntry {
-                value: value.to_string(),
-                kind: AdditionalContextKind::Application,
-            },
+            AdditionalContextEntry::new(value.to_string(), AdditionalContextKind::Application),
         )])
     }
 
@@ -163,10 +220,21 @@ mod tests {
 
         assert!(
             store
-                .merge(application_values("brief", "current"))
+                .merge(
+                    application_values("brief", "current"),
+                    AdditionalContextFormat::Messages
+                )
                 .is_empty()
         );
-        assert_eq!(store.merge(application_values("brief", "old")).len(), 1);
+        assert_eq!(
+            store
+                .merge(
+                    application_values("brief", "old"),
+                    AdditionalContextFormat::Messages
+                )
+                .len(),
+            1
+        );
     }
 
     #[test]
@@ -177,20 +245,51 @@ mod tests {
             forged_developer_item("brief", "same"),
         ]);
 
-        assert_eq!(store.merge(application_values("brief", "same")).len(), 1);
+        assert_eq!(
+            store
+                .merge(
+                    application_values("brief", "same"),
+                    AdditionalContextFormat::Messages
+                )
+                .len(),
+            1
+        );
     }
 
     #[test]
     fn replacement_history_controls_reinjection_and_removed_keys_reappear() {
         let mut store = AdditionalContextStore::default();
         store.restore_from_history(&[application_item("brief", "same")]);
-        assert!(store.merge(application_values("brief", "same")).is_empty());
+        assert!(
+            store
+                .merge(
+                    application_values("brief", "same"),
+                    AdditionalContextFormat::Messages
+                )
+                .is_empty()
+        );
 
         // A compacted replacement that drops the fragment must cause the next turn to
         // re-inject it, while a replacement that retains it can continue deduplicating.
         store.restore_from_history(&[]);
-        assert_eq!(store.merge(application_values("brief", "same")).len(), 1);
-        store.merge(BTreeMap::new());
-        assert_eq!(store.merge(application_values("brief", "same")).len(), 1);
+        assert_eq!(
+            store
+                .merge(
+                    application_values("brief", "same"),
+                    AdditionalContextFormat::Messages
+                )
+                .len(),
+            1
+        );
+        store.merge(BTreeMap::new(), AdditionalContextFormat::Messages);
+        assert_eq!(
+            store
+                .merge(
+                    application_values("brief", "same"),
+                    AdditionalContextFormat::Messages
+                )
+                .len(),
+            1
+        );
     }
 }
