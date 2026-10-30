@@ -32,8 +32,8 @@ CANARY_PATH_PATTERNS = {
     ".github/workflows/v8-canary.yml",
     "MODULE.bazel",
     "MODULE.bazel.lock",
-    "codex-rs/Cargo.toml",
-    "codex-rs/v8-poc/**",
+    "bgs-rs/Cargo.toml",
+    "bgs-rs/v8-poc/**",
     "patches/BUILD.bazel",
     "patches/llvm_*.patch",
     "patches/rules_cc_*.patch",
@@ -121,7 +121,7 @@ def git_output(*args: str, root: Path = ROOT) -> bytes:
 
 def v8_version_at_revision(revision: str, *, root: Path = ROOT) -> str:
     return resolved_v8_version(
-        git_output("show", f"{revision}:codex-rs/Cargo.lock", root=root)
+        git_output("show", f"{revision}:bgs-rs/Cargo.lock", root=root)
     )
 
 

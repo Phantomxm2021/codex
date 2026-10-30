@@ -1,6 +1,6 @@
-"""Pinned source imports for Codex's V8 dependency builds.
+"""Pinned source imports for Bgs's V8 dependency builds.
 
-V8 uses these same repositories through the codex_deps module-extension bridge
+V8 uses these same repositories through the bgs_deps module-extension bridge
 in its MODULE.bazel. The BUILD files, and all dependency compilation policy,
 live next to this file so updating V8 does not require patching shared rules.
 

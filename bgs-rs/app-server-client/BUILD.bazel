@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "app-server-client",
+    crate_name = "bgs_app_server_client",
+)

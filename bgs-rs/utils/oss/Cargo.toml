@@ -1,0 +1,17 @@
+[package]
+name = "bgs-utils-oss"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-core = { workspace = true }
+bgs-lmstudio = { workspace = true }
+bgs-model-provider-info = { workspace = true }
+bgs-ollama = { workspace = true }
+
+[lib]
+doctest = false

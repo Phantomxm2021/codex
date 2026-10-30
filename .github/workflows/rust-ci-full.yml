@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     defaults:
       run:
-        working-directory: codex-rs
+        working-directory: bgs-rs
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-24.04
     defaults:
       run:
-        working-directory: codex-rs
+        working-directory: bgs-rs
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -113,7 +113,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-      - name: Run argument comment lint on codex-rs via Bazel
+      - name: Run argument comment lint on bgs-rs via Bazel
         uses: ./.github/actions/run-argument-comment-lint
         with:
           target: ${{ runner.os }}
@@ -126,7 +126,7 @@ jobs:
     timeout-minutes: 30
     defaults:
       run:
-        working-directory: codex-rs
+        working-directory: bgs-rs
     env:
       # Speed up repeated builds across CI runs by caching compiled objects, except on
       # arm64 macOS runners cross-targeting x86_64 where ring/cc-rs can produce
@@ -246,7 +246,7 @@ jobs:
 
       - name: Compute lockfile hash
         id: lockhash
-        working-directory: codex-rs
+        working-directory: bgs-rs
         shell: bash
         run: |
           set -euo pipefail

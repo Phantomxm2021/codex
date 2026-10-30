@@ -173,7 +173,7 @@ class NotarizationTest(unittest.TestCase):
         ]
         with tempfile.TemporaryDirectory() as directory:
             artifact, log = (
-                Path(directory) / "codex.zip",
+                Path(directory) / "bgs.zip",
                 Path(directory) / "notary-log.json",
             )
             artifact.write_bytes(b"signed release binary")
@@ -226,7 +226,7 @@ class NotarizationWrapperTest(unittest.TestCase):
                 executable.chmod(0o755)
             for kind in ("binary", "dmg"):
                 with self.subTest(kind=kind):
-                    artifact = root / ("codex.dmg" if kind == "dmg" else "codex")
+                    artifact = root / ("bgs.dmg" if kind == "dmg" else "bgs")
                     artifact.write_bytes(b"signed release artifact")
                     subprocess.run(
                         [

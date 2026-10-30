@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "guardian-v3",
+    crate_name = "bgs_guardian_v3",
+)

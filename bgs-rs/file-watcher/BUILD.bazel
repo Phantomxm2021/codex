@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "file-watcher",
+    crate_name = "bgs_file_watcher",
+)

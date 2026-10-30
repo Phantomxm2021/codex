@@ -1,4 +1,4 @@
-"""Runtime settings for Codex's Highway and simdutf V8 dependencies.
+"""Runtime settings for Bgs's Highway and simdutf V8 dependencies.
 
 These targets build with the same Chromium libc++ headers as V8 when that
 profile is active. Shared libraries such as Abseil remain separate.

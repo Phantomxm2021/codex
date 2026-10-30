@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-"""Verify that codex-rs Cargo manifests follow workspace manifest policy.
+"""Verify that bgs-rs Cargo manifests follow workspace manifest policy.
 
 Checks:
 - Crates inherit `[workspace.package]` metadata.
 - Crates opt into `[lints] workspace = true`.
-- Crate names follow the codex-rs directory naming conventions.
+- Crate names follow the bgs-rs directory naming conventions.
 - Workspace manifests do not introduce workspace crate feature toggles.
 """
 
@@ -17,16 +17,16 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-CARGO_RS_ROOT = ROOT / "codex-rs"
+CARGO_RS_ROOT = ROOT / "bgs-rs"
 WORKSPACE_PACKAGE_FIELDS = ("version", "edition", "license")
 TOP_LEVEL_NAME_EXCEPTIONS = {
-    "windows-sandbox-rs": "codex-windows-sandbox",
+    "windows-sandbox-rs": "bgs-windows-sandbox",
 }
 UTILITY_NAME_EXCEPTIONS = {
-    "path-utils": "codex-utils-path",
+    "path-utils": "bgs-utils-path",
 }
 MANIFEST_FEATURE_EXCEPTIONS = {
-    "codex-rs/v8-poc/Cargo.toml": {"sandbox": ("v8/v8_enable_sandbox",)},
+    "bgs-rs/v8-poc/Cargo.toml": {"sandbox": ("v8/v8_enable_sandbox",)},
 }
 OPTIONAL_DEPENDENCY_EXCEPTIONS = set()
 INTERNAL_DEPENDENCY_FEATURE_EXCEPTIONS = {}
@@ -60,7 +60,7 @@ def main() -> int:
         return 0
 
     print(
-        "Cargo manifests under codex-rs must inherit workspace package metadata, "
+        "Cargo manifests under bgs-rs must inherit workspace package metadata, "
         "opt into workspace lints, and avoid introducing new workspace crate "
         "features."
     )
@@ -71,7 +71,7 @@ def main() -> int:
         "permutations we want to avoid."
     )
     print(
-        "Cargo only applies `codex-rs/Cargo.toml` `[workspace.lints.clippy]` "
+        "Cargo only applies `bgs-rs/Cargo.toml` `[workspace.lints.clippy]` "
         "entries to a crate when that crate declares:"
     )
     print()
@@ -84,8 +84,8 @@ def main() -> int:
     )
     print()
     print(
-        "Package-name checks apply to `codex-rs/<crate>/Cargo.toml` and "
-        "`codex-rs/utils/<crate>/Cargo.toml`."
+        "Package-name checks apply to `bgs-rs/<crate>/Cargo.toml` and "
+        "`bgs-rs/utils/<crate>/Cargo.toml`."
     )
     print(
         "Workspace crate features are forbidden; add a targeted exception here "
@@ -213,11 +213,11 @@ def expected_package_name(path: Path) -> str | None:
         directory = parts[0]
         return TOP_LEVEL_NAME_EXCEPTIONS.get(
             directory,
-            directory if directory.startswith("codex-") else f"codex-{directory}",
+            directory if directory.startswith("bgs-") else f"bgs-{directory}",
         )
     if len(parts) == 3 and parts[0] == "utils" and parts[2] == "Cargo.toml":
         directory = parts[1]
-        return UTILITY_NAME_EXCEPTIONS.get(directory, f"codex-utils-{directory}")
+        return UTILITY_NAME_EXCEPTIONS.get(directory, f"bgs-utils-{directory}")
     return None
 
 

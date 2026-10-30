@@ -1,0 +1,43 @@
+[package]
+name = "bgs-sandboxing"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "bgs_sandboxing"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+bgs-mxc-sandbox = { workspace = true }
+bgs-network-proxy = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-uds = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+bgs-utils-pty = { workspace = true }
+bgs-windows-sandbox = { workspace = true }
+dunce = { workspace = true }
+libc = { workspace = true }
+serde_json = { workspace = true }
+regex-lite = { workspace = true }
+tokio = { workspace = true, features = ["rt", "sync"] }
+tracing = { workspace = true, features = ["log"] }
+url = { workspace = true }
+which = { workspace = true }
+
+[target.'cfg(windows)'.dependencies]
+bgs-otel = { workspace = true }
+bgs-utils-home-dir = { workspace = true }
+
+[dev-dependencies]
+anyhow = { workspace = true }
+bgs-utils-cargo-bin = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt", "time"] }

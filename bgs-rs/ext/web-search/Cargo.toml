@@ -1,0 +1,33 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-web-search-extension"
+version.workspace = true
+
+[lib]
+name = "bgs_web_search_extension"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-api = { workspace = true }
+bgs-core = { workspace = true }
+bgs-extension-api = { workspace = true }
+bgs-extension-items = { workspace = true }
+bgs-http-client = { workspace = true }
+bgs-login = { workspace = true }
+bgs-model-provider = { workspace = true }
+bgs-model-provider-info = { workspace = true }
+bgs-otel = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-tools = { workspace = true }
+http = { workspace = true }
+schemars = { workspace = true }
+serde_json = { workspace = true }
+url = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

@@ -19,10 +19,10 @@ load(
 load("@v8//:bazel/v8-non-pointer-compression.bzl", "v8_binary_non_pointer_compression")
 load("@v8_python_deps//:requirements.bzl", "requirement")
 
-# Used by the Codex-owned pip hub; pin changes travel with the V8 source.
+# Used by the Bgs-owned pip hub; pin changes travel with the V8 source.
 exports_files(["bazel/requirements.txt"])
 
-# Codex V8 source policy. Only ABI, runtime and target CPU vary, selected by
+# Bgs V8 source policy. Only ABI, runtime and target CPU vary, selected by
 # artifact profiles. CPU selection lives in bazel/config.
 # Platform feature choices preserve the published Bazel Unix and GN MSVC builds.
 # ICU and no-ICU remain separate targets for the engine and its generators.
@@ -30,7 +30,7 @@ v8_flag(name = "v8_enable_sandbox")
 
 v8_flag(name = "v8_use_rusty_v8_custom_libcxx")
 
-# Maglev is supported on the two architectures shipped by Codex. Keep the
+# Maglev is supported on the two architectures shipped by Bgs. Keep the
 # architecture tests separate from feature policy for host-tool transitions.
 selects.config_setting_group(
     name = "enable_maglev",
@@ -106,7 +106,7 @@ selects.config_setting_group(
     ],
 )
 
-# Fixed V8 15.2 Codex feature contract: TurboFan and WebAssembly enabled;
+# Fixed V8 15.2 Bgs feature contract: TurboFan and WebAssembly enabled;
 # experiments, VTune and profiling disabled. Do not hard-code ABI-sensitive
 # values such as sandbox, pointer compression or target CPU into this baseline.
 v8_config(
@@ -140,7 +140,7 @@ v8_config(
             "V8_TYPED_ARRAY_MAX_SIZE_IN_HEAP=64",
         ],
     }) + select({
-        # Rusty V8's v8_enable_v8_checks feature is off in Codex. Keep the
+        # Rusty V8's v8_enable_v8_checks feature is off in Bgs. Keep the
         # matching C++ flag undefined even in debug: it adds a HandleScope
         # field that Rust would not allocate. DEBUG itself preserves that ABI.
         # V8's BUILD.gn also selects logging level 2 for debug verification.
@@ -304,7 +304,7 @@ alias(
     actual = "@@//third_party/v8:platform_windows_msvc",
 )
 
-# @CODEX_V8_UPSTREAM_FILEGROUPS@
+# @BGS_V8_UPSTREAM_FILEGROUPS@
 
 filegroup(
     name = "windows_x64_stack_assembly",

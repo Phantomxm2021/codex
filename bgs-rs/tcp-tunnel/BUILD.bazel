@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "tcp-tunnel",
+    crate_name = "bgs_tcp_tunnel",
+)

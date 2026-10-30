@@ -42,7 +42,7 @@ def _v8_abseil_repository_impl(repository_ctx):
         fail("Unexpected Abseil inline namespace: recheck the private V8 ABI for this source revision")
     repository_ctx.file(
         "absl/base/options.h",
-        options.replace(original, "#define ABSL_OPTION_INLINE_NAMESPACE_NAME codex_v8_lts_20250814"),
+        options.replace(original, "#define ABSL_OPTION_INLINE_NAMESPACE_NAME bgs_v8_lts_20250814"),
         executable = False,
     )
 

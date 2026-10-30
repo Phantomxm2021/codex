@@ -19,7 +19,7 @@ runs:
   steps:
     - name: Refresh release workspace metadata
       shell: bash
-      working-directory: ${{ github.workspace }}/codex-rs
+      working-directory: ${{ github.workspace }}/bgs-rs
       # Release tags change Cargo.toml; rules_rs needs matching workspace lock entries.
       run: cargo update --workspace
 
@@ -37,8 +37,8 @@ runs:
           ${{ runner.os == 'Windows' && '--config=ci-windows-msvc' || '' }} \
           ${{ runner.os == 'macOS' && '--config=ci-macos --remote_download_toplevel --build_metadata=VISIBILITY=PRIVATE' || '' }} \
           "--platforms=@rules_rs//rs/platforms:$TARGET" \
-          "--//codex-rs:runtime_package_build_mode=$BUILD_MODE" \
-          "//codex-rs:runtime_package_$BUNDLE"
+          "--//bgs-rs:runtime_package_build_mode=$BUILD_MODE" \
+          "//bgs-rs:runtime_package_$BUNDLE"
 
     - name: Extract staging archive
       shell: bash
@@ -48,4 +48,4 @@ runs:
         RELEASE_DIR: ${{ inputs.release-dir }}
       run: |
         mkdir -p "$RELEASE_DIR"
-        tar -xzf "bazel-bin/codex-rs/runtime_package_$BUNDLE.tar.gz" -C "$RELEASE_DIR"
+        tar -xzf "bazel-bin/bgs-rs/runtime_package_$BUNDLE.tar.gz" -C "$RELEASE_DIR"

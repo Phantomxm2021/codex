@@ -1,0 +1,33 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-core-api"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "bgs_core_api"
+path = "src/lib.rs"
+test = false
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-app-server-protocol = { workspace = true }
+bgs-arg0 = { workspace = true }
+bgs-analytics = { workspace = true }
+bgs-config = { workspace = true }
+bgs-core = { workspace = true }
+bgs-extension-api = { workspace = true }
+bgs-home = { workspace = true }
+bgs-history = { workspace = true }
+bgs-image-generation-extension = { workspace = true }
+bgs-exec-server = { workspace = true }
+bgs-features = { workspace = true }
+bgs-login = { workspace = true }
+bgs-model-provider-info = { workspace = true }
+bgs-models-manager = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-state = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }

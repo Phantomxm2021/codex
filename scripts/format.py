@@ -41,7 +41,7 @@ def just_formatter_group(*, check: bool) -> FormatterGroup:
 
 
 def rust_formatter_group(*, check: bool) -> FormatterGroup:
-    rust_workspace = REPO_ROOT / "codex-rs"
+    rust_workspace = REPO_ROOT / "bgs-rs"
     repository_files = subprocess.check_output(
         [
             "git",

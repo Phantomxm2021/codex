@@ -1,86 +1,86 @@
 {
   "outputs": {
-    "codex": {
+    "bgs": {
       "platforms": {
         "macos-aarch64": {
-          "regex": "^codex-package-aarch64-apple-darwin\\.tar\\.zst$",
-          "path": "bin/codex"
+          "regex": "^bgs-package-aarch64-apple-darwin\\.tar\\.zst$",
+          "path": "bin/bgs"
         },
         "macos-x86_64": {
-          "regex": "^codex-package-x86_64-apple-darwin\\.tar\\.zst$",
-          "path": "bin/codex"
+          "regex": "^bgs-package-x86_64-apple-darwin\\.tar\\.zst$",
+          "path": "bin/bgs"
         },
         "linux-x86_64": {
-          "regex": "^codex-package-x86_64-unknown-linux-musl\\.tar\\.zst$",
-          "path": "bin/codex"
+          "regex": "^bgs-package-x86_64-unknown-linux-musl\\.tar\\.zst$",
+          "path": "bin/bgs"
         },
         "linux-aarch64": {
-          "regex": "^codex-package-aarch64-unknown-linux-musl\\.tar\\.zst$",
-          "path": "bin/codex"
+          "regex": "^bgs-package-aarch64-unknown-linux-musl\\.tar\\.zst$",
+          "path": "bin/bgs"
         },
         "windows-x86_64": {
-          "regex": "^codex-package-x86_64-pc-windows-msvc\\.tar\\.zst$",
-          "path": "bin/codex.exe"
+          "regex": "^bgs-package-x86_64-pc-windows-msvc\\.tar\\.zst$",
+          "path": "bin/bgs.exe"
         },
         "windows-aarch64": {
-          "regex": "^codex-package-aarch64-pc-windows-msvc\\.tar\\.zst$",
-          "path": "bin/codex.exe"
+          "regex": "^bgs-package-aarch64-pc-windows-msvc\\.tar\\.zst$",
+          "path": "bin/bgs.exe"
         }
       }
     },
-    "codex-app-server": {
+    "bgs-app-server": {
       "platforms": {
         "macos-aarch64": {
-          "regex": "^codex-app-server-package-aarch64-apple-darwin\\.tar\\.zst$",
-          "path": "bin/codex-app-server"
+          "regex": "^bgs-app-server-package-aarch64-apple-darwin\\.tar\\.zst$",
+          "path": "bin/bgs-app-server"
         },
         "macos-x86_64": {
-          "regex": "^codex-app-server-package-x86_64-apple-darwin\\.tar\\.zst$",
-          "path": "bin/codex-app-server"
+          "regex": "^bgs-app-server-package-x86_64-apple-darwin\\.tar\\.zst$",
+          "path": "bin/bgs-app-server"
         },
         "linux-x86_64": {
-          "regex": "^codex-app-server-package-x86_64-unknown-linux-musl\\.tar\\.zst$",
-          "path": "bin/codex-app-server"
+          "regex": "^bgs-app-server-package-x86_64-unknown-linux-musl\\.tar\\.zst$",
+          "path": "bin/bgs-app-server"
         },
         "linux-aarch64": {
-          "regex": "^codex-app-server-package-aarch64-unknown-linux-musl\\.tar\\.zst$",
-          "path": "bin/codex-app-server"
+          "regex": "^bgs-app-server-package-aarch64-unknown-linux-musl\\.tar\\.zst$",
+          "path": "bin/bgs-app-server"
         },
         "windows-x86_64": {
-          "regex": "^codex-app-server-package-x86_64-pc-windows-msvc\\.tar\\.zst$",
-          "path": "bin/codex-app-server.exe"
+          "regex": "^bgs-app-server-package-x86_64-pc-windows-msvc\\.tar\\.zst$",
+          "path": "bin/bgs-app-server.exe"
         },
         "windows-aarch64": {
-          "regex": "^codex-app-server-package-aarch64-pc-windows-msvc\\.tar\\.zst$",
-          "path": "bin/codex-app-server.exe"
+          "regex": "^bgs-app-server-package-aarch64-pc-windows-msvc\\.tar\\.zst$",
+          "path": "bin/bgs-app-server.exe"
         }
       }
     },
-    "codex-responses-api-proxy": {
+    "bgs-responses-api-proxy": {
       "platforms": {
         "macos-aarch64": {
-          "regex": "^codex-responses-api-proxy-aarch64-apple-darwin\\.zst$",
-          "path": "codex-responses-api-proxy"
+          "regex": "^bgs-responses-api-proxy-aarch64-apple-darwin\\.zst$",
+          "path": "bgs-responses-api-proxy"
         },
         "macos-x86_64": {
-          "regex": "^codex-responses-api-proxy-x86_64-apple-darwin\\.zst$",
-          "path": "codex-responses-api-proxy"
+          "regex": "^bgs-responses-api-proxy-x86_64-apple-darwin\\.zst$",
+          "path": "bgs-responses-api-proxy"
         },
         "linux-x86_64": {
-          "regex": "^codex-responses-api-proxy-x86_64-unknown-linux-musl\\.zst$",
-          "path": "codex-responses-api-proxy"
+          "regex": "^bgs-responses-api-proxy-x86_64-unknown-linux-musl\\.zst$",
+          "path": "bgs-responses-api-proxy"
         },
         "linux-aarch64": {
-          "regex": "^codex-responses-api-proxy-aarch64-unknown-linux-musl\\.zst$",
-          "path": "codex-responses-api-proxy"
+          "regex": "^bgs-responses-api-proxy-aarch64-unknown-linux-musl\\.zst$",
+          "path": "bgs-responses-api-proxy"
         },
         "windows-x86_64": {
-          "regex": "^codex-responses-api-proxy-x86_64-pc-windows-msvc\\.exe\\.zst$",
-          "path": "codex-responses-api-proxy.exe"
+          "regex": "^bgs-responses-api-proxy-x86_64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "bgs-responses-api-proxy.exe"
         },
         "windows-aarch64": {
-          "regex": "^codex-responses-api-proxy-aarch64-pc-windows-msvc\\.exe\\.zst$",
-          "path": "codex-responses-api-proxy.exe"
+          "regex": "^bgs-responses-api-proxy-aarch64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "bgs-responses-api-proxy.exe"
         }
       }
     },
@@ -96,39 +96,39 @@
         }
       }
     },
-    "codex-command-runner": {
+    "bgs-command-runner": {
       "platforms": {
         "windows-x86_64": {
-          "regex": "^codex-command-runner-x86_64-pc-windows-msvc\\.exe\\.zst$",
-          "path": "codex-command-runner.exe"
+          "regex": "^bgs-command-runner-x86_64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "bgs-command-runner.exe"
         },
         "windows-aarch64": {
-          "regex": "^codex-command-runner-aarch64-pc-windows-msvc\\.exe\\.zst$",
-          "path": "codex-command-runner.exe"
+          "regex": "^bgs-command-runner-aarch64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "bgs-command-runner.exe"
         }
       }
     },
-    "codex-windows-sandbox-setup": {
+    "bgs-windows-sandbox-setup": {
       "platforms": {
         "windows-x86_64": {
-          "regex": "^codex-windows-sandbox-setup-x86_64-pc-windows-msvc\\.exe\\.zst$",
-          "path": "codex-windows-sandbox-setup.exe"
+          "regex": "^bgs-windows-sandbox-setup-x86_64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "bgs-windows-sandbox-setup.exe"
         },
         "windows-aarch64": {
-          "regex": "^codex-windows-sandbox-setup-aarch64-pc-windows-msvc\\.exe\\.zst$",
-          "path": "codex-windows-sandbox-setup.exe"
+          "regex": "^bgs-windows-sandbox-setup-aarch64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "bgs-windows-sandbox-setup.exe"
         }
       }
     },
-    "codex-windows-sandbox-service": {
+    "bgs-windows-sandbox-service": {
       "platforms": {
         "windows-x86_64": {
-          "regex": "^codex-windows-sandbox-service-x86_64-pc-windows-msvc\\.exe\\.zst$",
-          "path": "codex-windows-sandbox-service.exe"
+          "regex": "^bgs-windows-sandbox-service-x86_64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "bgs-windows-sandbox-service.exe"
         },
         "windows-aarch64": {
-          "regex": "^codex-windows-sandbox-service-aarch64-pc-windows-msvc\\.exe\\.zst$",
-          "path": "codex-windows-sandbox-service.exe"
+          "regex": "^bgs-windows-sandbox-service-aarch64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "bgs-windows-sandbox-service.exe"
         }
       }
     }

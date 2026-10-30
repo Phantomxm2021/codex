@@ -1,0 +1,8 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "support",
+    compile_data = ["//bgs-rs/exec-server:src/proto/bgs.exec_server.relay.v1.rs"],
+    crate_name = "bgs_exec_server_test_support",
+    crate_srcs = glob(["*.rs"]),
+)

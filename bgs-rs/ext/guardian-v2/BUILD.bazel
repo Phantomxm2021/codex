@@ -1,0 +1,14 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+# Core's context-adapter unit tests compile the same setup function with their Config type.
+exports_files(
+    ["src/sync_reviewer/reviewer_config.rs"],
+    visibility = ["//bgs-rs/core:__pkg__"],
+)
+
+bgs_rust_crate(
+    name = "guardian-v2",
+    crate_name = "bgs_guardian_v2",
+    extra_binaries = ["//bgs-rs/code-mode-host:bgs-code-mode-host"],
+    test_data_extra = glob(["src/**/snapshots/**"]),
+)

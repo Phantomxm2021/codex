@@ -1,0 +1,17 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "multi-env-copy-file",
+    crate_name = "bgs_multi_env_copy_file",
+    extra_binaries = [
+        "//bgs-rs/bwrap:bwrap",
+        "//bgs-rs/code-mode-host:bgs-code-mode-host",
+        "//bgs-rs/linux-sandbox:bgs-linux-sandbox",
+        "//bgs-rs/cli:bgs",
+        "//bgs-rs/windows-sandbox-rs:bgs-command-runner",
+        "//bgs-rs/windows-sandbox-rs:bgs-windows-managed-deny-probe",
+        "//bgs-rs/windows-sandbox-rs:bgs-windows-sandbox-setup",
+    ],
+    run_tests_with_wine_exec = True,
+    test_tags = ["no-sandbox"],
+)

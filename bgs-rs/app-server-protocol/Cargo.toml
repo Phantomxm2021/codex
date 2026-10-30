@@ -1,0 +1,56 @@
+[package]
+name = "bgs-app-server-protocol"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "bgs_app_server_protocol"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+bgs-experimental-api-macros = { workspace = true }
+bgs-app-server-protocol-noop-macros = { workspace = true }
+bgs-extension-items = { workspace = true }
+bgs-history = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-rollout = { workspace = true }
+bgs-secrets = { workspace = true }
+bgs-shell-command = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+bgs-utils-redacted-string = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+serde_with = { workspace = true }
+strum_macros = { workspace = true }
+thiserror = { workspace = true }
+rmcp = { workspace = true, default-features = false, features = [
+    "base64",
+    "macros",
+    "server",
+] }
+inventory = { workspace = true }
+tracing = { workspace = true }
+uuid = { workspace = true, features = ["serde", "v7"] }
+zstd = { workspace = true }
+
+[dev-dependencies]
+anyhow = { workspace = true }
+bgs-utils-cargo-bin = { workspace = true }
+pretty_assertions = { workspace = true }
+rmcp = { workspace = true, default-features = false, features = [
+    "base64",
+    "macros",
+    "schemars",
+    "server",
+] }
+schemars = { workspace = true }
+similar = { workspace = true }
+tempfile = { workspace = true }
+ts-rs = { workspace = true }

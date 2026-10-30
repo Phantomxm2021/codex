@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "attachment-store",
+    crate_name = "bgs_attachment_store",
+)

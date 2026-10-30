@@ -3,12 +3,12 @@
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 
-import { Codex } from "@openai/codex-sdk";
-import type { ThreadEvent, ThreadItem } from "@openai/codex-sdk";
-import { codexPathOverride } from "./helpers.ts";
+import { Bgs } from "@openai/bgs-sdk";
+import type { ThreadEvent, ThreadItem } from "@openai/bgs-sdk";
+import { bgsPathOverride } from "./helpers.ts";
 
-const codex = new Codex({ codexPathOverride: codexPathOverride() });
-const thread = codex.startThread();
+const bgs = new Bgs({ bgsPathOverride: bgsPathOverride() });
+const thread = bgs.startThread();
 const rl = createInterface({ input, output });
 
 const handleItemCompleted = (item: ThreadItem): void => {

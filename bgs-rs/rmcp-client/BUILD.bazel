@@ -1,0 +1,9 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "rmcp-client",
+    crate_name = "bgs_rmcp_client",
+    extra_binaries = [
+        "//bgs-rs/cli:bgs",
+    ],
+)

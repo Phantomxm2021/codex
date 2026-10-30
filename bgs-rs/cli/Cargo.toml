@@ -1,0 +1,151 @@
+[package]
+name = "bgs-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+build = "build.rs"
+default-run = "bgs"
+
+[[bin]]
+name = "bgs"
+path = "src/main.rs"
+
+[[bin]]
+name = "logs_client"
+path = "src/bin/logs_client.rs"
+
+[[test]]
+name = "app_server_daemon_package"
+path = "tests/app_server_daemon/package.rs"
+
+[lib]
+name = "bgs_cli"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-utils-process = { workspace = true }
+anyhow = { workspace = true }
+chrono = { workspace = true }
+clap = { workspace = true, features = ["derive", "env"] }
+clap_complete = { workspace = true }
+bgs-app-server = { workspace = true }
+bgs-app-server-daemon = { workspace = true }
+bgs-app-server-protocol = { workspace = true }
+bgs-app-server-test-client = { workspace = true }
+bgs-arg0 = { workspace = true }
+bgs-build-info = { workspace = true }
+bgs-api = { workspace = true }
+bgs-chatgpt = { workspace = true }
+bgs-cloud-config = { workspace = true }
+bgs-cloud-tasks = { path = "../cloud-tasks" }
+bgs-utils-cli = { workspace = true }
+bgs-config = { workspace = true }
+bgs-core = { workspace = true }
+bgs-core-plugins = { workspace = true }
+bgs-history = { workspace = true }
+bgs-home = { workspace = true }
+bgs-http-client = { workspace = true }
+bgs-exec = { workspace = true }
+bgs-exec-server = { workspace = true }
+bgs-exec-server-cli = { workspace = true }
+bgs-execpolicy = { workspace = true }
+bgs-extension-api = { workspace = true }
+bgs-features = { workspace = true }
+bgs-multi-env-copy-file = { workspace = true }
+bgs-git-attribution = { workspace = true }
+bgs-git-utils = { workspace = true }
+bgs-install-context = { workspace = true }
+bgs-login = { workspace = true }
+bgs-memories-write = { workspace = true }
+bgs-mcp = { workspace = true }
+bgs-model-provider = { workspace = true }
+bgs-models-manager = { workspace = true }
+bgs-plugin = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-responses-api-proxy = { workspace = true }
+bgs-tcp-tunnel = { workspace = true }
+bgs-rmcp-client = { workspace = true }
+bgs-rollout = { workspace = true }
+bgs-rollout-trace = { workspace = true }
+bgs-sandboxing = { workspace = true }
+bgs-skills-extension = { workspace = true }
+bgs-state = { workspace = true }
+bgs-stdio-to-uds = { workspace = true }
+bgs-terminal-detection = { workspace = true }
+bgs-thread-store = { workspace = true }
+bgs-tui = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-path = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+bgs-utils-redacted-string = { workspace = true }
+bgs-websocket-auth = { workspace = true }
+crossterm = { workspace = true, features = ["event-stream"] }
+futures = { workspace = true }
+http = { workspace = true }
+libc = { workspace = true }
+os_info = { workspace = true }
+owo-colors = { workspace = true }
+regex-lite = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+sqlx = { workspace = true }
+supports-color = { workspace = true }
+sys-locale = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = [
+    "io-std",
+    "macros",
+    "net",
+    "process",
+    "rt-multi-thread",
+    "signal",
+    "time",
+] }
+toml = { workspace = true }
+tracing = { workspace = true }
+tracing-appender = { workspace = true }
+tracing-subscriber = { workspace = true }
+unicode-segmentation = { workspace = true }
+url = { workspace = true }
+which = { workspace = true }
+
+[target.'cfg(all(target_os = "linux", target_env = "musl", any(target_arch = "x86_64", target_arch = "aarch64")))'.dependencies]
+tikv-jemallocator = { workspace = true }
+
+[target.'cfg(target_os = "windows")'.dependencies]
+bgs_windows_sandbox = { package = "bgs-windows-sandbox", path = "../windows-sandbox-rs" }
+windows-sys = { workspace = true, features = [
+    "Win32_Foundation",
+    "Win32_Storage_Packaging_Appx",
+    "Win32_System_Console",
+    "Win32_System_Threading",
+] }
+
+[dev-dependencies]
+app_test_support = { workspace = true }
+assert_cmd = { workspace = true }
+assert_matches = { workspace = true }
+bgs-app-server-client = { workspace = true }
+bgs-utils-cargo-bin = { workspace = true }
+bgs-utils-pty = { workspace = true }
+core_test_support = { workspace = true }
+flate2 = { workspace = true }
+insta = { workspace = true }
+jsonwebtoken = { workspace = true }
+predicates = { workspace = true }
+pretty_assertions = { workspace = true }
+sha2 = { workspace = true }
+tar = { workspace = true }
+tokio-tungstenite = { workspace = true }
+vt100 = { workspace = true }
+wiremock = { workspace = true }
+zstd = { workspace = true }
+
+[package.metadata.cargo-shear]
+# These Rust sources are intentionally Bazel-only macrobenchmarks rather than
+# Cargo targets.
+ignored-paths = ["e2e_benches/*.rs"]
