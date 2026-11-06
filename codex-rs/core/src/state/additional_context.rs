@@ -6,11 +6,17 @@ use crate::context::AdditionalContextDeveloperFragment;
 use crate::context::AdditionalContextToolOutput;
 use crate::context::AdditionalContextUserFragment;
 use crate::context::ContextualUserFragment;
+use codex_context_fragments::MAX_ADDITIONAL_CONTEXT_VALUE_TOKENS;
 use codex_history::ResponseItemEnvelope;
+use codex_otel::ADDITIONAL_CONTEXT_COUNT_METRIC;
+use codex_otel::ADDITIONAL_CONTEXT_VALUE_BYTES_BUCKETS;
+use codex_otel::ADDITIONAL_CONTEXT_VALUE_BYTES_METRIC;
+use codex_otel::SessionTelemetry;
 use codex_protocol::models::ContentItem;
 use codex_protocol::models::ResponseItem;
 use codex_protocol::protocol::AdditionalContextEntry;
 use codex_protocol::protocol::AdditionalContextKind;
+use codex_utils_string::truncate_middle_with_token_budget;
 
 const ADDITIONAL_CONTEXT_KIND_PREFIX: &str = "additional_content.";
 
@@ -49,7 +55,11 @@ impl AdditionalContextStore {
         &mut self,
         values: BTreeMap<String, AdditionalContextEntry>,
         format: AdditionalContextFormat,
+        telemetry: &SessionTelemetry,
     ) -> Vec<(ResponseItem, AdditionalContextKind)> {
+        for entry in values.values() {
+            Self::record_metrics(entry, telemetry);
+        }
         let values =
             values
                 .into_iter()
@@ -98,6 +108,34 @@ impl AdditionalContextStore {
             .collect();
         self.values = values;
         fragments
+    }
+
+    fn record_metrics(entry: &AdditionalContextEntry, telemetry: &SessionTelemetry) {
+        let (bounded_value, original_tokens) =
+            truncate_middle_with_token_budget(&entry.value, MAX_ADDITIONAL_CONTEXT_VALUE_TOKENS);
+        let kind = match entry.kind {
+            AdditionalContextKind::Untrusted => "untrusted",
+            AdditionalContextKind::Application => "application",
+        };
+        let truncated = original_tokens.is_some().to_string();
+        let mut tags = vec![("kind", kind), ("truncated", truncated.as_str())];
+        if let Some(name) = entry.name.as_deref() {
+            tags.push(("name", name));
+        }
+        telemetry.counter(ADDITIONAL_CONTEXT_COUNT_METRIC, /*inc*/ 1, &tags);
+        for (stage, bytes) in [
+            ("before", entry.value.len()),
+            ("after", bounded_value.len()),
+        ] {
+            let mut size_tags = tags.clone();
+            size_tags.push(("stage", stage));
+            telemetry.histogram_with_boundaries(
+                ADDITIONAL_CONTEXT_VALUE_BYTES_METRIC,
+                i64::try_from(bytes).unwrap_or(i64::MAX),
+                ADDITIONAL_CONTEXT_VALUE_BYTES_BUCKETS,
+                &size_tags,
+            );
+        }
     }
 
     /// Rebuilds the deduplication state from trusted application context that survived a
@@ -164,6 +202,21 @@ mod tests {
     use codex_context_fragments::ContextualUserFragment;
     use codex_history::CodexHarnessMetadata;
 
+    fn test_session_telemetry() -> SessionTelemetry {
+        SessionTelemetry::new(
+            codex_protocol::ThreadId::new(),
+            "test-model",
+            "test-model",
+            None,
+            None,
+            None,
+            "test-originator".to_string(),
+            false,
+            "test-terminal".to_string(),
+            codex_protocol::protocol::SessionSource::Cli,
+        )
+    }
+
     fn application_item(key: &str, value: &str) -> ResponseItemEnvelope {
         ResponseItemEnvelope {
             item: ContextualUserFragment::into(AdditionalContextDeveloperFragment::new(
@@ -222,7 +275,8 @@ mod tests {
             store
                 .merge(
                     application_values("brief", "current"),
-                    AdditionalContextFormat::Messages
+                    AdditionalContextFormat::Messages,
+                    &test_session_telemetry()
                 )
                 .is_empty()
         );
@@ -230,7 +284,8 @@ mod tests {
             store
                 .merge(
                     application_values("brief", "old"),
-                    AdditionalContextFormat::Messages
+                    AdditionalContextFormat::Messages,
+                    &test_session_telemetry()
                 )
                 .len(),
             1
@@ -249,7 +304,8 @@ mod tests {
             store
                 .merge(
                     application_values("brief", "same"),
-                    AdditionalContextFormat::Messages
+                    AdditionalContextFormat::Messages,
+                    &test_session_telemetry()
                 )
                 .len(),
             1
@@ -264,7 +320,8 @@ mod tests {
             store
                 .merge(
                     application_values("brief", "same"),
-                    AdditionalContextFormat::Messages
+                    AdditionalContextFormat::Messages,
+                    &test_session_telemetry()
                 )
                 .is_empty()
         );
@@ -276,17 +333,23 @@ mod tests {
             store
                 .merge(
                     application_values("brief", "same"),
-                    AdditionalContextFormat::Messages
+                    AdditionalContextFormat::Messages,
+                    &test_session_telemetry()
                 )
                 .len(),
             1
         );
-        store.merge(BTreeMap::new(), AdditionalContextFormat::Messages);
+        store.merge(
+            BTreeMap::new(),
+            AdditionalContextFormat::Messages,
+            &test_session_telemetry(),
+        );
         assert_eq!(
             store
                 .merge(
                     application_values("brief", "same"),
-                    AdditionalContextFormat::Messages
+                    AdditionalContextFormat::Messages,
+                    &test_session_telemetry()
                 )
                 .len(),
             1
