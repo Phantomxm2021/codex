@@ -319,7 +319,8 @@ impl GoalToolExecutor {
             })?
             .ok_or_else(|| {
                 FunctionCallError::RespondToModel(
-                    "cannot update goal because this thread has no goal".to_string(),
+                    "cannot update goal because its scope changed while waiting for response usage"
+                        .to_string(),
                 )
             })?;
         self.metrics
