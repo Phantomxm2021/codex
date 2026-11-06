@@ -1,12 +1,12 @@
 #!/usr/bin/env -S NODE_NO_WARNINGS=1 pnpm ts-node-esm --files
 
-import { Codex } from "@openai/codex-sdk";
+import { Bgs } from "@openai/bgs-sdk";
 
-import { codexPathOverride } from "./helpers.ts";
+import { bgsPathOverride } from "./helpers.ts";
 
-const codex = new Codex({ codexPathOverride: codexPathOverride() });
+const bgs = new Bgs({ bgsPathOverride: bgsPathOverride() });
 
-const thread = codex.startThread();
+const thread = bgs.startThread();
 
 const schema = {
   type: "object",

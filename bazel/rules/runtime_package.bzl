@@ -28,7 +28,7 @@ _PROFILE_OUTPUTS = _PROFILE_INPUTS + [
 
 def _release_profile_impl(settings, attr):
     profile = {key: settings[key] for key in _PROFILE_INPUTS}
-    smoke = settings["//codex-rs:runtime_package_build_mode"] == "debug"
+    smoke = settings["//bgs-rs:runtime_package_build_mode"] == "debug"
     profile.update({
         "//command_line_option:compilation_mode": "opt",
         "@rules_rust//rust/settings:lto": "off" if smoke else "thin",
@@ -71,7 +71,7 @@ def _release_profile_impl(settings, attr):
 
 _release_profile = transition(
     implementation = _release_profile_impl,
-    inputs = _PROFILE_INPUTS + ["//codex-rs:runtime_package_build_mode"],
+    inputs = _PROFILE_INPUTS + ["//bgs-rs:runtime_package_build_mode"],
     outputs = _PROFILE_OUTPUTS,
 )
 

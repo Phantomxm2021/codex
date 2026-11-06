@@ -1,0 +1,29 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-prompts"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "bgs_prompts"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+bgs-collaboration-mode-templates = { workspace = true }
+bgs-context-fragments = { workspace = true }
+bgs-execpolicy = { workspace = true }
+bgs-git-utils = { workspace = true }
+bgs-guardian-context = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-template = { workspace = true }
+tracing = { workspace = true }
+
+[dev-dependencies]
+bgs-protocol-test-support = { workspace = true }
+pretty_assertions = { workspace = true }

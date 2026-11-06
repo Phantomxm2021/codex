@@ -1,4 +1,4 @@
-# What: adapt the pinned V8 rule helpers to Codex's engine configuration.
+# What: adapt the pinned V8 rule helpers to Bgs's engine configuration.
 # Scope: bazel/defs.bzl and bazel/config/v8-target-cpu.bzl; the engine graph
 # and dependency choices live in third_party/v8/engine.BUILD.bazel. ABI,
 # runtime and CPU settings are internal outputs of artifact_profile.bzl.

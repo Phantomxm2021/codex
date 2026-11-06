@@ -1,0 +1,51 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-guardian-v2"
+version.workspace = true
+
+[lib]
+name = "bgs_guardian_v2"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+bgs-analytics = { workspace = true }
+bgs-api = { workspace = true }
+bgs-config = { workspace = true }
+bgs-context-fragments = { workspace = true }
+bgs-core = { workspace = true }
+bgs-extension-api = { workspace = true }
+bgs-features = { workspace = true }
+bgs-guardian-context = { workspace = true }
+bgs-guardian-reviewer = { workspace = true }
+bgs-history = { workspace = true }
+bgs-http-client = { workspace = true }
+bgs-login = { workspace = true }
+bgs-model-provider = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-prompts = { workspace = true }
+bgs-websocket-client = { workspace = true }
+dirs = { workspace = true }
+http = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["time"] }
+tracing = { workspace = true }
+uuid = { workspace = true }
+
+[dev-dependencies]
+bgs-model-provider-info = { workspace = true }
+bgs-protocol-test-support = { workspace = true }
+bgs-utils-cargo-bin = { workspace = true }
+core_test_support = { workspace = true }
+insta = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+wiremock = { workspace = true }
+zstd = { workspace = true }

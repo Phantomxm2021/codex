@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "websocket-auth",
+    crate_name = "bgs_websocket_auth",
+)

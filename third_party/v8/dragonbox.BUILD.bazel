@@ -1,4 +1,4 @@
-# Codex overlay for the V8 DEPS revision. Mirrors :lib_dragonbox in V8's
+# Bgs overlay for the V8 DEPS revision. Mirrors :lib_dragonbox in V8's
 # BUILD.bazel, exporting the include path V8 expects from a separate repo.
 load("@rules_cc//cc:defs.bzl", "cc_library")
 

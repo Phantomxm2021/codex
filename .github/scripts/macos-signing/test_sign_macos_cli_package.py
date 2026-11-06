@@ -32,13 +32,13 @@ if name == "codesign":
         sys.exit(1)
     if "--entitlements" in args:
         target = Path(args[-1]).name
-        if target == "CodexCLI.app":
-            source = Path(os.environ["CODEX_REPO_ROOT"]) / "signing-verification/codex-provisioned-entitlements.plist"
-        elif target in ("codex", "codex-code-mode-host", "codex-exec-server"):
+        if target == "BgsCLI.app":
+            source = Path(os.environ["BGS_REPO_ROOT"]) / "signing-verification/bgs-provisioned-entitlements.plist"
+        elif target in ("bgs", "bgs-code-mode-host", "bgs-exec-server"):
             source = Path(os.environ["MOCK_SIGNING_SCRIPTS"]) / (target + ".entitlements.plist")
         else:
             sys.exit(0)
-        if target == "codex-exec-server" and os.environ.get("MOCK_EXECUTOR_ENTITLEMENTS"):
+        if target == "bgs-exec-server" and os.environ.get("MOCK_EXECUTOR_ENTITLEMENTS"):
             sys.stdout.buffer.write(plistlib.dumps({"unexpected": True}))
             sys.exit(0)
         if not plistlib.loads(source.read_bytes()) and os.environ.get("MOCK_OMIT_EMPTY_ENTITLEMENTS"):
@@ -77,12 +77,12 @@ class MacosSigningTests(ProvisioningTestCase):
         )
         for name in ("sign_macos_code.sh", "notarize_macos_binary_with_akv.sh"):
             (scripts / name).write_text(
-                'python3 "$CODEX_REPO_ROOT/record.py" "$(basename "$0")" "$@"\n'
+                'python3 "$BGS_REPO_ROOT/record.py" "$(basename "$0")" "$@"\n'
             )
         (scripts / "notarize_with_akv.py").write_text(
             "import os, runpy, sys\n"
             "sys.argv.insert(1, 'notarize_with_akv.py')\n"
-            "runpy.run_path(os.environ['CODEX_REPO_ROOT'] + '/record.py')\n"
+            "runpy.run_path(os.environ['BGS_REPO_ROOT'] + '/record.py')\n"
         )
         for name in ("rcodesign", "codesign", "lipo", "plutil"):
             path = root / name
@@ -93,28 +93,28 @@ class MacosSigningTests(ProvisioningTestCase):
         certificate.write_text(ssl.DER_cert_to_PEM_cert(certificate_der))
         (root / "certificate.der").write_bytes(certificate_der)
         package = root / "package with spaces"
-        for relative in ("bin/codex", *bundle.HELPERS):
+        for relative in ("bin/bgs", *bundle.HELPERS):
             path = package / relative
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text("#!/bin/sh\nexit 0\n")
             path.chmod(0o755)
-        (package / "codex-package.json").write_text(
+        (package / "bgs-package.json").write_text(
             json.dumps(
                 {
-                    "variant": "codex",
+                    "variant": "bgs",
                     "layoutVersion": 1,
                     "target": target,
-                    "entrypoint": "bin/codex",
+                    "entrypoint": "bin/bgs",
                 }
             )
         )
         env = {
             key: value
             for key, value in os.environ.items()
-            if key not in ("GITHUB_WORKSPACE", "CODEX_PROVISIONING_HELPER")
+            if key not in ("GITHUB_WORKSPACE", "BGS_PROVISIONING_HELPER")
         }
         env.update(
-            CODEX_REPO_ROOT=str(root),
+            BGS_REPO_ROOT=str(root),
             RUNNER_TEMP=str(root),
             TARGET=target,
             PATH=f"{root}{os.pathsep}{os.environ['PATH']}",
@@ -179,23 +179,23 @@ class MacosSigningTests(ProvisioningTestCase):
                     [
                         str(package / relative)
                         for relative in (
-                            bundle.APP if provisioned else "bin/codex",
+                            bundle.APP if provisioned else "bin/bgs",
                             *bundle.HELPERS,
                         )
                     ],
                 )
                 self.assertEqual(
-                    signing[0][signing[0].index("--identifier") + 1], "codex"
+                    signing[0][signing[0].index("--identifier") + 1], "bgs"
                 )
                 self.assertEqual(
                     signing[0][signing[0].index("--entitlements") + 1],
                     str(
                         root
-                        / "signing-verification/codex-provisioned-entitlements.plist"
+                        / "signing-verification/bgs-provisioned-entitlements.plist"
                     )
                     if provisioned
                     else str(
-                        Path(env["MOCK_SIGNING_SCRIPTS"]) / "codex.entitlements.plist"
+                        Path(env["MOCK_SIGNING_SCRIPTS"]) / "bgs.entitlements.plist"
                     ),
                 )
                 self.assertEqual(
@@ -217,7 +217,7 @@ class MacosSigningTests(ProvisioningTestCase):
                             "arm64" if target.startswith("aarch64") else "x86_64",
                         ]
                         for relative in (
-                            bundle.EXECUTABLE if provisioned else "bin/codex",
+                            bundle.EXECUTABLE if provisioned else "bin/bgs",
                             *bundle.HELPERS,
                         )
                     ],
@@ -233,47 +233,47 @@ class MacosSigningTests(ProvisioningTestCase):
                     requirement = cli_verification[
                         cli_verification.index("--test-requirement") + 1
                     ]
-                    self.assertIn(' and identifier "codex"', requirement)
+                    self.assertIn(' and identifier "bgs"', requirement)
                     self.assertIn(
                         ' and certificate leaf[subject.OU] = "TESTTEAM01"', requirement
                     )
                     with zipfile.ZipFile(root / "provisioned-cli.zip") as archive:
                         info = plistlib.loads(
-                            archive.read("CodexCLI.app/Contents/Info.plist")
+                            archive.read("BgsCLI.app/Contents/Info.plist")
                         )
                         self.assertEqual(
-                            info["CFBundleIdentifier"], "com.openai.codex.cli"
+                            info["CFBundleIdentifier"], "com.phantomlab.bgs.cli"
                         )
-                        self.assertEqual(info["CFBundleExecutable"], "codex")
+                        self.assertEqual(info["CFBundleExecutable"], "bgs")
                         self.assertEqual(
                             plistlib.loads(
                                 (
                                     root
-                                    / "signing-verification/codex-provisioned-entitlements.plist"
+                                    / "signing-verification/bgs-provisioned-entitlements.plist"
                                 ).read_bytes()
                             ),
                             {
                                 **plistlib.loads(
                                     (
                                         Path(env["MOCK_SIGNING_SCRIPTS"])
-                                        / "codex.entitlements.plist"
+                                        / "bgs.entitlements.plist"
                                     ).read_bytes()
                                 ),
-                                "com.apple.application-identifier": "TESTTEAM01.com.openai.codex.cli",
+                                "com.apple.application-identifier": "TESTTEAM01.com.phantomlab.bgs.cli",
                                 "com.apple.developer.team-identifier": "TESTTEAM01",
                                 "keychain-access-groups": [
-                                    "TESTTEAM01.com.openai.codex.cli"
+                                    "TESTTEAM01.com.phantomlab.bgs.cli"
                                 ],
                             },
                         )
                         self.assertEqual(
                             archive.read(
-                                "CodexCLI.app/Contents/embedded.provisionprofile"
+                                "BgsCLI.app/Contents/embedded.provisionprofile"
                             ),
                             self.configuration.profile.read_bytes(),
                         )
                         self.assertEqual(
-                            archive.read("bin/codex").decode(), bundle.LAUNCHER
+                            archive.read("bin/bgs").decode(), bundle.LAUNCHER
                         )
                         self.assertTrue(
                             all(
@@ -284,8 +284,8 @@ class MacosSigningTests(ProvisioningTestCase):
 
     def test_provisioned_verification_rejects_changed_bundle_identity(self):
         for field, value in (
-            ("CFBundleIdentifier", "codex"),
-            ("CFBundleExecutable", "another-codex"),
+            ("CFBundleIdentifier", "bgs"),
+            ("CFBundleExecutable", "another-bgs"),
             ("CFBundlePackageType", "BNDL"),
         ):
             with self.subTest(field=field), tempfile.TemporaryDirectory() as directory:

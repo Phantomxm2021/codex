@@ -9,7 +9,7 @@ diff --git a/cc/private/toolchain/windows_cc_configure.bzl b/cc/private/toolchai
          The path to the LLVM installation, or None if not found.
      """
 
-+    # Codex's opt-in V8 toolchain supplies a Bazel-fetched compiler.
++    # Bgs's opt-in V8 toolchain supplies a Bazel-fetched compiler.
 +    # Ordinary cc_autoconf repositories have no such attribute.
 +    llvm_label = getattr(repository_ctx.attr, "native_llvm", None)
 +    if llvm_label:

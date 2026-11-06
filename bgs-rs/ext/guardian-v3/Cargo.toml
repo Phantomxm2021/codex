@@ -1,0 +1,17 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-guardian-v3"
+version.workspace = true
+
+[lib]
+doctest = false
+test = false
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-message-board = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-state = { workspace = true }

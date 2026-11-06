@@ -1,0 +1,7 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "plugin-host",
+    crate_name = "bgs_plugin_host",
+    test_only_binaries = ["bgs-plugin-test-helper"],
+)

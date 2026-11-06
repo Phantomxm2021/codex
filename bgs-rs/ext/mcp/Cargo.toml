@@ -1,0 +1,45 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-mcp-extension"
+version.workspace = true
+
+[lib]
+name = "bgs_mcp_extension"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+bgs-core = { workspace = true }
+bgs-core-plugins = { workspace = true }
+bgs-config = { workspace = true }
+bgs-connectors = { workspace = true }
+bgs-connectors-extension = { workspace = true }
+bgs-exec-server = { workspace = true }
+bgs-extension-api = { workspace = true }
+bgs-features = { workspace = true }
+bgs-mcp = { workspace = true }
+bgs-plugin = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true, features = ["sync"] }
+
+[dev-dependencies]
+core_test_support = { workspace = true }
+axum = { workspace = true }
+bgs-exec-server-test-support = { workspace = true }
+bgs-login = { workspace = true }
+futures = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "test-util"] }
+tokio-util = { workspace = true, features = ["rt"] }
+wiremock = { workspace = true }

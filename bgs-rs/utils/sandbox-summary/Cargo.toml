@@ -1,0 +1,19 @@
+[package]
+name = "bgs-utils-sandbox-summary"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-protocol = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+
+[dev-dependencies]
+bgs-utils-absolute-path = { workspace = true }
+pretty_assertions = { workspace = true }
+
+[lib]
+doctest = false

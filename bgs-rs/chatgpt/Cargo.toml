@@ -1,0 +1,31 @@
+[package]
+name = "bgs-chatgpt"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true, features = ["derive"] }
+bgs-connectors = { workspace = true }
+bgs-core = { workspace = true }
+bgs-git-utils = { workspace = true }
+bgs-http-client = { workspace = true }
+bgs-login = { workspace = true }
+bgs-model-provider = { workspace = true }
+bgs-plugin = { workspace = true }
+bgs-utils-cli = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+tokio = { workspace = true, features = ["full"] }
+
+[dev-dependencies]
+bgs-utils-cargo-bin = { workspace = true }
+pretty_assertions = { workspace = true }
+serde_json = { workspace = true }
+tempfile = { workspace = true }
+
+[lib]
+doctest = false

@@ -46,7 +46,7 @@ class VerifyPyPIReleaseTest(unittest.TestCase):
             ) as urlopen,
             patch("verify_pypi_release.time.sleep") as sleep,
         ):
-            verify_release("openai-codex", "1.2.3")
+            verify_release("openai-bgs", "1.2.3")
 
         self.assertEqual(urlopen.call_count, 15)
         self.assertEqual(sleep.call_count, 14)
@@ -71,7 +71,7 @@ class VerifyPyPIReleaseTest(unittest.TestCase):
             ) as urlopen,
             patch("verify_pypi_release.time.sleep") as sleep,
         ):
-            verify_release("openai-codex", "1.2.3b01")
+            verify_release("openai-bgs", "1.2.3b01")
         urlopen.assert_called_once_with(
             "https://pypi.org/pypi/openai-codex/1.2.3b1/json", timeout=30
         )
@@ -86,7 +86,7 @@ class VerifyPyPIReleaseTest(unittest.TestCase):
             patch("verify_pypi_release.time.sleep") as sleep,
             self.assertRaisesRegex(SystemExit, "did not become available on PyPI"),
         ):
-            verify_release("openai-codex-cli-bin", "1.2.3a4.post5")
+            verify_release("openai-bgs-cli-bin", "1.2.3a4.post5")
 
         self.assertEqual(urlopen.call_count, 30)
         self.assertEqual(sleep.call_count, 29)

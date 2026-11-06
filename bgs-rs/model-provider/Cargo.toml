@@ -1,0 +1,51 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-model-provider"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "bgs_model_provider"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-utils-process = { workspace = true }
+chrono = { workspace = true }
+bgs-api = { workspace = true }
+bgs-agent-identity = { workspace = true }
+bgs-aws-auth = { workspace = true }
+bgs-http-client = { workspace = true }
+bgs-feedback = { workspace = true }
+bgs-features = { workspace = true }
+bgs-login = { workspace = true }
+bgs-runtime-agent-instance = { workspace = true }
+bgs-keyring-store = { workspace = true }
+bgs-model-provider-info = { workspace = true }
+bgs-models-manager = { workspace = true }
+bgs-otel = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-response-debug-context = { workspace = true }
+bgs-secrets = { workspace = true }
+http = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
+tokio = { workspace = true, features = ["io-util", "process", "sync", "time"] }
+tracing = { workspace = true, features = ["log"] }
+url = { workspace = true }
+
+[dev-dependencies]
+base64 = { workspace = true }
+bgs-utils-cargo-bin = { workspace = true }
+bgs-utils-redacted-string = { workspace = true }
+bgs-utils-rustls-provider = { workspace = true }
+pretty_assertions = { workspace = true }
+rcgen = { workspace = true }
+rustls = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt"] }
+wiremock = { workspace = true }

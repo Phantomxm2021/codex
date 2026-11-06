@@ -1,0 +1,43 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-image-generation-extension"
+version.workspace = true
+
+[lib]
+name = "bgs_image_generation_extension"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+base64 = { workspace = true }
+bgs-api = { workspace = true }
+bgs-attachment-store = { workspace = true }
+bgs-core = { workspace = true }
+bgs-exec-server = { workspace = true }
+bgs-extension-api = { workspace = true }
+bgs-extension-items = { workspace = true }
+bgs-http-client = { workspace = true }
+bgs-login = { workspace = true }
+bgs-model-provider = { workspace = true }
+bgs-model-provider-info = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-tools = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-image = { workspace = true }
+bgs-utils-path-uri = { workspace = true }
+http = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
+tracing = { workspace = true }
+
+[dev-dependencies]
+image = { workspace = true, features = ["png"] }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }

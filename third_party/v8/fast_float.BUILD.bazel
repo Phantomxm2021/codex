@@ -1,4 +1,4 @@
-# Codex header-only overlay for the V8 DEPS revision; the include prefix
+# Bgs header-only overlay for the V8 DEPS revision; the include prefix
 # preserves V8's third_party checkout layout across the repository boundary.
 load("@rules_cc//cc:defs.bzl", "cc_library")
 

@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "thread-store",
+    crate_name = "bgs_thread_store",
+)

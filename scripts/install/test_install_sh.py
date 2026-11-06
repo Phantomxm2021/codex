@@ -33,10 +33,10 @@ class InstallShTest(unittest.TestCase):
             ],
         )
         self.assertIn(
-            f"Could not fetch GitHub release metadata for Codex {VERSION}",
+            f"Could not fetch GitHub release metadata for Bgs {VERSION}",
             result.stderr,
         )
-        self.assertNotIn("Could not find Codex package", result.stderr)
+        self.assertNotIn("Could not find Bgs package", result.stderr)
 
     def test_exact_release_opt_out_uses_github_metadata_once(self) -> None:
         result, requests = run_installer(VERSION, use_mirror=False)
@@ -48,7 +48,7 @@ class InstallShTest(unittest.TestCase):
                 "https://api.github.com/repos/openai/codex/releases/tags/"
                 f"rust-v{VERSION}",
                 "https://github.com/openai/codex/releases/download/"
-                f"rust-v{VERSION}/codex-package_SHA256SUMS",
+                f"rust-v{VERSION}/bgs-package_SHA256SUMS",
             ],
         )
         self.assertIn(f"Resolved version: {VERSION}", result.stdout)
@@ -64,7 +64,7 @@ class InstallShTest(unittest.TestCase):
                 "https://api.github.com/repos/openai/codex/releases/tags/"
                 f"rust-v{version}",
                 "https://github.com/openai/codex/releases/download/"
-                f"rust-v{version}/codex-package_SHA256SUMS",
+                f"rust-v{version}/bgs-package_SHA256SUMS",
             ],
         )
         self.assertIn(f"Resolved version: {version}", result.stdout)
@@ -78,7 +78,7 @@ class InstallShTest(unittest.TestCase):
             [
                 "https://api.github.com/repos/openai/codex/releases/latest",
                 "https://github.com/openai/codex/releases/download/"
-                f"rust-v{VERSION}/codex-package_SHA256SUMS",
+                f"rust-v{VERSION}/bgs-package_SHA256SUMS",
             ],
         )
         self.assertIn(f"Resolved version: {VERSION}", result.stdout)
@@ -94,7 +94,7 @@ class InstallShTest(unittest.TestCase):
             [
                 "https://api.github.com/repos/openai/codex/releases/latest",
                 "https://github.com/openai/codex/releases/download/"
-                f"rust-v{VERSION}/codex-package_SHA256SUMS",
+                f"rust-v{VERSION}/bgs-package_SHA256SUMS",
             ],
         )
         self.assertIn(f"Resolved version: {VERSION}", result.stdout)
@@ -106,10 +106,10 @@ class InstallShTest(unittest.TestCase):
 
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(len(requests), 2)
-        self.assertIn("/codex-npm-", requests[1])
-        self.assertNotIn("codex-package_SHA256SUMS", requests[1])
+        self.assertIn("/bgs-npm-", requests[1])
+        self.assertNotIn("bgs-package_SHA256SUMS", requests[1])
 
-    def test_macos_install_exposes_code_mode_host_beside_codex(self) -> None:
+    def test_macos_install_exposes_code_mode_host_beside_bgs(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             archive_path, checksum_path, metadata_json = create_package_release(root)
@@ -125,13 +125,13 @@ class InstallShTest(unittest.TestCase):
 
             self.assertEqual(result.returncode, 0, result.stderr)
             install_bin = root / "install-bin"
-            current = root / "codex-home" / "packages" / "standalone" / "current"
-            codex_path = install_bin / "codex"
-            host_path = install_bin / "codex-code-mode-host"
-            self.assertEqual(os.readlink(codex_path), str(current / "bin" / "codex"))
+            current = root / "bgs-home" / "packages" / "standalone" / "current"
+            bgs_path = install_bin / "bgs"
+            host_path = install_bin / "bgs-code-mode-host"
+            self.assertEqual(os.readlink(bgs_path), str(current / "bin" / "bgs"))
             self.assertEqual(
                 os.readlink(host_path),
-                str(current / "bin" / "codex-code-mode-host"),
+                str(current / "bin" / "bgs-code-mode-host"),
             )
             self.assertTrue(os.access(host_path, os.X_OK))
 
@@ -172,16 +172,16 @@ class InstallShTest(unittest.TestCase):
             )
             pinned, _ = run_installer_in(root, VERSION, **options)
             self.assertEqual(pinned.returncode, 0, pinned.stderr)
-            visible = root / "install-bin/codex"
+            visible = root / "install-bin/bgs"
             original = visible.resolve()
-            pending = visible.with_name(".codex.12345")
+            pending = visible.with_name(".bgs.12345")
             pending.symlink_to(original)
             profile = root / "home/.profile"
             profile.write_text("unchanged profile\n")
 
             installed, _ = run_installer_in(root, "latest", daemon_only=True, **options)
             self.assertEqual(installed.returncode, 0, installed.stderr)
-            daemon = root / "codex-home/packages/app-server-daemon"
+            daemon = root / "bgs-home/packages/app-server-daemon"
             release_name = f"{VERSION}-aarch64-apple-darwin"
             self.assertEqual(
                 (daemon / "current").resolve(), daemon / "releases" / release_name
@@ -219,11 +219,11 @@ class InstallShTest(unittest.TestCase):
             self.assertEqual((daemon / "current").resolve(), local)
             self.assertFalse(marker.exists())
 
-            binary = daemon / "releases" / release_name / "bin/codex"
+            binary = daemon / "releases" / release_name / "bin/bgs"
             contents = binary.read_text()
             binary.write_text(
                 '#!/bin/sh\n[ "$1" = "--version" ] || exit 2\n'
-                f"echo codex-cli {VERSION}\n"
+                f"echo bgs-cli {VERSION}\n"
             )
             incompatible, _ = run_installer_in(
                 root,
@@ -254,7 +254,7 @@ class InstallShTest(unittest.TestCase):
             self.assertTrue(pending.is_symlink())
             self.assertEqual(profile.read_text(), "unchanged profile\n")
             self.assertFalse(
-                (root / "codex-home/packages/standalone/auto-update-version").exists()
+                (root / "bgs-home/packages/standalone/auto-update-version").exists()
             )
 
     def test_explicit_release_pins_even_the_current_latest_version(self) -> None:
@@ -267,7 +267,7 @@ class InstallShTest(unittest.TestCase):
                 checksum_path=checksum,
                 force_macos=True,
             )
-            marker = root / "codex-home/packages/standalone/auto-update-version"
+            marker = root / "bgs-home/packages/standalone/auto-update-version"
             latest, _ = run_installer_in(root, "latest", **options)
             self.assertEqual(latest.returncode, 0, latest.stderr)
             release_name = f"{VERSION}-aarch64-apple-darwin"
@@ -278,7 +278,7 @@ class InstallShTest(unittest.TestCase):
             self.assertFalse(marker.exists())
 
             updater_record = (
-                root / "codex-home/app-server-daemon/app-server-updater.pid"
+                root / "bgs-home/app-server-daemon/app-server-updater.pid"
             )
             updater_record.parent.mkdir(parents=True)
             updater_record.write_text(
@@ -309,7 +309,7 @@ class InstallShTest(unittest.TestCase):
 
             managed = (
                 root
-                / f"codex-home/packages/standalone/releases/{release_name}/bin/codex"
+                / f"bgs-home/packages/standalone/releases/{release_name}/bin/bgs"
             )
             managed.unlink()
             guarded, _ = run_installer_in(
@@ -330,7 +330,7 @@ class InstallShTest(unittest.TestCase):
         )
         function = "record_standalone_releases_in_use() {" + function + "\n}\n"
         function = function.replace("/usr/sbin/lsof ", "mock_lsof ")
-        matches = "p123\nn/releases/active/bin/codex\n"
+        matches = "p123\nn/releases/active/bin/bgs\n"
         for status, output, error, expected in (
             (0, matches, "", 0),
             (1, "", "", 0),
@@ -348,7 +348,7 @@ class InstallShTest(unittest.TestCase):
                         "releases=/releases\n"
                         f"tmp_dir={shlex.quote(temp_dir)}\n"
                         # Avoid depending on other processes on the test host.
-                        'ps() { printf "%s codex\\n" "$(id -u)"; }\n'
+                        'ps() { printf "%s bgs\\n" "$(id -u)"; }\n'
                         "mock_lsof() {\n"
                         f"  printf '%s' {shlex.quote(output)}\n"
                         f"  printf '%s' {shlex.quote(error)} >&2\n"
@@ -369,12 +369,12 @@ class InstallShTest(unittest.TestCase):
     ) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             # macOS lsof can escape the non-ASCII bytes in the installation path.
-            root = Path(temp_dir).resolve() / "André codex install"
+            root = Path(temp_dir).resolve() / "André bgs install"
             root.mkdir()
             system = os.uname()
             if system.sysname == "Linux":
                 # The race requires pruning to proceed. A live but unreadable
-                # Codex/helper (e.g. the agent's sandbox) must prevent that.
+                # Bgs/helper (e.g. the agent's sandbox) must prevent that.
                 for process in Path("/proc").glob("[0-9]*"):
                     try:
                         (process / "exe").readlink()
@@ -385,7 +385,7 @@ class InstallShTest(unittest.TestCase):
                         except OSError:
                             continue  # The process may have exited.
                         if (
-                            name.startswith("codex") or name in ("rg", "bwrap")
+                            name.startswith("bgs") or name in ("rg", "bwrap")
                         ) and not any(
                             line.startswith("State:") and "Z" in line
                             for line in status.splitlines()
@@ -395,7 +395,7 @@ class InstallShTest(unittest.TestCase):
                             )
             arch = "aarch64" if system.machine in ("arm64", "aarch64") else "x86_64"
             target = f"{arch}-{'apple-darwin' if system.sysname == 'Darwin' else 'unknown-linux-musl'}"
-            packages = root / "codex-home/packages/standalone"
+            packages = root / "bgs-home/packages/standalone"
             releases = packages / "releases"
             versions = ("0.140.0", "0.141.0", VERSION)
             install_options = {}
@@ -417,7 +417,7 @@ class InstallShTest(unittest.TestCase):
             )
             self.assertEqual(first.returncode, 0, first.stderr)
             oldest = releases / f"{versions[0]}-{target}"
-            helper = oldest / "bin/codex-code-mode-host"
+            helper = oldest / "bin/bgs-code-mode-host"
             shutil.copy("/bin/sleep", helper)
             if system.sysname == "Darwin":
                 # A copied macOS system binary cannot run with its platform signature.
@@ -436,7 +436,7 @@ class InstallShTest(unittest.TestCase):
 
                     unowned = releases / f"0.139.0-{target}"
                     unowned.mkdir()
-                    (unowned / "codex-package.json").write_text("{}")
+                    (unowned / "bgs-package.json").write_text("{}")
                     retired = releases / ".retired.old-attempt"
                     retired.mkdir()
                     (retired / "leave-alone").write_text("not retried")
@@ -489,7 +489,7 @@ class InstallShTest(unittest.TestCase):
                 fake_ps = root / "bin/ps"
                 foreign_uid = 0 if os.geteuid() != 0 else 501
                 try:
-                    for executable in (oldest / "bin/codex", helper):
+                    for executable in (oldest / "bin/bgs", helper):
                         with self.subTest(foreign_executable=executable.name):
                             fake_ps.write_text(
                                 "#!/bin/sh\n"
@@ -569,7 +569,7 @@ class InstallShTest(unittest.TestCase):
                     self.assertEqual(held.returncode, 0, held.stderr)
                     self.assertTrue(oldest.is_dir(), held.stderr)
 
-            # A no-op latest install (also the codex update path) cleans up the
+            # A no-op latest install (also the bgs update path) cleans up the
             # now-unused release without rotating previous to current.
             repeated, _ = run_installer_in(root, "latest", **install_options[VERSION])
             self.assertEqual(repeated.returncode, 0, repeated.stderr)
@@ -604,7 +604,7 @@ class InstallShTest(unittest.TestCase):
             pinned, _ = run_installer_in(root, VERSION, **options)
             self.assertEqual(pinned.returncode, 0, pinned.stderr)
             updater_record = (
-                root / "codex-home/app-server-daemon/app-server-updater.pid"
+                root / "bgs-home/app-server-daemon/app-server-updater.pid"
             )
             updater_record.parent.mkdir(parents=True)
             updater_record.write_text(
@@ -622,7 +622,7 @@ class InstallShTest(unittest.TestCase):
             )
             self.assertEqual(attempted.returncode, 0, attempted.stderr)
             self.assertFalse(
-                (root / "codex-home/packages/standalone/auto-update-version").exists()
+                (root / "bgs-home/packages/standalone/auto-update-version").exists()
             )
 
     def test_releases_unusable_metadata_falls_back_to_github(self) -> None:
@@ -639,11 +639,11 @@ class InstallShTest(unittest.TestCase):
                     "tag_name": f"rust-v{VERSION}",
                     "assets": [
                         {
-                            "name": "codex-package-aarch64-apple-darwin.tar.gz",
+                            "name": "bgs-package-aarch64-apple-darwin.tar.gz",
                             "digest": "sha256:" + "a" * 64,
                         },
                         {
-                            "name": "codex-package_SHA256SUMS",
+                            "name": "bgs-package_SHA256SUMS",
                             "digest": "sha256:" + "z" * 64,
                         },
                     ],
@@ -678,9 +678,9 @@ class InstallShTest(unittest.TestCase):
                             "https://releases.openai.com/codex/channels/latest",
                             "https://api.github.com/repos/openai/codex/releases/latest",
                             "https://github.com/openai/codex/releases/download/"
-                            f"rust-v{VERSION}/codex-package_SHA256SUMS",
+                            f"rust-v{VERSION}/bgs-package_SHA256SUMS",
                             "https://github.com/openai/codex/releases/download/"
-                            f"rust-v{VERSION}/codex-package-aarch64-apple-darwin.tar.gz",
+                            f"rust-v{VERSION}/bgs-package-aarch64-apple-darwin.tar.gz",
                         ],
                     )
                     self.assertIn("falling back to GitHub Releases", result.stderr)
@@ -713,9 +713,9 @@ class InstallShTest(unittest.TestCase):
                     "https://api.github.com/repos/openai/codex/releases/tags/"
                     f"rust-v{VERSION}",
                     "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/codex-package_SHA256SUMS",
+                    f"rust-v{VERSION}/bgs-package_SHA256SUMS",
                     "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/codex-package-aarch64-apple-darwin.tar.gz",
+                    f"rust-v{VERSION}/bgs-package-aarch64-apple-darwin.tar.gz",
                 ],
             )
             self.assertIn("falling back to GitHub Releases", result.stderr)
@@ -743,10 +743,10 @@ class InstallShTest(unittest.TestCase):
                     "https://releases.openai.com/codex/channels/latest",
                     f"https://releases.openai.com/codex/releases/{VERSION}/codex-package_SHA256SUMS",
                     "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/codex-package_SHA256SUMS",
+                    f"rust-v{VERSION}/bgs-package_SHA256SUMS",
                     f"https://releases.openai.com/codex/releases/{VERSION}/codex-package-aarch64-apple-darwin.tar.gz",
                     "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/codex-package-aarch64-apple-darwin.tar.gz",
+                    f"rust-v{VERSION}/bgs-package-aarch64-apple-darwin.tar.gz",
                 ],
             )
             self.assertIn("retrying from GitHub Releases", result.stderr)
@@ -774,10 +774,10 @@ class InstallShTest(unittest.TestCase):
                     "https://releases.openai.com/codex/channels/latest",
                     f"https://releases.openai.com/codex/releases/{VERSION}/codex-package_SHA256SUMS",
                     "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/codex-package_SHA256SUMS",
+                    f"rust-v{VERSION}/bgs-package_SHA256SUMS",
                     f"https://releases.openai.com/codex/releases/{VERSION}/codex-package-aarch64-apple-darwin.tar.gz",
                     "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/codex-package-aarch64-apple-darwin.tar.gz",
+                    f"rust-v{VERSION}/bgs-package-aarch64-apple-darwin.tar.gz",
                 ],
             )
             self.assertIn("checksum did not match expected digest", result.stderr)
@@ -789,7 +789,7 @@ class InstallShTest(unittest.TestCase):
             archive_path, checksum_path, metadata_json = create_package_release(root)
             mirror_metadata = json.loads(metadata_json)
             for release_asset in mirror_metadata["assets"]:
-                if release_asset["name"] == "codex-package_SHA256SUMS":
+                if release_asset["name"] == "bgs-package_SHA256SUMS":
                     release_asset["digest"] = "sha256:" + "0" * 64
 
             result, requests = run_installer_in(
@@ -810,7 +810,7 @@ class InstallShTest(unittest.TestCase):
                     "https://releases.openai.com/codex/channels/latest",
                     f"https://releases.openai.com/codex/releases/{VERSION}/codex-package_SHA256SUMS",
                     "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/codex-package_SHA256SUMS",
+                    f"rust-v{VERSION}/bgs-package_SHA256SUMS",
                     "https://api.github.com/repos/openai/codex/releases/tags/"
                     f"rust-v{VERSION}",
                     f"https://releases.openai.com/codex/releases/{VERSION}/codex-package-aarch64-apple-darwin.tar.gz",
@@ -824,12 +824,12 @@ class InstallShTest(unittest.TestCase):
             archive_path, checksum_path, metadata_json = create_package_release(root)
             mirror_checksum_path = root / "mirror-SHA256SUMS"
             mirror_checksum_path.write_text(
-                f"{'a' * 64}  codex-package-other-platform.tar.gz\n",
+                f"{'a' * 64}  bgs-package-other-platform.tar.gz\n",
                 encoding="utf-8",
             )
             mirror_metadata = json.loads(metadata_json)
             for release_asset in mirror_metadata["assets"]:
-                if release_asset["name"] == "codex-package_SHA256SUMS":
+                if release_asset["name"] == "bgs-package_SHA256SUMS":
                     release_asset["digest"] = (
                         "sha256:"
                         + hashlib.sha256(mirror_checksum_path.read_bytes()).hexdigest()
@@ -854,7 +854,7 @@ class InstallShTest(unittest.TestCase):
                     "https://releases.openai.com/codex/channels/latest",
                     f"https://releases.openai.com/codex/releases/{VERSION}/codex-package_SHA256SUMS",
                     "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/codex-package_SHA256SUMS",
+                    f"rust-v{VERSION}/bgs-package_SHA256SUMS",
                     "https://api.github.com/repos/openai/codex/releases/tags/"
                     f"rust-v{VERSION}",
                     f"https://releases.openai.com/codex/releases/{VERSION}/codex-package-aarch64-apple-darwin.tar.gz",
@@ -885,7 +885,7 @@ class InstallShTest(unittest.TestCase):
                     "https://releases.openai.com/codex/channels/latest",
                     f"https://releases.openai.com/codex/releases/{VERSION}/codex-package_SHA256SUMS",
                     "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/codex-package_SHA256SUMS",
+                    f"rust-v{VERSION}/bgs-package_SHA256SUMS",
                     "https://api.github.com/repos/openai/codex/releases/tags/"
                     f"rust-v{VERSION}",
                 ],
@@ -948,7 +948,7 @@ class InstallShTest(unittest.TestCase):
                     "https://api.github.com/repos/openai/codex/releases/tags/"
                     f"rust-v{VERSION}",
                     "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/codex-npm-darwin-arm64-{VERSION}.tgz",
+                    f"rust-v{VERSION}/bgs-npm-darwin-arm64-{VERSION}.tgz",
                 ],
             )
 
@@ -971,7 +971,7 @@ class InstallShTest(unittest.TestCase):
                     f"rust-v{VERSION}",
                 ],
             )
-            self.assertNotIn("Downloading Codex CLI", second_result.stdout)
+            self.assertNotIn("Downloading BGS CLI", second_result.stdout)
 
 
 def run_installer(
@@ -1032,72 +1032,72 @@ def run_installer_in(
               fi
               previous="$arg"
             done
-            printf '%s\n' "$url" >>"$CODEX_TEST_REQUEST_LOG"
+            printf '%s\n' "$url" >>"$BGS_TEST_REQUEST_LOG"
 
             case "$url" in
               https://api.github.com/*)
-                if [ "$CODEX_TEST_METADATA_FAILURE" = "1" ]; then
+                if [ "$BGS_TEST_METADATA_FAILURE" = "1" ]; then
                   echo "curl: (22) The requested URL returned error: 403" >&2
                   exit 22
                 fi
-                printf '%s\n' "$CODEX_TEST_METADATA_JSON"
+                printf '%s\n' "$BGS_TEST_METADATA_JSON"
                 ;;
               https://releases.openai.com/codex/channels/latest|https://releases.openai.com/codex/releases/*/release.json)
-                if [ "$CODEX_TEST_RELEASES_MODE" = "channel_failure" ]; then
+                if [ "$BGS_TEST_RELEASES_MODE" = "channel_failure" ]; then
                   exit 22
                 fi
-                printf '%s\n' "$CODEX_TEST_RELEASES_METADATA_JSON"
+                printf '%s\n' "$BGS_TEST_RELEASES_METADATA_JSON"
                 ;;
               https://releases.openai.com/codex/releases/*/codex-package_SHA256SUMS)
-                if [ "$CODEX_TEST_RELEASES_MODE" = "asset_fallback" ]; then
+                if [ "$BGS_TEST_RELEASES_MODE" = "asset_fallback" ]; then
                   exit 22
                 fi
-                if [ "$CODEX_TEST_RELEASES_MODE" = "corrupt_assets" ] ||
-                  [ "$CODEX_TEST_RELEASES_MODE" = "corrupt_checksum_and_github" ]; then
+                if [ "$BGS_TEST_RELEASES_MODE" = "corrupt_assets" ] ||
+                  [ "$BGS_TEST_RELEASES_MODE" = "corrupt_checksum_and_github" ]; then
                   printf '<html>proxy error</html>\n' >"$output"
                   exit 0
                 fi
-                if [ -n "$CODEX_TEST_RELEASES_CHECKSUM_PATH" ]; then
-                  cp "$CODEX_TEST_RELEASES_CHECKSUM_PATH" "$output"
+                if [ -n "$BGS_TEST_RELEASES_CHECKSUM_PATH" ]; then
+                  cp "$BGS_TEST_RELEASES_CHECKSUM_PATH" "$output"
                 else
                   exit 22
                 fi
                 ;;
               https://releases.openai.com/codex/releases/*/codex-package-*.tar.gz)
-                if [ "$CODEX_TEST_RELEASES_MODE" = "asset_fallback" ]; then
+                if [ "$BGS_TEST_RELEASES_MODE" = "asset_fallback" ]; then
                   exit 22
                 fi
-                if [ "$CODEX_TEST_RELEASES_MODE" = "corrupt_assets" ]; then
+                if [ "$BGS_TEST_RELEASES_MODE" = "corrupt_assets" ]; then
                   printf '<html>proxy error</html>\n' >"$output"
                   exit 0
                 fi
-                if [ -n "$CODEX_TEST_ARCHIVE_PATH" ]; then
-                  cp "$CODEX_TEST_ARCHIVE_PATH" "$output"
+                if [ -n "$BGS_TEST_ARCHIVE_PATH" ]; then
+                  cp "$BGS_TEST_ARCHIVE_PATH" "$output"
                 else
                   exit 22
                 fi
                 ;;
               https://github.com/openai/codex/releases/download/*/codex-package_SHA256SUMS)
-                if [ "$CODEX_TEST_RELEASES_MODE" = "corrupt_checksum_and_github" ]; then
+                if [ "$BGS_TEST_RELEASES_MODE" = "corrupt_checksum_and_github" ]; then
                   printf '<html>proxy error</html>\n' >"$output"
                   exit 0
                 fi
-                if [ -n "$CODEX_TEST_CHECKSUM_PATH" ]; then
-                  cp "$CODEX_TEST_CHECKSUM_PATH" "$output"
+                if [ -n "$BGS_TEST_CHECKSUM_PATH" ]; then
+                  cp "$BGS_TEST_CHECKSUM_PATH" "$output"
                 else
                   exit 22
                 fi
                 ;;
               https://github.com/openai/codex/releases/download/*/codex-package-*.tar.gz)
-                if [ -n "$CODEX_TEST_ARCHIVE_PATH" ]; then
-                  cp "$CODEX_TEST_ARCHIVE_PATH" "$output"
+                if [ -n "$BGS_TEST_ARCHIVE_PATH" ]; then
+                  cp "$BGS_TEST_ARCHIVE_PATH" "$output"
                 else
                   exit 22
                 fi
                 ;;
               https://github.com/openai/codex/releases/download/*/codex-npm-*.tgz)
-                if [ -n "$CODEX_TEST_LEGACY_ARCHIVE_PATH" ]; then
-                  cp "$CODEX_TEST_LEGACY_ARCHIVE_PATH" "$output"
+                if [ -n "$BGS_TEST_LEGACY_ARCHIVE_PATH" ]; then
+                  cp "$BGS_TEST_LEGACY_ARCHIVE_PATH" "$output"
                 else
                   exit 22
                 fi
@@ -1129,8 +1129,8 @@ def run_installer_in(
             if fail_ps
             else "#!/bin/sh\n"
             'case "$*" in\n'
-            '  *lstart*) printf "S %s\\n" "$CODEX_TEST_PARENT_START" ;;\n'
-            '  *) printf "%s\\n" "$CODEX_TEST_PARENT_PID" ;;\n'
+            '  *lstart*) printf "S %s\\n" "$BGS_TEST_PARENT_START" ;;\n'
+            '  *) printf "%s\\n" "$BGS_TEST_PARENT_PID" ;;\n'
             "esac\n",
             encoding="utf-8",
         )
@@ -1141,49 +1141,49 @@ def run_installer_in(
     env = os.environ.copy()
     env.update(
         {
-            "CODEX_HOME": str(root / "codex-home"),
-            "CODEX_INSTALL_DIR": str(root / "install-bin"),
-            "CODEX_NON_INTERACTIVE": "1",
-            "CODEX_RELEASE": release,
-            "CODEX_INSTALL_DAEMON_ONLY": "1" if daemon_only else "0",
-            "CODEX_TEST_ARCHIVE_PATH": str(archive_path or ""),
-            "CODEX_TEST_CHECKSUM_PATH": str(checksum_path or ""),
-            "CODEX_TEST_RELEASES_CHECKSUM_PATH": str(
+            "BGS_HOME": str(root / "bgs-home"),
+            "BGS_INSTALL_DIR": str(root / "install-bin"),
+            "BGS_NON_INTERACTIVE": "1",
+            "BGS_RELEASE": release,
+            "BGS_INSTALL_DAEMON_ONLY": "1" if daemon_only else "0",
+            "BGS_TEST_ARCHIVE_PATH": str(archive_path or ""),
+            "BGS_TEST_CHECKSUM_PATH": str(checksum_path or ""),
+            "BGS_TEST_RELEASES_CHECKSUM_PATH": str(
                 releases_checksum_path or checksum_path or ""
             ),
-            "CODEX_TEST_LEGACY_ARCHIVE_PATH": str(legacy_archive_path or ""),
-            "CODEX_TEST_METADATA_FAILURE": "1" if metadata_failure else "0",
-            "CODEX_TEST_METADATA_JSON": (
+            "BGS_TEST_LEGACY_ARCHIVE_PATH": str(legacy_archive_path or ""),
+            "BGS_TEST_METADATA_FAILURE": "1" if metadata_failure else "0",
+            "BGS_TEST_METADATA_JSON": (
                 metadata_json if metadata_json is not None else release_metadata()
             ),
-            "CODEX_TEST_RELEASES_METADATA_JSON": (
+            "BGS_TEST_RELEASES_METADATA_JSON": (
                 releases_metadata_json
                 if releases_metadata_json is not None
                 else metadata_json
                 if metadata_json is not None
                 else release_metadata()
             ),
-            "CODEX_TEST_RELEASES_MODE": releases_mode,
-            "CODEX_TEST_REQUEST_LOG": str(request_log),
+            "BGS_TEST_RELEASES_MODE": releases_mode,
+            "BGS_TEST_REQUEST_LOG": str(request_log),
             "HOME": str(home),
             "PATH": f"{bin_dir}:/usr/bin:/bin",
             "SHELL": "/bin/sh",
         }
     )
-    env["CODEX_INSTALL_IF_CURRENT"] = "1" if manual_update else "0"
+    env["BGS_INSTALL_IF_CURRENT"] = "1" if manual_update else "0"
     if update_guard_from_release is None:
-        env.pop("CODEX_INSTALL_IF_LATEST", None)
-        env.pop("CODEX_UPDATE_FROM_RELEASE", None)
+        env.pop("BGS_INSTALL_IF_LATEST", None)
+        env.pop("BGS_UPDATE_FROM_RELEASE", None)
     else:
-        env["CODEX_INSTALL_IF_LATEST"] = "0" if manual_update else "1"
-        env["CODEX_UPDATE_FROM_RELEASE"] = update_guard_from_release
+        env["BGS_INSTALL_IF_LATEST"] = "0" if manual_update else "1"
+        env["BGS_UPDATE_FROM_RELEASE"] = update_guard_from_release
     if old_updater_parent_pid is not None:
-        env["CODEX_TEST_PARENT_PID"] = str(old_updater_parent_pid)
-        env["CODEX_TEST_PARENT_START"] = process_start_time()
+        env["BGS_TEST_PARENT_PID"] = str(old_updater_parent_pid)
+        env["BGS_TEST_PARENT_START"] = process_start_time()
     if use_mirror is None:
-        env.pop("CODEX_INSTALLER_USE_RELEASES_OPENAI_COM", None)
+        env.pop("BGS_INSTALLER_USE_RELEASES_OPENAI_COM", None)
     else:
-        env["CODEX_INSTALLER_USE_RELEASES_OPENAI_COM"] = (
+        env["BGS_INSTALLER_USE_RELEASES_OPENAI_COM"] = (
             "TRUE" if use_mirror else "false"
         )
     result = subprocess.run(
@@ -1218,36 +1218,36 @@ def create_package_release(
 ) -> tuple[Path, Path, str]:
     package_dir = root / "package"
     (package_dir / "bin").mkdir(parents=True)
-    (package_dir / "codex-path").mkdir()
-    metadata = {"version": binary_version, "target": target, "entrypoint": "bin/codex"}
+    (package_dir / "bgs-path").mkdir()
+    metadata = {"version": binary_version, "target": target, "entrypoint": "bin/bgs"}
     if include_exec_server:
-        metadata["execServer"] = "bin/codex-exec-server"
-        write_executable(package_dir / "bin/codex-exec-server", "#!/bin/sh\nexit 0\n")
-    (package_dir / "codex-package.json").write_text(
+        metadata["execServer"] = "bin/bgs-exec-server"
+        write_executable(package_dir / "bin/bgs-exec-server", "#!/bin/sh\nexit 0\n")
+    (package_dir / "bgs-package.json").write_text(
         json.dumps(metadata),
         encoding="utf-8",
     )
     write_executable(
-        package_dir / "bin" / "codex",
-        f"#!/bin/sh\nprintf 'codex-cli {binary_version}\\n'\n",
+        package_dir / "bin" / "bgs",
+        f"#!/bin/sh\nprintf 'bgs-cli {binary_version}\\n'\n",
     )
     write_executable(
-        package_dir / "bin" / "codex-code-mode-host",
+        package_dir / "bin" / "bgs-code-mode-host",
         "#!/bin/sh\nexit 0\n",
     )
-    write_executable(package_dir / "codex-path" / "rg", "#!/bin/sh\nexit 0\n")
+    write_executable(package_dir / "bgs-path" / "rg", "#!/bin/sh\nexit 0\n")
     if "linux" in target:
-        (package_dir / "codex-resources").mkdir()
-        write_executable(package_dir / "codex-resources/bwrap", "#!/bin/sh\nexit 0\n")
+        (package_dir / "bgs-resources").mkdir()
+        write_executable(package_dir / "bgs-resources/bwrap", "#!/bin/sh\nexit 0\n")
 
-    asset = f"codex-package-{target}.tar.gz"
+    asset = f"bgs-package-{target}.tar.gz"
     archive_path = root / asset
     with tarfile.open(archive_path, "w:gz") as archive:
         for path in package_dir.iterdir():
             archive.add(path, arcname=path.name)
 
     archive_digest = hashlib.sha256(archive_path.read_bytes()).hexdigest()
-    checksum_path = root / "codex-package_SHA256SUMS"
+    checksum_path = root / "bgs-package_SHA256SUMS"
     checksum_path.write_text(f"{archive_digest}  {asset}\n", encoding="utf-8")
     checksum_digest = hashlib.sha256(checksum_path.read_bytes()).hexdigest()
     metadata_json = json.dumps(
@@ -1255,7 +1255,7 @@ def create_package_release(
             "assets": [
                 {"name": asset, "digest": f"sha256:{archive_digest}"},
                 {
-                    "name": "codex-package_SHA256SUMS",
+                    "name": "bgs-package_SHA256SUMS",
                     "digest": f"sha256:{checksum_digest}",
                 },
             ],
@@ -1269,15 +1269,15 @@ def create_package_release(
 def create_legacy_release(root: Path) -> tuple[Path, str]:
     package_dir = root / "legacy-package"
     vendor_dir = package_dir / "package" / "vendor" / "aarch64-apple-darwin"
-    (vendor_dir / "codex").mkdir(parents=True)
+    (vendor_dir / "bgs").mkdir(parents=True)
     (vendor_dir / "path").mkdir()
     write_executable(
-        vendor_dir / "codex" / "codex",
-        f"#!/bin/sh\nprintf 'codex-cli {VERSION}\\n'\n",
+        vendor_dir / "bgs" / "bgs",
+        f"#!/bin/sh\nprintf 'bgs-cli {VERSION}\\n'\n",
     )
     write_executable(vendor_dir / "path" / "rg", "#!/bin/sh\nexit 0\n")
 
-    asset = f"codex-npm-darwin-arm64-{VERSION}.tgz"
+    asset = f"bgs-npm-darwin-arm64-{VERSION}.tgz"
     archive_path = root / asset
     with tarfile.open(archive_path, "w:gz") as archive:
         archive.add(package_dir / "package", arcname="package")
@@ -1301,7 +1301,7 @@ def write_executable(path: Path, contents: str) -> None:
 def release_metadata(*, compact: bool = False, reorder: bool = False) -> str:
     assets = [
         asset_metadata(
-            f"codex-package-{target}.tar.gz",
+            f"bgs-package-{target}.tar.gz",
             f"sha256:{'a' * 64}",
             reorder=reorder,
         )
@@ -1314,7 +1314,7 @@ def release_metadata(*, compact: bool = False, reorder: bool = False) -> str:
     ]
     assets.append(
         asset_metadata(
-            "codex-package_SHA256SUMS",
+            "bgs-package_SHA256SUMS",
             f"sha256:{'b' * 64}",
             reorder=reorder,
         )
@@ -1338,18 +1338,18 @@ def legacy_release_metadata_with_decoys() -> str:
     assets = [
         {
             "metadata": {
-                "name": "codex-package-x86_64-unknown-linux-musl.tar.gz",
+                "name": "bgs-package-x86_64-unknown-linux-musl.tar.gz",
                 "digest": fake_digest,
             },
             "digest": f"sha256:{'c' * 64}",
-            "name": f"codex-npm-{target}-{VERSION}.tgz",
+            "name": f"bgs-npm-{target}-{VERSION}.tgz",
         }
         for target in ("darwin-arm64", "darwin-x64", "linux-arm64", "linux-x64")
     ]
     return json.dumps(
         {
             "body": (
-                f'fake: {{"name":"codex-package_SHA256SUMS","digest":"{fake_digest}"}}'
+                f'fake: {{"name":"bgs-package_SHA256SUMS","digest":"{fake_digest}"}}'
             ),
             "assets": assets,
             "tag_name": f"rust-v{VERSION}",

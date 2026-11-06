@@ -1,0 +1,34 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "bgs-memories-extension"
+version.workspace = true
+
+[lib]
+name = "bgs_memories_extension"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+bgs-core = { workspace = true }
+bgs-extension-api = { workspace = true }
+bgs-features = { workspace = true }
+bgs-otel = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-tools = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+bgs-utils-output-truncation = { workspace = true }
+bgs-utils-template = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["fs"] }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["fs", "macros"] }

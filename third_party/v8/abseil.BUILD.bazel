@@ -1,4 +1,4 @@
-# Codex-owned build of the eight Abseil entry points V8 15.2.124.1 uses.
+# Bgs-owned build of the eight Abseil entry points V8 15.2.124.1 uses.
 # Sources are from their transitive closure in Abseil 20250814.1's BUILD files.
 # Share headers, but compile runtime objects only when a caller needs them.
 # Keep non-Cord strings below time/synchronization: Cord depends on both.

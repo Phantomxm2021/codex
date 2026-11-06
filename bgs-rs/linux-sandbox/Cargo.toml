@@ -1,0 +1,50 @@
+[package]
+name = "bgs-linux-sandbox"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "bgs-linux-sandbox"
+path = "src/main.rs"
+
+[lib]
+name = "bgs_linux_sandbox"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[target.'cfg(target_os = "linux")'.dependencies]
+clap = { workspace = true, features = ["derive"] }
+bgs-install-context = { workspace = true }
+bgs-network-proxy = { workspace = true }
+bgs-process-hardening = { workspace = true }
+bgs-protocol = { workspace = true }
+bgs-sandboxing = { workspace = true }
+bgs-uds = { workspace = true }
+bgs-utils-absolute-path = { workspace = true }
+globset = { workspace = true }
+landlock = { workspace = true }
+libc = { workspace = true }
+rustix = { workspace = true }
+seccompiler = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
+url = { workspace = true }
+
+[target.'cfg(target_os = "linux")'.dev-dependencies]
+bgs-core = { workspace = true }
+bgs-utils-cargo-bin = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+test-case = "3.3.1"
+tokio = { workspace = true, features = [
+    "io-std",
+    "macros",
+    "process",
+    "rt-multi-thread",
+    "signal",
+] }

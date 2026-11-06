@@ -1,7 +1,7 @@
 # Adapted from google/highway's BUILD at the V8 DEPS revision 2607d3b5:
 # https://github.com/google/highway/blob/2607d3b5b0113992fe84d3848859eae13b3b52c1/BUILD
 # Keep :hwy and its compiler configuration; omit upstream tests/other libraries.
-# Codex adds private V8 runtime settings, disables module maps and builds
+# Bgs adds private V8 runtime settings, disables module maps and builds
 # statically (no upstream HWY_SHARED_DEFINE). See README.md for update checks.
 load("@@//third_party/v8:dependency_config.bzl", "RUSTY_V8_DEPENDENCY_COPTS", "RUSTY_V8_DEPENDENCY_DEPS")
 load("@bazel_skylib//lib:selects.bzl", "selects")

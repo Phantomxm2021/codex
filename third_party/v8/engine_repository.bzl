@@ -1,18 +1,18 @@
-"""V8 source import with Codex-owned Bazel entry points.
+"""V8 source import with Bgs-owned Bazel entry points.
 
 The root package is placed inside the fetched source tree so relative source
 labels and globs have their normal Bazel semantics. Reuse upstream's platform
-and CPU configuration in place, with Codex's narrow patch to bazel/defs.bzl
+and CPU configuration in place, with Bgs's narrow patch to bazel/defs.bzl
 and the target CPU setting.
-V8's MODULE and toolchain BUILD files are never part of Codex's dependency or
+V8's MODULE and toolchain BUILD files are never part of Bgs's dependency or
 toolchain graph.
 """
 
 # Upstream keeps its source groups in BUILD.bazel, which cannot be loaded as
 # a Starlark library. Reuse filegroups, so labels/globs retain their semantics
 # inside @v8. Compiled targets (including valid V8 v8_library/v8_binary calls)
-# belong in engine.BUILD.bazel, where we wire Codex's dependencies and runtime.
-_INVENTORY_SLOT = "# @CODEX_V8_UPSTREAM_FILEGROUPS@"
+# belong in engine.BUILD.bazel, where we wire Bgs's dependencies and runtime.
+_INVENTORY_SLOT = "# @BGS_V8_UPSTREAM_FILEGROUPS@"
 _FILE_GROUPS = "# File group rules"
 _GENERATED_FILES = "# Generated files"
 
@@ -67,13 +67,13 @@ def _engine_repository_impl(ctx):
     inventory = inventory.replace(msvc_scanner, '":windows_x64_stack_assembly"')
     template = ctx.read(ctx.attr._engine_build)
     if template.count(_INVENTORY_SLOT) != 1:
-        fail("Codex V8 BUILD template must contain exactly one upstream filegroup slot")
+        fail("Bgs V8 BUILD template must contain exactly one upstream filegroup slot")
 
     for patch in ctx.attr.patches:
         ctx.patch(patch, strip = ctx.attr.patch_strip)
 
     # Preserve V8's source layout and the two third-party package boundaries
-    # (disarm and fadec); neither is in the Codex V8 closure. Keep upstream's
+    # (disarm and fadec); neither is in the Bgs V8 closure. Keep upstream's
     # platform/CPU package and prevent upstream toolchain discovery.
     for path in [
         "MODULE.bazel",
@@ -97,5 +97,5 @@ engine_repository = repository_rule(
             allow_single_file = True,
         ),
     },
-    doc = "Fetch the pinned V8 source tree and install Codex's engine graph.",
+    doc = "Fetch the pinned V8 source tree and install Bgs's engine graph.",
 )

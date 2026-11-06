@@ -1,4 +1,4 @@
-# Codex overlay for the V8 DEPS revision. Mirrors :lib_fp16 in V8's
+# Bgs overlay for the V8 DEPS revision. Mirrors :lib_fp16 in V8's
 # BUILD.bazel, exporting its headers at V8's expected include path.
 load("@rules_cc//cc:defs.bzl", "cc_library")
 

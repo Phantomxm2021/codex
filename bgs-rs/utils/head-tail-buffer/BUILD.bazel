@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "head-tail-buffer",
+    crate_name = "bgs_utils_head_tail_buffer",
+)

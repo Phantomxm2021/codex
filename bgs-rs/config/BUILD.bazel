@@ -1,0 +1,7 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "config",
+    compile_data = ["defaults.toml"],
+    crate_name = "bgs_config",
+)

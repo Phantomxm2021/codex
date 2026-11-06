@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "user-verification",
+    crate_name = "bgs_user_verification",
+)

@@ -1,0 +1,6 @@
+load("//:defs.bzl", "bgs_rust_crate")
+
+bgs_rust_crate(
+    name = "path-uri",
+    crate_name = "bgs_utils_path_uri",
+)
