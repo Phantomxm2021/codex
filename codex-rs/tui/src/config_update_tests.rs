@@ -51,7 +51,7 @@ async fn remote_project_trust_guards_thread_start_and_preserves_repository_decis
     );
     std::fs::write(codex_home.join("config.toml"), &undecided_config)?;
     std::fs::write(
-        project_cwd.join(".codex/config.toml"),
+        project_cwd.join(".bgs/config.toml"),
         "model_reasoning_effort = \"high\"\n",
     )?;
     let config = ConfigBuilder::default()
@@ -166,7 +166,7 @@ async fn remote_project_trust_guards_thread_start_and_preserves_repository_decis
 
     std::fs::create_dir(project_root.join(".bgs"))?;
     std::fs::write(
-        project_root.join(".codex/config.toml"),
+        project_root.join(".bgs/config.toml"),
         "model_reasoning_effort = \"low\"\n",
     )?;
     for (parent, child) in [("untrusted", "trusted"), ("trusted", "untrusted")] {
@@ -200,7 +200,7 @@ async fn remote_project_trust_guards_thread_start_and_preserves_repository_decis
     )
     .await?;
 
-    std::fs::remove_file(project_cwd.join(".codex/config.toml"))?;
+    std::fs::remove_file(project_cwd.join(".bgs/config.toml"))?;
     std::fs::remove_dir(project_cwd.join(".bgs"))?;
     let canonical_project_cwd = PathBuf::from(project_trust_key(&project_root)).join("nested");
     let error = read_trust(&canonical_project_cwd, ProjectTrustHost::Remote)
@@ -325,7 +325,7 @@ fn effective_defaults_accept_foreign_layer_paths() -> Result<()> {
     ]);
     let response: EffectiveConfig = serde_json::from_value(serde_json::json!({
         "config": {"model": "server-model"},
-        "origins": {"model": {"name": {"type": "user", "file": "C:\\Users\\user\\.codex\\config.toml", "profile": null}, "version": "1"}},
+        "origins": {"model": {"name": {"type": "user", "file": "C:\\Users\\user\\.bgs\\config.toml", "profile": null}, "version": "1"}},
         "layers": layers,
     }))?;
     assert_eq!(

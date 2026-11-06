@@ -205,7 +205,7 @@ client_id = "mcp-client"
         McpServerAuth::EmaAuth,
     );
     std::fs::write(
-        workspace.path().join(".codex/config.toml"),
+        workspace.path().join(".bgs/config.toml"),
         format!("[mcp_servers.enterprise]\nauth = {project_auth:?}\n"),
     )?;
     let error = builder

@@ -379,7 +379,7 @@ async fn sandbox_blocks_first_time_dot_codex_creation() {
         vec![
             "bash".to_string(),
             "-lc".to_string(),
-            "mkdir -p .codex && echo 'sandbox_mode = \"danger-full-access\"' > .codex/config.toml"
+            "mkdir -p .codex && echo 'sandbox_mode = \"danger-full-access\"' > .bgs/config.toml"
                 .to_string(),
         ],
         repo_root.clone(),

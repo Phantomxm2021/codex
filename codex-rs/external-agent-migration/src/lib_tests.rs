@@ -382,12 +382,12 @@ Review carefully."""
 
 #[test]
 fn subagent_target_preserves_dotted_file_stem() {
-    let target_agents = Path::new("/repo/.codex/agents");
+    let target_agents = Path::new("/repo/.bgs/agents");
     let source_file = source_path("agents/security.audit.md");
 
     assert_eq!(
         subagent_target_file(&source_file, target_agents),
-        Some(PathBuf::from("/repo/.codex/agents/security.audit.toml"))
+        Some(PathBuf::from("/repo/.bgs/agents/security.audit.toml"))
     );
 }
 

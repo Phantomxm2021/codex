@@ -165,7 +165,7 @@ async fn worktree_start_and_fork(backend: &str) -> anyhow::Result<()> {
     // Forking without --cd must select the daemon using the resolved project, not this launcher.
     fs::create_dir(launcher.join(".bgs"))?;
     fs::write(
-        launcher.join(".codex/config.toml"),
+        launcher.join(".bgs/config.toml"),
         "features.auth_elicitation = false\n",
     )?;
     fs::write(
@@ -175,7 +175,7 @@ async fn worktree_start_and_fork(backend: &str) -> anyhow::Result<()> {
     let server = MockServer::start().await;
     fs::create_dir(source.join(".bgs"))?;
     fs::write(
-        source.join(".codex/config.toml"),
+        source.join(".bgs/config.toml"),
         "model = \"destination-model\"\nanalytics.enabled = false\ncli_auth_credentials_store = \"file\"\n",
     )?;
     git(&source, &["init", "--quiet"])?;
@@ -222,7 +222,7 @@ trust_level = "trusted"
         "uncommitted launcher instructions",
     )?;
     fs::write(
-        source.join(".codex/config.toml"),
+        source.join(".bgs/config.toml"),
         "model = \"source-model\"\nanalytics.enabled = true\n",
     )?;
     app_test_support::write_chatgpt_auth(
@@ -322,7 +322,7 @@ trust_level = "trusted"
     ] {
         if auth_failure {
             fs::write(
-                source.join(".codex/config.toml"),
+                source.join(".bgs/config.toml"),
                 "forced_login_method = \"api\"\n",
             )?;
             git(
@@ -335,7 +335,7 @@ trust_level = "trusted"
                     "require API login",
                 ],
             )?;
-            fs::write(source.join(".codex/config.toml"), "")?;
+            fs::write(source.join(".bgs/config.toml"), "")?;
         }
         let (metric_tx, mut metric_rx) = tokio::sync::mpsc::unbounded_channel();
         Mock::given(wiremock::matchers::path("/metrics"))
@@ -935,7 +935,7 @@ trust_level = "trusted"
         server.reset().await;
     }
     // Source loads its healthy uncommitted config, but the new checkout loads malformed HEAD.
-    fs::write(source.join(".codex/config.toml"), "not = [valid toml")?;
+    fs::write(source.join(".bgs/config.toml"), "not = [valid toml")?;
     git(
         &source,
         &[
@@ -946,7 +946,7 @@ trust_level = "trusted"
             "invalid destination",
         ],
     )?;
-    fs::write(source.join(".codex/config.toml"), "")?;
+    fs::write(source.join(".bgs/config.toml"), "")?;
     let before = git(&source, &["worktree", "list", "--porcelain"])?;
     let output = rejected_start(
         &program,

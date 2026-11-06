@@ -238,7 +238,7 @@ mod tests {
         let codex_home = Path::new(r"C:\Users\example\.codex");
 
         assert_eq!(
-            PathBuf::from(r"C:\Users\example\.codex\.sandbox-bin"),
+            PathBuf::from(r"C:\Users\example\.bgs\.sandbox-bin"),
             helper_bin_dir(codex_home)
         );
     }

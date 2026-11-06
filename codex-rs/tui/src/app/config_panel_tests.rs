@@ -42,7 +42,7 @@ async fn config_toggle_save_uses_host_config_and_applies_live_while_offline() ->
     for (cwd, auto_recap) in [(&local_cwd, false), (&session_cwd, true)] {
         std::fs::create_dir_all(cwd.join(".bgs"))?;
         std::fs::write(
-            cwd.join(".codex/config.toml"),
+            cwd.join(".bgs/config.toml"),
             format!("[tui]\nauto_recap = {auto_recap}\n"),
         )?;
     }

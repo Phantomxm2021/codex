@@ -1887,7 +1887,7 @@ fn create_seatbelt_args_with_read_only_git_and_codex_subpaths() {
     };
 
     // Create the Seatbelt command to wrap a shell command that tries to
-    // write to .codex/config.toml in the vulnerable root.
+    // write to .bgs/config.toml in the vulnerable root.
     let shell_command: Vec<String> = [
         "bash",
         "-c",
@@ -2015,7 +2015,7 @@ fn create_seatbelt_args_with_read_only_git_and_codex_subpaths() {
         .expect("seatbelt args should include command separator");
     assert_eq!(args[command_index + 1..], shell_command);
 
-    // Verify that .codex/config.toml cannot be modified under the generated
+    // Verify that .bgs/config.toml cannot be modified under the generated
     // Seatbelt policy.
     let config_toml = dot_codex_canonical.join("config.toml");
     let output = Command::new(MACOS_PATH_TO_SEATBELT_EXECUTABLE)
@@ -3106,7 +3106,7 @@ struct PopulatedTmp {
     /// For the purposes of this test, we consider this a "vulnerable" root
     /// because a bad actor could write to .git/hooks/pre-commit so an
     /// unsuspecting user would run code as privileged the next time they
-    /// ran `git commit` themselves, or modified .codex/config.toml to
+    /// ran `git commit` themselves, or modified .bgs/config.toml to
     /// contain `sandbox_mode = "danger-full-access"` so the agent would
     /// have full privileges the next time it ran in that repo.
     vulnerable_root: PathBuf,
@@ -3139,7 +3139,7 @@ fn populate_tmpdir(tmp: &Path) -> PopulatedTmp {
         vulnerable_root.join(".bgs").join("config.toml"),
         "sandbox_mode = \"read-only\"\n",
     )
-    .expect("write .codex/config.toml");
+    .expect("write .bgs/config.toml");
 
     let empty_root = tmp.join("empty_root");
     fs::create_dir_all(&empty_root).expect("create empty_root");

@@ -160,7 +160,7 @@ async fn managed_defaults_win_when_a_project_setting_shadows_the_selected_profil
     .expect("profile");
     std::fs::create_dir(project.path().join(".bgs")).expect("project config directory");
     std::fs::write(
-        project.path().join(".codex/config.toml"),
+        project.path().join(".bgs/config.toml"),
         "model = \"project-model\"\n",
     )
     .expect("project config");

@@ -281,7 +281,7 @@ async fn inactive_profiles_keep_snapshots_but_active_brokers_require_sandbox() -
     let dir = tempdir()?;
     std::fs::create_dir(dir.path().join(".bgs"))?;
     std::fs::write(
-        dir.path().join(".codex/startup.sh"),
+        dir.path().join(".bgs/startup.sh"),
         "printf started > startup-ran\n",
     )?;
     let session_id = ThreadId::new();
@@ -354,7 +354,7 @@ async fn inactive_profiles_keep_snapshots_but_active_brokers_require_sandbox() -
                 ShellEnvironmentPolicy {
                     r#set: HashMap::from([(
                         "BASH_ENV".to_string(),
-                        "./.codex/startup.sh".to_string(),
+                        "./.bgs/startup.sh".to_string(),
                     )]),
                     ..ShellEnvironmentPolicy::default()
                 },
@@ -460,13 +460,13 @@ async fn inactive_profiles_keep_snapshots_but_active_brokers_require_sandbox() -
 
     // Identical concurrent captures must not share one command's cancellation.
     fs::write(
-        dir.path().join(".codex/startup.sh"),
+        dir.path().join(".bgs/startup.sh"),
         "export OPENAI_API_KEY=sk-snapshot-cache-test\nprintf started > capture-started\nwhile [ ! -f finish-startup ]; do sleep 0.01; done\n",
     )
     .await?;
     config.shell_environment_policy.r#set.insert(
         "BASH_ENV".into(),
-        dir.path().join(".codex/startup.sh").display().to_string(),
+        dir.path().join(".bgs/startup.sh").display().to_string(),
     );
     environments.set_snapshot_credential_broker(SnapshotCredentialBrokerState::Ready(
         started_proxy.proxy(),
@@ -632,7 +632,7 @@ async fn inactive_profiles_keep_snapshots_but_active_brokers_require_sandbox() -
     fs::remove_file(dir.path().join("finish-startup")).await?;
     fs::remove_file(dir.path().join("capture-started")).await?;
     fs::write(
-        dir.path().join(".codex/startup.sh"),
+        dir.path().join(".bgs/startup.sh"),
         "export OPENAI_API_KEY=sk-snapshot-cache-test\nprintf x >> capture-started\nwhile [ ! -f finish-startup ]; do sleep 0.01; done\n",
     )
     .await?;

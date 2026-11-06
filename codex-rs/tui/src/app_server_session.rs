@@ -4098,7 +4098,7 @@ mod tests {
             ),
         ] {
             std::fs::write(
-                workspace.join(".codex/config.toml"),
+                workspace.join(".bgs/config.toml"),
                 if project {
                     "model_reasoning_summary = \"concise\"\nmodel_verbosity = \"low\"\nweb_search = \"disabled\"\n"
                 } else {

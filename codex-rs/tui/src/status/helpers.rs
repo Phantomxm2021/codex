@@ -285,7 +285,7 @@ mod tests {
 
         insta::assert_snapshot!(
             summary.replace('\\', "/"),
-            @"~/.codex/AGENTS.md, ../AGENTS.md, AGENTS.md, nested/AGENTS.md"
+            @"~/.bgs/AGENTS.md, ../AGENTS.md, AGENTS.md, nested/AGENTS.md"
         );
     }
 

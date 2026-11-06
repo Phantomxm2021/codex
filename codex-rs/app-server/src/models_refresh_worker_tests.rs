@@ -336,7 +336,7 @@ async fn catalog_reload_recovers_original_project_after_startup_fallback() -> an
             "projects": {project_path.to_string_lossy(): {"trust_level": "trusted"}}
         }))?,
     )?;
-    let project_config = project_path.join(".codex/config.toml");
+    let project_config = project_path.join(".bgs/config.toml");
     std::fs::write(&project_config, "model_catalog_json = [")?;
     let manager = crate::config_manager::ConfigManager::without_managed_config_for_tests(
         home.path().to_path_buf(),
@@ -358,7 +358,7 @@ async fn catalog_reload_recovers_original_project_after_startup_fallback() -> an
         .remove(0);
     model.slug = "project-model".into();
     std::fs::write(
-        project_path.join(".codex/catalog.json"),
+        project_path.join(".bgs/catalog.json"),
         serde_json::to_vec(&serde_json::json!({"models": [model]}))?,
     )?;
     std::fs::write(&project_config, "model_catalog_json = 'catalog.json'")?;

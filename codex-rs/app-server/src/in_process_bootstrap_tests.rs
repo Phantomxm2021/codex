@@ -161,7 +161,7 @@ async fn startup_reloads_the_callers_selected_project() -> anyhow::Result<()> {
         &user_config,
         format!("chatgpt_base_url = '{selected_url}'\n{trust}"),
     )?;
-    let project_config = selected.join(".codex/config.toml");
+    let project_config = selected.join(".bgs/config.toml");
     std::fs::write(&project_config, "model = 'selected-model'")?;
     let loader_overrides = LoaderOverrides::without_managed_config_for_tests();
     let mut config = Arc::new(

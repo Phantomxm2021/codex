@@ -1180,7 +1180,7 @@ hooks = false
     std::fs::create_dir_all(workspace.path().join(".git"))?;
     std::fs::create_dir_all(workspace.path().join(".bgs"))?;
     std::fs::write(
-        workspace.path().join(".codex/config.toml"),
+        workspace.path().join(".bgs/config.toml"),
         r#"[features]
 hooks = true
 
@@ -1215,7 +1215,7 @@ timeout = 5
     let HooksListResponse { data } =
         timeout(DEFAULT_TIMEOUT, mcp.read_response(request_id)).await??;
     let project_config_path =
-        AbsolutePathBuf::try_from(workspace.path().join(".codex/config.toml"))?;
+        AbsolutePathBuf::try_from(workspace.path().join(".bgs/config.toml"))?;
     assert_eq!(
         data,
         vec![
@@ -1306,7 +1306,7 @@ async fn hooks_list_uses_root_repo_hooks_for_linked_worktrees() -> Result<()> {
     let repo_hook = data[0].hooks[0].clone();
     let worktree_hook = data[1].hooks[0].clone();
     let repo_config_path =
-        AbsolutePathBuf::from_absolute_path(repo_root.join(".codex/config.toml"))?;
+        AbsolutePathBuf::from_absolute_path(repo_root.join(".bgs/config.toml"))?;
 
     assert_eq!(
         repo_hook.handler,

@@ -3031,9 +3031,9 @@ mod tests {
                 &prepared,
             ));
         }
-        assert!(!policy.can_write_path(&path("file:///C:/workspace/.codex/config"), &context));
+        assert!(!policy.can_write_path(&path("file:///C:/workspace/.bgs/config"), &context));
         assert_eq!(
-            policy.metadata_write_denial(&path("file:///C:/workspace/.codex/config"), &context),
+            policy.metadata_write_denial(&path("file:///C:/workspace/.bgs/config"), &context),
             Some(".bgs"),
         );
     }
@@ -3578,7 +3578,7 @@ mod tests {
         );
         assert!(
             !file_system_policy
-                .can_write_local_path_with_cwd(Path::new(".codex/config.toml"), relative_cwd,)
+                .can_write_local_path_with_cwd(Path::new(".bgs/config.toml"), relative_cwd,)
         );
         assert!(!file_system_policy.can_write_local_path_with_cwd(
             Path::new(".agents/skills/example/SKILL.md"),

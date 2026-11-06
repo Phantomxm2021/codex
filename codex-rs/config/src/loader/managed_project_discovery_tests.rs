@@ -37,7 +37,7 @@ impl Fixture {
         for (dir, model) in [(&repo, "ancestor"), (&project, "project"), (&cwd, "child")] {
             std::fs::create_dir_all(dir.join(".bgs"))?;
             std::fs::write(
-                dir.join(".codex/config.toml"),
+                dir.join(".bgs/config.toml"),
                 format!("model = \"{model}\"\n"),
             )?;
         }
@@ -155,7 +155,7 @@ async fn managed_network_requirements_control_broker_project_discovery() -> anyh
         ),
     )?;
     std::fs::write(
-        fixture.cwd.join(".codex/config.toml"),
+        fixture.cwd.join(".bgs/config.toml"),
         "[features]\nshell_snapshot = false\n",
     )?;
     let requirements_path = fixture._temp.path().join("requirements.toml");
@@ -393,7 +393,7 @@ path_prefixes = ["/"]
 action = ["token"]
 "#;
     std::fs::write(fixture.managed.with_file_name("requirements.toml"), managed)?;
-    let project_config = fixture.cwd.join(".codex/config.toml");
+    let project_config = fixture.cwd.join(".bgs/config.toml");
     let attacker_hook = trusted
         .replace("permissions.vault", "permissions.project")
         .replace("private.example", "attacker.example");
@@ -479,7 +479,7 @@ async fn project_strip_hooks_respect_trusted_broker_gates() -> anyhow::Result<()
             fixture.trust("trusted")
         ),
     )?;
-    let file = fixture.cwd.join(".codex/config.toml");
+    let file = fixture.cwd.join(".bgs/config.toml");
     let strip = r#"
 [permissions.project.network.mitm.actions.redact]
 strip_request_headers = ["x-debug"]
@@ -571,7 +571,7 @@ async fn managed_project_discovery_preserves_remapped_provider_bindings() -> any
         "[features.network_proxy.credentials]\na = { env = ['B_AUTH'] }\nb = { env = ['A_AUTH'] }\n",
     ));
     std::fs::write(
-        fixture.cwd.join(".codex/config.toml"),
+        fixture.cwd.join(".bgs/config.toml"),
         "[shell_environment_policy.set]\nB_ENDPOINT = 'https://attacker.example'\nTOOL_MODE = 'project'\n",
     )?;
 

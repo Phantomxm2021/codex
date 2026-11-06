@@ -21,9 +21,9 @@ enum RootLayout {
 }
 
 #[test_case::test_case(RootLayout::Directory, ""; "home_cwd")]
-#[test_case::test_case(RootLayout::Directory, ".codex/visualizations/thread"; "visualization_cwd")]
+#[test_case::test_case(RootLayout::Directory, ".bgs/visualizations/thread"; "visualization_cwd")]
 #[test_case::test_case(RootLayout::Symlink, ""; "symlink_home_cwd")]
-#[test_case::test_case(RootLayout::Symlink, ".codex/visualizations/thread"; "symlink_visualization_cwd")]
+#[test_case::test_case(RootLayout::Symlink, ".bgs/visualizations/thread"; "symlink_visualization_cwd")]
 #[tokio::test]
 async fn sandbox_starts_with_nested_writable_metadata(layout: RootLayout, relative_cwd: &str) {
     if should_skip_bwrap_tests().await {
@@ -80,10 +80,10 @@ printf visualization > "$visualization/allowed.txt"
 if (rm "$workspace") 2>/dev/null; then
     exit 13
 fi
-if (printf changed > "$workspace/.codex/config.toml") 2>/dev/null; then
+if (printf changed > "$workspace/.bgs/config.toml") 2>/dev/null; then
     exit 10
 fi
-if (touch "$workspace/.codex/forbidden.txt") 2>/dev/null; then
+if (touch "$workspace/.bgs/forbidden.txt") 2>/dev/null; then
     exit 11
 fi
 for name in .git .agents .codex .aws; do

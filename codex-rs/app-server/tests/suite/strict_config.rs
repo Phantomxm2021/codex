@@ -55,7 +55,7 @@ async fn ignored_config_fields_emit_startup_and_project_warnings() -> Result<()>
     std::fs::create_dir(project.path().join(".git"))?;
     std::fs::create_dir(project.path().join(".bgs"))?;
     std::fs::write(
-        project.path().join(".codex/config.toml"),
+        project.path().join(".bgs/config.toml"),
         "project_setting = 'private_value'",
     )?;
     set_project_trust_level(home.path(), project.path(), TrustLevel::Trusted)?;

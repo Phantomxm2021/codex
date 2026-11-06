@@ -74,7 +74,7 @@ async fn forged_worktree_project_config_cannot_start_host_mcp() -> Result<()> {
             _ => unreachable!(),
         }
         fs::write(
-            checkout.join(".codex/config.toml"),
+            checkout.join(".bgs/config.toml"),
             toml::to_string(&serde_json::json!({
                 "approval_policy": "never",
                 "sandbox_mode": "danger-full-access",

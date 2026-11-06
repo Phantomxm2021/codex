@@ -879,7 +879,7 @@ async fn plugin_list_omitted_cwds_excludes_server_project_config() -> Result<()>
     )?;
     let source = serde_json::to_string(&project_marketplace.path().to_string_lossy())?;
     std::fs::write(
-        codex_home.path().join(".codex/config.toml"),
+        codex_home.path().join(".bgs/config.toml"),
         format!(
             "[marketplaces.project-marketplace]\nsource_type = \"local\"\nsource = {source}\n\n[plugins.\"home-plugin@home-marketplace\"]\nenabled = false\n"
         ),
@@ -1182,7 +1182,7 @@ async fn plugin_list_refreshes_plugins_from_each_cwd(
             format!("[plugins.\"sample@{name}\"]\nenabled = true\n")
         };
         std::fs::write(
-            repo.join(".codex/config.toml"),
+            repo.join(".bgs/config.toml"),
             format!("[features]\nplugins = true\n{plugin_config}"),
         )?;
         set_project_trust_level(codex_home.path(), repo, TrustLevel::Trusted)?;
@@ -1261,9 +1261,9 @@ async fn plugin_catalogs_skip_invalid_project_config_and_report_cwd_error() -> R
         }
         set_project_trust_level(codex_home.path(), repo, TrustLevel::Trusted)?;
     }
-    std::fs::write(invalid_repo.join(".codex/config.toml"), "invalid = [\n")?;
+    std::fs::write(invalid_repo.join(".bgs/config.toml"), "invalid = [\n")?;
     std::fs::write(
-        valid_repo.join(".codex/config.toml"),
+        valid_repo.join(".bgs/config.toml"),
         "[plugins.\"sample@valid-marketplace\"]\nenabled = true\n",
     )?;
     std::fs::write(
@@ -1552,7 +1552,7 @@ enabled = true
     )?;
     std::fs::create_dir_all(workspace_enabled.path().join(".bgs"))?;
     std::fs::write(
-        workspace_enabled.path().join(".codex/config.toml"),
+        workspace_enabled.path().join(".bgs/config.toml"),
         r#"[plugins."shared-plugin@codex-curated"]
 enabled = false
 "#,
@@ -1893,7 +1893,7 @@ enabled = true
             repo_root.path().join(".agents/plugins/marketplace.json"),
             later_repo.path().join(".agents/plugins/marketplace.json"),
         )?;
-        std::fs::write(later_repo.path().join(".codex/config.toml"), plugin_config)?;
+        std::fs::write(later_repo.path().join(".bgs/config.toml"), plugin_config)?;
         set_project_trust_level(codex_home.path(), later_repo.path(), TrustLevel::Trusted)?;
         cwds.push(AbsolutePathBuf::try_from(later_repo.path())?);
     }
@@ -2195,7 +2195,7 @@ async fn plugin_list_includes_remote_marketplaces_when_remote_plugin_enabled(
         } else {
             "[features]\nplugins = false\n[plugins.\"sample@disabled-local\"]\nenabled = true\n"
         };
-        std::fs::write(repo.path().join(".codex/config.toml"), config)?;
+        std::fs::write(repo.path().join(".bgs/config.toml"), config)?;
         std::fs::write(
             repo.path().join(".agents/plugins/marketplace.json"),
             r#"{"name":"disabled-local","plugins":[{"name":"sample","source":{"source":"local","path":"./sample"}}]}"#,
@@ -4863,7 +4863,7 @@ remote_plugin = true
         std::fs::create_dir_all(repo.path().join(directory))?;
     }
     std::fs::write(
-        repo.path().join(".codex/config.toml"),
+        repo.path().join(".bgs/config.toml"),
         "[features]\nplugins = true\n[plugins.\"sample@local\"]\nenabled = true\n",
     )?;
     std::fs::write(

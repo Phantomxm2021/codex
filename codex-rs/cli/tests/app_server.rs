@@ -222,7 +222,7 @@ fn print_startup_config_preserves_project_login_restrictions() -> Result<()> {
     std::fs::create_dir(project.path().join(".bgs"))?;
     for method in ["chatgpt", "api"] {
         std::fs::write(
-            project.path().join(".codex/config.toml"),
+            project.path().join(".bgs/config.toml"),
             format!("forced_login_method = '{method}'\n"),
         )?;
         for sign_out in [None, Some("--startup-sign-out")] {
