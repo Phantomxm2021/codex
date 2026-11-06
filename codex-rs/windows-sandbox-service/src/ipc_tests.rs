@@ -768,7 +768,7 @@ fn registered_home_preparation_does_not_touch_the_legacy_bin() -> anyhow::Result
     ));
     std::fs::create_dir(&root)?;
     let result = (|| -> anyhow::Result<()> {
-        let home = root.join(".codex");
+        let home = root.join(".bgs");
         std::fs::create_dir(&home)?;
         let bin = home.join(".sandbox-bin");
         let marker = b"legacy bin is deliberately not a directory";

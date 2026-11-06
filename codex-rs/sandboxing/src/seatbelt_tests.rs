@@ -1959,7 +1959,7 @@ fn create_seatbelt_args_with_read_only_git_and_codex_subpaths() {
             "-DWRITABLE_ROOT_0_EXCLUDED_0={}",
             cwd.canonicalize()
                 .expect("canonicalize cwd")
-                .join(".codex")
+                .join(".bgs")
                 .display()
         ),
         format!(
@@ -2718,7 +2718,7 @@ fn seatbelt_protects_case_variants_of_metadata() {
 fn seatbelt_protects_resolved_target_of_symlinked_metadata_directory() {
     use std::os::unix::fs::symlink;
 
-    for (name, config_name) in [(".codex", "config.toml"), (".aws", "config")] {
+    for (name, config_name) in [(".bgs", "config.toml"), (".aws", "config")] {
         let tmp = TempDir::new().expect("tempdir");
         let writable_root = tmp.path().join("workspace");
         let actual_config = writable_root.join("actual-config");
@@ -2784,7 +2784,7 @@ fn create_seatbelt_args_block_first_time_dot_codex_creation_with_metadata_name_r
         .output()
         .expect("git init .");
 
-    let dot_codex = repo_root.join(".codex");
+    let dot_codex = repo_root.join(".bgs");
     let config_toml = dot_codex.join("config.toml");
     let policy = SandboxPolicy::WorkspaceWrite {
         writable_roots: vec![repo_root.as_path().try_into().expect("absolute repo root")],
@@ -3134,9 +3134,9 @@ fn populate_tmpdir(tmp: &Path) -> PopulatedTmp {
         .output()
         .expect("git init .");
 
-    fs::create_dir_all(vulnerable_root.join(".codex")).expect("create .codex");
+    fs::create_dir_all(vulnerable_root.join(".bgs")).expect("create .codex");
     fs::write(
-        vulnerable_root.join(".codex").join("config.toml"),
+        vulnerable_root.join(".bgs").join("config.toml"),
         "sandbox_mode = \"read-only\"\n",
     )
     .expect("write .codex/config.toml");
@@ -3150,7 +3150,7 @@ fn populate_tmpdir(tmp: &Path) -> PopulatedTmp {
         .expect("canonicalize vulnerable_root");
     let dot_git_canonical = vulnerable_root_canonical.join(".git");
     let dot_agents_canonical = vulnerable_root_canonical.join(".agents");
-    let dot_codex_canonical = vulnerable_root_canonical.join(".codex");
+    let dot_codex_canonical = vulnerable_root_canonical.join(".bgs");
     let empty_root_canonical = empty_root.canonicalize().expect("canonicalize empty_root");
     PopulatedTmp {
         vulnerable_root,

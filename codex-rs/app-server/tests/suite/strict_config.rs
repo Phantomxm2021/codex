@@ -53,7 +53,7 @@ async fn ignored_config_fields_emit_startup_and_project_warnings() -> Result<()>
 
     let project = TempDir::new()?;
     std::fs::create_dir(project.path().join(".git"))?;
-    std::fs::create_dir(project.path().join(".codex"))?;
+    std::fs::create_dir(project.path().join(".bgs"))?;
     std::fs::write(
         project.path().join(".codex/config.toml"),
         "project_setting = 'private_value'",

@@ -604,7 +604,7 @@ mod tests {
     fn windows_batch_alias_preserves_unicode_executable_paths() -> anyhow::Result<()> {
         let root = TempDir::new()?;
         let profile = root.path().join("用户");
-        let alias_directory = profile.join(".codex").join("tmp").join("arg0");
+        let alias_directory = profile.join(".bgs").join("tmp").join("arg0");
         let executable_directory = profile.join("bin");
         fs::create_dir_all(&alias_directory)?;
         fs::create_dir_all(&executable_directory)?;

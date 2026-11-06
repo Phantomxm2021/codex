@@ -279,7 +279,7 @@ async fn inactive_profiles_keep_snapshots_but_active_brokers_require_sandbox() -
     use tokio_util::sync::CancellationToken;
 
     let dir = tempdir()?;
-    std::fs::create_dir(dir.path().join(".codex"))?;
+    std::fs::create_dir(dir.path().join(".bgs"))?;
     std::fs::write(
         dir.path().join(".codex/startup.sh"),
         "printf started > startup-ran\n",

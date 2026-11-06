@@ -10,8 +10,10 @@ The public executable is `bgs`; internal Cargo names and the companion
 
 The runtime reads `BGS_HOME`, defaulting to `~/.bgs`. BeeGameStudio supplies
 an owner-private `.runtime/app/bgs` home. Existing sessions are not rewritten.
-Protocol fields, MCP metadata, model/service identifiers, plugin formats and
-project-level `.codex` configuration retain the upstream contract.
+Project configuration uses `.bgs`, system configuration `/etc/bgs`, and macOS
+managed preferences `com.phantomlab.bgs`; Codex configuration is not loaded.
+Protocol fields, MCP metadata, model/service identifiers and third-party plugin
+formats retain upstream names.
 
 Official binary self-replacement is disabled for this source-built package.
 Merge upstream into `bgs/source-VERSION`, review its branding/packaging-only

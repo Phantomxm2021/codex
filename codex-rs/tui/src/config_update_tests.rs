@@ -42,7 +42,7 @@ async fn remote_project_trust_guards_thread_start_and_preserves_repository_decis
     std::fs::create_dir_all(&project_cwd)?;
     std::fs::create_dir(project_root.join(".git"))?;
     std::fs::write(project_root.join(".git/HEAD"), "ref: refs/heads/main\n")?;
-    std::fs::create_dir(project_cwd.join(".codex"))?;
+    std::fs::create_dir(project_cwd.join(".bgs"))?;
     let undecided_config = format!(
         "[{}]\n",
         trusted_project_edit(&project_root)
@@ -164,7 +164,7 @@ async fn remote_project_trust_guards_thread_start_and_preserves_repository_decis
     "
     );
 
-    std::fs::create_dir(project_root.join(".codex"))?;
+    std::fs::create_dir(project_root.join(".bgs"))?;
     std::fs::write(
         project_root.join(".codex/config.toml"),
         "model_reasoning_effort = \"low\"\n",
@@ -187,7 +187,7 @@ async fn remote_project_trust_guards_thread_start_and_preserves_repository_decis
             (child == "untrusted").then_some(Some(TrustLevel::Untrusted))
         );
     }
-    std::fs::remove_dir_all(project_root.join(".codex"))?;
+    std::fs::remove_dir_all(project_root.join(".bgs"))?;
     let untrusted_projects = replace_config_value(
         "projects",
         serde_json::json!({
@@ -201,7 +201,7 @@ async fn remote_project_trust_guards_thread_start_and_preserves_repository_decis
     .await?;
 
     std::fs::remove_file(project_cwd.join(".codex/config.toml"))?;
-    std::fs::remove_dir(project_cwd.join(".codex"))?;
+    std::fs::remove_dir(project_cwd.join(".bgs"))?;
     let canonical_project_cwd = PathBuf::from(project_trust_key(&project_root)).join("nested");
     let error = read_trust(&canonical_project_cwd, ProjectTrustHost::Remote)
         .await

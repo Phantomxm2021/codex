@@ -764,7 +764,7 @@ def main() -> int:
     )
 
     # 34. WS: policy tamper (.codex artifacts) denied
-    codex_home = Path(os.environ["USERPROFILE"]) / ".codex"
+    codex_home = Path(os.environ["USERPROFILE"]) / ".bgs"
     cap_sid_target = codex_home / "cap_sid"
     rc, out, err = run_sbx(
         "workspace-write",

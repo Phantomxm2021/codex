@@ -163,7 +163,7 @@ async fn worktree_start_and_fork(backend: &str) -> anyhow::Result<()> {
         fs::create_dir(path)?;
     }
     // Forking without --cd must select the daemon using the resolved project, not this launcher.
-    fs::create_dir(launcher.join(".codex"))?;
+    fs::create_dir(launcher.join(".bgs"))?;
     fs::write(
         launcher.join(".codex/config.toml"),
         "features.auth_elicitation = false\n",
@@ -173,7 +173,7 @@ async fn worktree_start_and_fork(backend: &str) -> anyhow::Result<()> {
         "committed destination instructions",
     )?;
     let server = MockServer::start().await;
-    fs::create_dir(source.join(".codex"))?;
+    fs::create_dir(source.join(".bgs"))?;
     fs::write(
         source.join(".codex/config.toml"),
         "model = \"destination-model\"\nanalytics.enabled = false\ncli_auth_credentials_store = \"file\"\n",
@@ -408,7 +408,7 @@ trust_level = "trusted"
             args.extend(["--cd".into(), source.display().to_string()]);
         }
         if explicit_cd {
-            args.extend(["--cd".into(), source.join(".codex").display().to_string()]);
+            args.extend(["--cd".into(), source.join(".bgs").display().to_string()]);
         }
         if analytics {
             args.extend([
@@ -883,7 +883,7 @@ trust_level = "trusted"
             Mock::given(wiremock::matchers::path("/source/backend-api/wham/config/bundle"))
                 .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
                     "config_toml": {"enterprise_managed": [{"id":"distrust-source", "name":"distrust-source",
-                        "contents": format!("[projects.{}]\ntrust_level = \"untrusted\"\n", serde_json::to_string(&codex_config::loader::project_trust_key(&source.join(".codex")))?)}]}
+                        "contents": format!("[projects.{}]\ntrust_level = \"untrusted\"\n", serde_json::to_string(&codex_config::loader::project_trust_key(&source.join(".bgs")))?)}]}
                 }))).mount(&server).await;
             let output = rejected_start(
                 &program,
@@ -893,7 +893,7 @@ trust_level = "trusted"
                     "worktrees".into(),
                     "--no-alt-screen".into(),
                     "--cd".into(),
-                    source.join(".codex").display().to_string(),
+                    source.join(".bgs").display().to_string(),
                 ],
                 &launcher,
                 &env,

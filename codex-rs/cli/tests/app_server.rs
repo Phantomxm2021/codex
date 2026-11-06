@@ -219,7 +219,7 @@ fn print_startup_config_preserves_project_login_restrictions() -> Result<()> {
         format!("[projects.{project_key}]\ntrust_level = \"trusted\"\n"),
     )?;
     std::fs::create_dir(project.path().join(".git"))?;
-    std::fs::create_dir(project.path().join(".codex"))?;
+    std::fs::create_dir(project.path().join(".bgs"))?;
     for method in ["chatgpt", "api"] {
         std::fs::write(
             project.path().join(".codex/config.toml"),
