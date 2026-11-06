@@ -3631,6 +3631,7 @@ dependencies = [
  "codex-utils-absolute-path",
  "codex-utils-template",
  "pretty_assertions",
+ "futures",
  "serde",
  "serde_json",
  "tempfile",
