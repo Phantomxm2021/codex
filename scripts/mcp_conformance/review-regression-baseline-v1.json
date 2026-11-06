@@ -1027,7 +1027,7 @@
     "2025-11-25",
     "2026-07-28"
   ],
-  "reviewer": "bgs-mcp-regression-suite",
+  "reviewer": "codex-mcp-regression-suite",
   "schemaVersion": 1,
   "summary": {
     "casesPassed": 13,

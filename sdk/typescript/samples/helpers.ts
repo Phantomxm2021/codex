@@ -1,8 +1,8 @@
 import path from "node:path";
 
-export function bgsPathOverride() {
+export function codexPathOverride() {
   return (
-    process.env.BGS_EXECUTABLE ??
-    path.join(process.cwd(), "..", "..", "bgs-rs", "target", "debug", "bgs")
+    process.env.CODEX_EXECUTABLE ??
+    path.join(process.cwd(), "..", "..", "codex-rs", "target", "debug", "codex")
   );
 }

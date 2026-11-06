@@ -10,8 +10,8 @@ def _schema_bundle_impl(ctx):
             executable = ctx.executable.generator,
             tools = [ctx.attr.generator[DefaultInfo].files_to_run],
             env = {
-                "BGS_APP_SERVER_SCHEMA_ROOT": schema.path,
-                "BGS_APP_SERVER_SCHEMA_EXPERIMENTAL": "1" if mode == "experimental" else "0",
+                "CODEX_APP_SERVER_SCHEMA_ROOT": schema.path,
+                "CODEX_APP_SERVER_SCHEMA_EXPERIMENTAL": "1" if mode == "experimental" else "0",
             },
             outputs = [schema],
             mnemonic = "PublicSchema",

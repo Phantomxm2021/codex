@@ -94,7 +94,7 @@ def environment(root: Path, target: str, pkg_config: Path) -> dict[str, str]:
     values = {
         f"PKG_CONFIG_{suffix}": str(pkg_config),
         f"PKG_CONFIG_PATH_{suffix}": str(root / "sdk/lib/pkgconfig"),
-        "BGS_TEST_VOICE_RUNTIME": str(root / "runtime"),
+        "CODEX_TEST_VOICE_RUNTIME": str(root / "runtime"),
     }
     for module in MODULES:
         key = re.sub(r"[^A-Z0-9]", "_", module.upper())

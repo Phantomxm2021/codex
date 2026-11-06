@@ -9,7 +9,7 @@ import {
   SseResponseBody,
   startResponsesTestProxy,
 } from "./responsesProxy";
-import { createMockClient } from "./testBgs";
+import { createMockClient } from "./testCodex";
 
 function* infiniteShellCall(): Generator<SseResponseBody> {
   while (true) {

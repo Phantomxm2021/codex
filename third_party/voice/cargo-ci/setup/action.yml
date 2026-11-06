@@ -58,5 +58,5 @@ runs:
         config.write_text('[profile.default]\narchive.include = [{ path = ' + json.dumps(relative)
                           + ', relative-to = "target", on-missing = "error" }]\n')
         with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
-            print(f"BGS_VOICE_NEXTEST_CONFIG={config}", file=env)
-            print(f"BGS_VOICE_RUNTIME_RELATIVE={relative}", file=env)
+            print(f"CODEX_VOICE_NEXTEST_CONFIG={config}", file=env)
+            print(f"CODEX_VOICE_RUNTIME_RELATIVE={relative}", file=env)

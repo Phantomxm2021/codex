@@ -1,4 +1,4 @@
 # Without this, Bazel will consider BUILD.bazel files in
 # .git/sl/origbackups (which can be populated by Sapling SCM).
 .git
-bgs-rs/target
+codex-rs/target

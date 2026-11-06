@@ -14,13 +14,13 @@ import random
 from collections.abc import Awaitable, Callable
 from typing import TypeVar
 
-from openai_bgs import (
-    AsyncBgs,
+from openai_codex import (
+    AsyncCodex,
     JsonRpcError,
     ServerBusyError,
     is_retryable_error,
 )
-from openai_bgs.types import TurnStatus
+from openai_codex.types import TurnStatus
 
 ResultT = TypeVar("ResultT")
 
@@ -53,8 +53,8 @@ async def retry_on_overload_async(
 
 
 async def main() -> None:
-    async with AsyncBgs(config=runtime_config()) as bgs:
-        thread = await bgs.thread_start(
+    async with AsyncCodex(config=runtime_config()) as codex:
+        thread = await codex.thread_start(
             model="gpt-5.4", config={"model_reasoning_effort": "high"}
         )
 

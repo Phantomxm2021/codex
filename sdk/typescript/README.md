@@ -1,13 +1,13 @@
-# Bgs SDK
+# Codex SDK
 
-Embed the Bgs agent in your workflows and apps.
+Embed the Codex agent in your workflows and apps.
 
-The TypeScript SDK wraps the `bgs` CLI from `@openai/bgs`. It spawns the CLI and exchanges JSONL events over stdin/stdout.
+The TypeScript SDK wraps the `codex` CLI from `@openai/codex`. It spawns the CLI and exchanges JSONL events over stdin/stdout.
 
 ## Installation
 
 ```bash
-npm install @openai/bgs-sdk
+npm install @openai/codex-sdk
 ```
 
 Requires Node.js 18+.
@@ -15,10 +15,10 @@ Requires Node.js 18+.
 ## Quickstart
 
 ```typescript
-import { Bgs } from "@openai/bgs-sdk";
+import { Codex } from "@openai/codex-sdk";
 
-const bgs = new Bgs();
-const thread = bgs.startThread();
+const codex = new Codex();
+const thread = codex.startThread();
 const turn = await thread.run("Diagnose the test failure and propose a fix");
 
 console.log(turn.finalResponse);
@@ -52,7 +52,7 @@ for await (const event of events) {
 
 ### Structured output
 
-The Bgs agent can produce a JSON response that conforms to a specified schema. The schema can be provided for each turn as a plain JSON object.
+The Codex agent can produce a JSON response that conforms to a specified schema. The schema can be provided for each turn as a plain JSON object.
 
 ```typescript
 const schema = {
@@ -85,7 +85,7 @@ console.log(turn.finalResponse);
 
 ### Attaching images
 
-Provide structured input entries when you need to include images alongside text. Text entries are concatenated into the final prompt while image entries are passed to the BGS CLI via `--image`.
+Provide structured input entries when you need to include images alongside text. Text entries are concatenated into the final prompt while image entries are passed to the Codex CLI via `--image`.
 
 ```typescript
 const turn = await thread.run([
@@ -97,48 +97,48 @@ const turn = await thread.run([
 
 ### Resuming an existing thread
 
-Threads are persisted in `~/.bgs/sessions`. If you lose the in-memory `Thread` object, reconstruct it with `resumeThread()` and keep going.
+Threads are persisted in `~/.codex/sessions`. If you lose the in-memory `Thread` object, reconstruct it with `resumeThread()` and keep going.
 
 ```typescript
-const savedThreadId = process.env.BGS_THREAD_ID!;
-const thread = bgs.resumeThread(savedThreadId);
+const savedThreadId = process.env.CODEX_THREAD_ID!;
+const thread = codex.resumeThread(savedThreadId);
 await thread.run("Implement the fix");
 ```
 
 ### Working directory controls
 
-Bgs runs in the current working directory by default. To avoid unrecoverable errors, Bgs requires the working directory to be a Git repository. You can skip the Git repository check by passing the `skipGitRepoCheck` option when creating a thread.
+Codex runs in the current working directory by default. To avoid unrecoverable errors, Codex requires the working directory to be a Git repository. You can skip the Git repository check by passing the `skipGitRepoCheck` option when creating a thread.
 
 ```typescript
-const thread = bgs.startThread({
+const thread = codex.startThread({
   workingDirectory: "/path/to/project",
   skipGitRepoCheck: true,
 });
 ```
 
-### Controlling the BGS CLI environment
+### Controlling the Codex CLI environment
 
-By default, the BGS CLI inherits the Node.js process environment. Provide the optional `env` parameter when instantiating the
-`Bgs` client to fully control which variables the CLI receives—useful for sandboxed hosts like Electron apps.
+By default, the Codex CLI inherits the Node.js process environment. Provide the optional `env` parameter when instantiating the
+`Codex` client to fully control which variables the CLI receives—useful for sandboxed hosts like Electron apps.
 
 ```typescript
-const bgs = new Bgs({
+const codex = new Codex({
   env: {
     PATH: "/usr/local/bin",
   },
 });
 ```
 
-The SDK still injects its required variables (such as `BGS_API_KEY`) on top of the environment you provide. If you set
+The SDK still injects its required variables (such as `CODEX_API_KEY`) on top of the environment you provide. If you set
 `baseUrl`, the SDK passes it as a `--config openai_base_url=...` override.
 
 ### Passing `--config` overrides
 
-Use the `config` option to provide additional BGS CLI configuration overrides. The SDK accepts a JSON object, flattens it
+Use the `config` option to provide additional Codex CLI configuration overrides. The SDK accepts a JSON object, flattens it
 into dotted paths, and serializes values as TOML literals before passing them as repeated `--config key=value` flags.
 
 ```typescript
-const bgs = new Bgs({
+const codex = new Codex({
   config: {
     show_raw_agent_reasoning: true,
     sandbox_workspace_write: { network_access: true },
@@ -147,10 +147,10 @@ const bgs = new Bgs({
 ```
 
 For configuration keys that cannot be expressed as dotted paths, pass raw TOML overrides with `configOverrides`. Each entry
-is forwarded unchanged as a separate `--config` argument, without modifying `BGS_HOME`:
+is forwarded unchanged as a separate `--config` argument, without modifying `CODEX_HOME`:
 
 ```typescript
-const bgs = new Bgs({
+const codex = new Codex({
   config: { default_permissions: "audit" },
   configOverrides: ['permissions.audit.filesystem={":root"="read","/path/to/project/.env"="deny"}'],
 });

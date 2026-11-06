@@ -9,9 +9,9 @@ import {
   sse,
   startResponsesTestProxy,
 } from "./responsesProxy";
-import { createMockClient } from "./testBgs";
+import { createMockClient } from "./testCodex";
 
-describe("Bgs", () => {
+describe("Codex", () => {
   it("returns thread events", async () => {
     const { url, close } = await startResponsesTestProxy({
       statusCode: 200,
@@ -189,7 +189,7 @@ describe("Bgs", () => {
       const text = payload!.json.text;
       expect(text).toBeDefined();
       expect(text?.format).toEqual({
-        name: "bgs_output_schema",
+        name: "codex_output_schema",
         type: "json_schema",
         strict: true,
         schema,

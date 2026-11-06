@@ -6,15 +6,15 @@
       "request": "launch",
       "name": "Cargo launch",
       "cargo": {
-        "cwd": "${workspaceFolder}/bgs-rs",
-        "args": ["build", "--bin=bgs-tui"]
+        "cwd": "${workspaceFolder}/codex-rs",
+        "args": ["build", "--bin=codex-tui"]
       },
       "args": []
     },
     {
       "type": "lldb",
       "request": "attach",
-      "name": "Attach to running bgs CLI",
+      "name": "Attach to running codex CLI",
       "pid": "${command:pickProcess}",
       "sourceLanguages": ["rust"]
     }

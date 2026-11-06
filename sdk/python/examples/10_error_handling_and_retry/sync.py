@@ -9,16 +9,16 @@ from _bootstrap import ensure_local_sdk_src, runtime_config
 
 ensure_local_sdk_src()
 
-from openai_bgs import (
-    Bgs,
+from openai_codex import (
+    Codex,
     JsonRpcError,
     ServerBusyError,
     retry_on_overload,
 )
-from openai_bgs.types import TurnStatus
+from openai_codex.types import TurnStatus
 
-with Bgs(config=runtime_config()) as bgs:
-    thread = bgs.thread_start(model="gpt-5.4", config={"model_reasoning_effort": "high"})
+with Codex(config=runtime_config()) as codex:
+    thread = codex.thread_start(model="gpt-5.4", config={"model_reasoning_effort": "high"})
 
     try:
         result = retry_on_overload(

@@ -1,6 +1,6 @@
 packages:
-  - bgs-cli
-  - bgs-rs/responses-api-proxy/npm
+  - codex-cli
+  - codex-rs/responses-api-proxy/npm
   - sdk/typescript
 
 ignoredBuiltDependencies:

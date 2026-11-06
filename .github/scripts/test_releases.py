@@ -75,58 +75,58 @@ class NpmAlphaTagTest(unittest.TestCase):
         # published release. Also exercise a missing pointer and dotted hotfix.
         cases = [
             (
-                "@openai/bgs-sdk",
+                "@openai/codex-sdk",
                 "latest",
                 "0.100.0",
                 "0.99.9",
                 "release-0.99.9-latest",
             ),
             (
-                "@openai/bgs",
+                "@openai/codex",
                 "linux-x64",
                 "0.99.9-linux-x64",
                 "0.100.0",
                 "linux-x64",
             ),
-            ("@openai/bgs-responses-api-proxy", "latest", None, "0.100.0", "latest"),
+            ("@openai/codex-responses-api-proxy", "latest", None, "0.100.0", "latest"),
             (
-                "@openai/bgs",
+                "@openai/codex",
                 "alpha",
                 "0.158.0-alpha.10",
                 "0.157.0-alpha.11.1",
                 "release-0.157.0-alpha.11.1-alpha",
             ),
             (
-                "@openai/bgs",
+                "@openai/codex",
                 "alpha-linux-x64",
                 "0.158.0-alpha.10-linux-x64",
                 "0.157.0-alpha.11.1",
                 "release-0.157.0-alpha.11.1-alpha-linux-x64",
             ),
             (
-                "@openai/bgs",
+                "@openai/codex",
                 "alpha-win32-arm64",
                 "0.158.0-alpha.9-win32-arm64",
                 "0.158.0-alpha.10",
                 "alpha-win32-arm64",
             ),
             (
-                "@openai/bgs-sdk",
+                "@openai/codex-sdk",
                 "alpha",
                 "0.158.0-alpha.10",
                 "0.158.0-alpha.10.1",
                 "alpha",
             ),
             (
-                "@openai/bgs-responses-api-proxy",
+                "@openai/codex-responses-api-proxy",
                 "alpha",
                 "0.159.0-alpha.1",
                 "0.158.0-alpha.10.1",
                 "release-0.158.0-alpha.10.1-alpha",
             ),
-            ("@openai/bgs-sdk", "alpha", None, "0.158.0-alpha.10", "alpha"),
+            ("@openai/codex-sdk", "alpha", None, "0.158.0-alpha.10", "alpha"),
             (
-                "@openai/bgs",
+                "@openai/codex",
                 "alpha-linux-x64",
                 "broken-linux-x64",
                 "0.158.0-alpha.10",
@@ -161,7 +161,7 @@ class NpmAlphaTagTest(unittest.TestCase):
     def test_stable_tags_reject_malformed_and_prerelease_versions(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             tarball = Path(tmpdir) / "package.tgz"
-            self.write_package(tarball, "@openai/bgs")
+            self.write_package(tarball, "@openai/codex")
             for tag, current in (
                 ("latest", "broken"),
                 ("linux-x64", "0.100.0-alpha.1-linux-x64"),
@@ -177,7 +177,7 @@ class NpmAlphaTagTest(unittest.TestCase):
     def test_registry_failure_prevents_publish(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             tarball = Path(tmpdir) / "package.tgz"
-            self.write_package(tarball, "@openai/bgs")
+            self.write_package(tarball, "@openai/codex")
             with patch(
                 "npm_alpha_tag.subprocess.run",
                 side_effect=subprocess.CalledProcessError(1, "npm"),
@@ -220,40 +220,40 @@ class DotSlashReleaseConfigTests(unittest.TestCase):
             {filename: set(outputs) for filename, outputs in self.configs.items()},
             {
                 "dotslash-config.json": {
-                    "bgs",
-                    "bgs-app-server",
-                    "bgs-responses-api-proxy",
+                    "codex",
+                    "codex-app-server",
+                    "codex-responses-api-proxy",
                     "bwrap",
-                    "bgs-command-runner",
-                    "bgs-windows-sandbox-setup",
-                    "bgs-windows-sandbox-service",
+                    "codex-command-runner",
+                    "codex-windows-sandbox-setup",
+                    "codex-windows-sandbox-service",
                 },
                 "dotslash-argument-comment-lint-config.json": {"argument-comment-lint"},
-                "dotslash-provisioned-config.json": {"bgs-provisioned"},
+                "dotslash-provisioned-config.json": {"codex-provisioned"},
             },
         )
         self.assertFalse(any("-bazel" in asset for asset in self.assets))
         self.assertEqual(self.missing_assets(self.assets), [])
 
     def test_missing_cargo_asset_is_detected(self):
-        missing_asset = "bgs-package-aarch64-apple-darwin.tar.zst"
+        missing_asset = "codex-package-aarch64-apple-darwin.tar.zst"
         self.assertIn(missing_asset, self.assets)
         self.assertEqual(
             self.missing_assets(self.assets - {missing_asset}),
-            [("dotslash-config.json", "bgs", "macos-aarch64")],
+            [("dotslash-config.json", "codex", "macos-aarch64")],
         )
 
     def test_missing_provisioned_cargo_asset_is_detected(self):
         for arch in ("aarch64", "x86_64"):
             with self.subTest(arch=arch):
-                missing_asset = f"bgs-provisioned-package-{arch}-apple-darwin.tar.gz"
+                missing_asset = f"codex-provisioned-package-{arch}-apple-darwin.tar.gz"
                 self.assertIn(missing_asset, self.assets)
                 self.assertEqual(
                     self.missing_assets(self.assets - {missing_asset}),
                     [
                         (
                             "dotslash-provisioned-config.json",
-                            "bgs-provisioned",
+                            "codex-provisioned",
                             f"macos-{arch}",
                         )
                     ],
@@ -284,7 +284,7 @@ class StablePublicationTests(unittest.TestCase):
             self.assertFalse(r2.should_update_channel("endpoint", "0.99.9", "latest"))
             self.assertTrue(r2.should_update_channel("endpoint", "0.100.0", "latest"))
             self.assertIn(
-                "s3://releases/bgs/channels/latest", command.call_args.args[0]
+                "s3://releases/codex/channels/latest", command.call_args.args[0]
             )
             command.return_value = "invalid"
             with self.assertRaises(r2.PublishError):

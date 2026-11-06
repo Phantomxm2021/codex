@@ -1,4 +1,4 @@
-"""Validate Bgs releases and check whether their GitHub channel pointers can advance."""
+"""Validate Codex releases and check whether their GitHub channel pointers can advance."""
 
 import argparse
 import json

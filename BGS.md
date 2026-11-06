@@ -1,26 +1,20 @@
 # BGS runtime
 
-BGS is a PhantomLab distribution based on OpenAI Codex. The upstream LICENSE
-and NOTICE remain applicable. Product names, source modules, configuration,
-environment variables and storage paths are branded; agent execution semantics
-and external service contracts are retained.
+BGS is a PhantomLab distribution based on OpenAI Codex. LICENSE and NOTICE
+retain upstream attribution. Native execution, Goal accounting, history,
+model metadata and wire protocols follow the selected upstream release.
 
-Build from the parent BeeGameStudio repository with `bun run bgs:build` and
-verify with `bun run bgs:verify`. The internal Cargo package is `bgs-cli`, target
-`bgs`, under `bgs-rs/`. No public npm BGS package is assumed or required.
+Build from BeeGameStudio with `bun run bgs:build`, then `bun run bgs:verify`.
+The public executable is `bgs`; internal Cargo names and the companion
+`codex-code-mode-host` retain upstream names under `codex-rs/`.
 
-The runtime reads `BGS_HOME`, defaulting to `~/.bgs`. Skills are under
-`$BGS_HOME/skills`; installed plugins and caches are under `$BGS_HOME/plugins`.
-BGS servers use an owner-private `.runtime/app/bgs` home. Old home directories
-require the offline migration described in the parent runbook; do not rename
-active account stores or rewrite saved sessions.
+The runtime reads `BGS_HOME`, defaulting to `~/.bgs`. BeeGameStudio supplies
+an owner-private `.runtime/app/bgs` home. Existing sessions are not rewritten.
+Protocol fields, MCP metadata, model/service identifiers, plugin formats and
+project-level `.codex` configuration retain the upstream contract.
 
-Official binary self-updates are disabled. Keep `bgs/source-VERSION` as the
-upstream-compatible source branch with the small product patches. Merge the
-next official release there, then run the parent's `scripts/brand-bgs.py`
-on a separate distribution branch. Never merge upstream directly into the
-mechanically renamed tree. See `docs/bgs-runtime-upgrades.md` in BeeGameStudio.
-
-External URLs/model IDs, protocol headers, third-party `.codex-plugin` manifests,
-and original attribution are deliberate compatibility exceptions. A local
-successful build does not validate untested platforms or live provider logins.
+Official binary self-replacement is disabled for this source-built package.
+Merge upstream into `bgs/source-VERSION`, review its branding/packaging-only
+diff, then run `scripts/brand-bgs.py` to generate the distribution. Do not add
+native behavior patches without explicit user authorization. See the parent
+`docs/bgs-runtime-upgrades.md` for provenance, validation and deployment.

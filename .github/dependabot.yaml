@@ -3,21 +3,21 @@
 version: 2
 updates:
   - package-ecosystem: bun
-    directory: .github/actions/bgs
+    directory: .github/actions/codex
     schedule:
       interval: weekly
     cooldown:
       default-days: 7
   - package-ecosystem: cargo
     directories:
-      - bgs-rs
-      - bgs-rs/*
+      - codex-rs
+      - codex-rs/*
     schedule:
       interval: weekly
     cooldown:
       default-days: 7
   - package-ecosystem: docker
-    directory: bgs-cli
+    directory: codex-cli
     schedule:
       interval: weekly
     cooldown:
@@ -29,7 +29,7 @@ updates:
     cooldown:
       default-days: 7
   - package-ecosystem: rust-toolchain
-    directory: bgs-rs
+    directory: codex-rs
     schedule:
       interval: weekly
     cooldown:

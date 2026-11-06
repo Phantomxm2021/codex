@@ -26,9 +26,9 @@ export type {
 export { Thread } from "./thread";
 export type { RunResult, RunStreamedResult, Input, UserInput } from "./thread";
 
-export { Bgs } from "./bgs";
+export { Codex } from "./codex";
 
-export type { BgsOptions } from "./bgsOptions";
+export type { CodexOptions } from "./codexOptions";
 
 export type {
   ThreadOptions,

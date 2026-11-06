@@ -1,5 +1,5 @@
 [project]
-name = "bgs-python-release-tools"
+name = "codex-python-release-tools"
 version = "0.0.0"
 requires-python = ">=3.10"
 

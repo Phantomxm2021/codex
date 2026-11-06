@@ -28,7 +28,7 @@ def wine_rust_test(
       complete PowerShell runtime.
 
     These are Bazel runfile locations. Resolve binaries with
-    `bgs_utils_cargo_bin::cargo_bin`; `:wine_test_support` resolves the fixed
+    `codex_utils_cargo_bin::cargo_bin`; `:wine_test_support` resolves the fixed
     runtime names and starts each process in an isolated prefix.
 
     Args:

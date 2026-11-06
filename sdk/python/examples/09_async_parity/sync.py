@@ -9,12 +9,12 @@ from _bootstrap import ensure_local_sdk_src, runtime_config, server_label
 
 ensure_local_sdk_src()
 
-from openai_bgs import Bgs
+from openai_codex import Codex
 
-with Bgs(config=runtime_config()) as bgs:
-    print("Server:", server_label(bgs.metadata))
+with Codex(config=runtime_config()) as codex:
+    print("Server:", server_label(codex.metadata))
 
-    thread = bgs.thread_start(model="gpt-5.4", config={"model_reasoning_effort": "high"})
+    thread = codex.thread_start(model="gpt-5.4", config={"model_reasoning_effort": "high"})
     turn = thread.turn("Say hello in one sentence.")
     result = turn.run()
 
