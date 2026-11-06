@@ -9,12 +9,6 @@ use codex_extension_api::ExtensionData;
 use codex_extension_api::ExtensionEventSink;
 use codex_extension_api::ExtensionFuture;
 use codex_extension_api::ExtensionRegistryBuilder;
-use codex_extension_api::ModelRequestContributor;
-use codex_extension_api::ModelRequestInput;
-use codex_extension_api::ModelRequestKind;
-use codex_extension_api::ModelResponseInterceptor;
-use codex_extension_api::ModelResponseStream;
-use codex_extension_api::ResponseEvent;
 use codex_extension_api::ThreadIdleInput;
 use codex_extension_api::ThreadLifecycleContributor;
 use codex_extension_api::ThreadResumeInput;
@@ -41,12 +35,9 @@ use codex_protocol::protocol::SessionSource;
 use codex_protocol::protocol::SubAgentSource;
 use codex_protocol::protocol::ThreadGoalStatus;
 use codex_protocol::protocol::TokenUsageInfo;
-use futures::StreamExt;
-use tokio::sync::watch;
 
 use crate::accounting::BudgetLimitedGoalDisposition;
 use crate::accounting::GoalAccountingState;
-use crate::accounting::GoalRequestUsage;
 use crate::analytics::GoalAnalytics;
 use crate::api::GoalService;
 use crate::events::GoalEventEmitter;
@@ -101,66 +92,6 @@ impl<C> GoalExtension<C> {
             goal_service,
             goal_config: Arc::new(goal_config),
         }
-    }
-}
-
-struct GoalModelRequest {
-    usage: watch::Sender<GoalRequestUsage>,
-    completed: bool,
-}
-
-impl Drop for GoalModelRequest {
-    fn drop(&mut self) {
-        if !self.completed {
-            self.usage.send_replace(GoalRequestUsage::Failed);
-        }
-    }
-}
-
-impl ModelResponseInterceptor for GoalModelRequest {
-    fn intercept(self: Box<Self>, stream: ModelResponseStream) -> ModelResponseStream {
-        Box::pin(futures::stream::unfold(
-            (self, stream),
-            |(mut request, mut stream)| async move {
-                let event = stream.next().await?;
-                match &event {
-                    Ok(ResponseEvent::Completed { token_usage, .. }) => {
-                        request.completed = true;
-                        if token_usage.is_none() {
-                            // No new receipt: mutations may use the last known count.
-                            request.usage.send_replace(GoalRequestUsage::Complete);
-                        }
-                    }
-                    Err(_) => {
-                        request.usage.send_replace(GoalRequestUsage::Failed);
-                    }
-                    _ => {}
-                }
-                Some((event, (request, stream)))
-            },
-        ))
-    }
-}
-
-impl<C> ModelRequestContributor for GoalExtension<C>
-where
-    C: Send + Sync + 'static,
-{
-    fn request(&self, input: ModelRequestInput<'_>) -> Option<Box<dyn ModelResponseInterceptor>> {
-        if input.kind != ModelRequestKind::Generation {
-            return None;
-        }
-        // Requests outside registered persisted threads do not have Goal accounting.
-        let thread_id = ThreadId::from_string(input.thread_id).ok()?;
-        let runtime = self.goal_service.runtime_for_thread(thread_id)?;
-        if !runtime.is_enabled() {
-            return None;
-        }
-        let usage = runtime.accounting_state().begin_model_request()?;
-        Some(Box::new(GoalModelRequest {
-            usage,
-            completed: false,
-        }))
     }
 }
 
@@ -538,11 +469,9 @@ where
             if let Some(root_accounting_state) = runtime.root_accounting_state() {
                 root_accounting_state.record_descendant_token_usage(&token_usage.last_token_usage);
             }
-            let accounting = runtime.accounting_state();
-            let _ = accounting
+            let _ = runtime
+                .accounting_state()
                 .record_token_usage(turn_store.level_id(), &token_usage.total_token_usage);
-            // Release mutations after their generating response enters the token baseline.
-            accounting.finish_model_request(turn_store.level_id());
         })
     }
 }
@@ -705,7 +634,6 @@ pub fn install_with_backend<C>(
     registry.config_contributor(extension.clone());
     registry.turn_lifecycle_contributor(extension.clone());
     registry.token_usage_contributor(extension.clone());
-    registry.model_request_contributor(extension.clone());
     registry.tool_lifecycle_contributor(extension.clone());
     registry.tool_contributor(extension);
 }

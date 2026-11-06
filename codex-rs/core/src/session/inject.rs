@@ -11,7 +11,6 @@ use codex_protocol::models::AudioReference;
 use codex_protocol::models::ContentItem;
 use codex_protocol::models::ResponseItem;
 use codex_protocol::openai_models::ModelInfo;
-use codex_protocol::protocol::AdditionalContextKind;
 
 /// Uploaded files need the admission checks on typed turn input before entering history.
 pub(crate) fn validate_injected_response_item(item: &ResponseItem) -> CodexResult<()> {
@@ -135,21 +134,6 @@ impl Session {
         });
 
         ResponseItemEnvelope { item, metadata }
-    }
-
-    pub(crate) fn annotate_additional_context_item(
-        &self,
-        item: ResponseItem,
-        kind: AdditionalContextKind,
-    ) -> ResponseItemEnvelope {
-        let mut envelope = self.annotate_client_response_item(item);
-        if matches!(kind, AdditionalContextKind::Application) {
-            envelope
-                .metadata
-                .get_or_insert_default()
-                .additional_context_application = true;
-        }
-        envelope
     }
 
     pub(crate) async fn record_annotated_conversation_items(

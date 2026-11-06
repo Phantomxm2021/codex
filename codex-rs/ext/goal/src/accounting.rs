@@ -15,7 +15,6 @@ use std::time::Duration;
 use std::time::Instant;
 use tokio::sync::Semaphore;
 use tokio::sync::SemaphorePermit;
-use tokio::sync::watch;
 
 #[derive(Debug)]
 pub(crate) struct GoalAccountingState {
@@ -46,20 +45,11 @@ struct GoalTurnAccounting {
     current_token_usage: TokenUsage,
     last_accounted_token_usage: TokenUsage,
     active_goal_id: Option<String>,
-    // Goal mutations wait until core has recorded this request's terminal usage.
-    request_usage: Option<watch::Sender<GoalRequestUsage>>,
     account_tokens: bool,
     failed_execution: bool,
     successful_tool: bool,
     empty_final: bool,
     has_activity: bool,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum GoalRequestUsage {
-    Pending,
-    Complete,
-    Failed,
 }
 
 #[derive(Debug)]
@@ -118,54 +108,6 @@ impl GoalAccountingState {
                 !matches!(collaboration_mode, ModeKind::Plan),
             ),
         );
-    }
-
-    pub(crate) fn begin_model_request(&self) -> Option<watch::Sender<GoalRequestUsage>> {
-        let mut inner = self.inner();
-        let turn_id = inner.current_turn_id.clone()?;
-        let turn = inner.turns.get_mut(&turn_id)?;
-        let (usage, _) = watch::channel(GoalRequestUsage::Pending);
-        turn.request_usage = Some(usage.clone());
-        Some(usage)
-    }
-
-    pub(crate) fn finish_model_request(&self, turn_id: &str) {
-        let mut inner = self.inner();
-        if let Some(turn) = inner.turns.get_mut(turn_id)
-            && let Some(usage) = turn.request_usage.take()
-        {
-            usage.send_replace(GoalRequestUsage::Complete);
-        }
-    }
-
-    pub(crate) async fn wait_for_model_request_usage(&self) -> Result<(), &'static str> {
-        let usage = {
-            let inner = self.inner();
-            inner
-                .current_turn_id
-                .as_ref()
-                .and_then(|turn_id| inner.turns.get(turn_id))
-                .and_then(|turn| turn.request_usage.as_ref())
-                .map(watch::Sender::subscribe)
-        };
-        let Some(mut usage) = usage else {
-            return Ok(());
-        };
-        loop {
-            let state = *usage.borrow_and_update();
-            match state {
-                GoalRequestUsage::Complete => return Ok(()),
-                GoalRequestUsage::Failed => {
-                    return Err(
-                        "Goal was not changed because its model response failed or was cancelled",
-                    );
-                }
-                GoalRequestUsage::Pending => usage
-                    .changed()
-                    .await
-                    .map_err(|_| "Goal response usage channel closed before completion")?,
-            }
-        }
     }
 
     pub(crate) fn current_turn_id(&self) -> Option<String> {
@@ -535,11 +477,6 @@ impl GoalAccountingState {
 
     pub(crate) fn interrupt_turn(&self, turn_id: &str) {
         let mut inner = self.inner();
-        if let Some(turn) = inner.turns.get_mut(turn_id)
-            && let Some(usage) = turn.request_usage.take()
-        {
-            usage.send_replace(GoalRequestUsage::Failed);
-        }
         if inner.current_turn_id.as_deref() == Some(turn_id) {
             // Abort can run on the submission loop: defer evaluation until idle so
             // it never waits for the goal-state permit held by automatic admission.
@@ -552,11 +489,7 @@ impl GoalAccountingState {
 
     pub(crate) fn finish_turn(&self, turn_id: &str) {
         let mut inner = self.inner();
-        if let Some(turn) = inner.turns.remove(turn_id)
-            && let Some(usage) = turn.request_usage
-        {
-            usage.send_replace(GoalRequestUsage::Failed);
-        }
+        inner.turns.remove(turn_id);
         if inner.current_turn_id.as_deref() == Some(turn_id) {
             inner.current_turn_id = None;
         }
@@ -675,7 +608,6 @@ impl GoalTurnAccounting {
             last_accounted_token_usage: current_token_usage.clone(),
             current_token_usage,
             active_goal_id: None,
-            request_usage: None,
             account_tokens,
             failed_execution: false,
             successful_tool: false,

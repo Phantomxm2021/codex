@@ -114,10 +114,7 @@ pub fn model_info_from_slug(slug: &str) -> ModelInfo {
         availability_nux: None,
         upgrade: None,
         model_messages: Some(local_model_messages()),
-        // The local fallback instructions do not contain the model-specific
-        // Skill guidance that known model templates may carry. Keep the
-        // catalog self-describing for unknown/BYOK model slugs.
-        include_skills_usage_instructions: true,
+        include_skills_usage_instructions: false,
         include_plugin_usage_instructions: false,
         include_apps_usage_instructions: false,
         supports_reasoning_summary_parameter: true,
