@@ -150,8 +150,8 @@ where
         if input.kind != ModelRequestKind::Generation {
             return None;
         }
-        let thread_id =
-            ThreadId::from_string(input.thread_id).expect("host thread id must be valid");
+        // Requests outside registered persisted threads do not have Goal accounting.
+        let thread_id = ThreadId::from_string(input.thread_id).ok()?;
         let runtime = self.goal_service.runtime_for_thread(thread_id)?;
         if !runtime.is_enabled() {
             return None;
@@ -539,7 +539,8 @@ where
                 root_accounting_state.record_descendant_token_usage(&token_usage.last_token_usage);
             }
             let accounting = runtime.accounting_state();
-            accounting.record_token_usage(turn_store.level_id(), &token_usage.total_token_usage);
+            let _ = accounting
+                .record_token_usage(turn_store.level_id(), &token_usage.total_token_usage);
             // Release mutations after their generating response enters the token baseline.
             accounting.finish_model_request(turn_store.level_id());
         })
