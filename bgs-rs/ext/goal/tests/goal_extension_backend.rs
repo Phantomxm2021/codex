@@ -14,7 +14,12 @@ use bgs_extension_api::ExtensionEventSink;
 use bgs_extension_api::ExtensionRegistryBuilder;
 use bgs_extension_api::ExtensionWarning;
 use bgs_extension_api::FunctionCallError;
+use bgs_extension_api::ModelRequestInput;
+use bgs_extension_api::ModelRequestKind;
+use bgs_extension_api::ModelResponseError;
+use bgs_extension_api::ModelResponseStream;
 use bgs_extension_api::NoopTurnItemEmitter;
+use bgs_extension_api::ResponseEvent;
 use bgs_extension_api::ThreadResumeInput;
 use bgs_extension_api::ThreadStartInput;
 use bgs_extension_api::ThreadStopInput;
@@ -48,9 +53,300 @@ use bgs_protocol::protocol::ThreadGoalStatus;
 use bgs_protocol::protocol::TokenUsage;
 use bgs_protocol::protocol::TokenUsageInfo;
 use bgs_protocol::protocol::TruncationPolicy;
+use futures::StreamExt;
 use pretty_assertions::assert_eq;
 use serde_json::json;
 use tempfile::TempDir;
+
+#[tokio::test]
+async fn goal_mutation_waits_for_its_response_usage_in_both_orders_and_sources()
+-> anyhow::Result<()> {
+    for usage_first in [false, true] {
+        for code_mode in [false, true] {
+            for status in ["complete", "paused", "blocked"] {
+                let runtime = test_runtime().await?;
+                let thread_id = test_thread_id()?;
+                seed_thread_metadata(runtime.as_ref(), thread_id).await?;
+                let harness = GoalExtensionHarness::new(runtime.clone(), thread_id).await?;
+                harness.start_turn("turn-1", &TokenUsage::default()).await;
+                let tools = harness.tools();
+                tool_by_name(&tools, "create_goal")
+                    .handle(tool_call(
+                        "create_goal",
+                        "create",
+                        json!({"objective":"finish fixture"}),
+                    ))
+                    .await?;
+                let mut response = harness.model_request(Box::pin(futures::stream::iter([Ok(
+                    completed_usage(Some(input_token_usage(48))),
+                )])));
+                let mut call = tool_call("update_goal", "complete", json!({"status":status}));
+                if code_mode {
+                    call.source = ToolCallSource::CodeMode {
+                        cell_id: "fixture-cell".into(),
+                        runtime_tool_call_id: "fixture-call".into(),
+                    };
+                }
+                if usage_first {
+                    assert!(response.next().await.expect("terminal response").is_ok());
+                    harness
+                        .record_token_usage("turn-1", &input_token_usage(48))
+                        .await;
+                }
+                let mut update = Box::pin(tool_by_name(&tools, "update_goal").handle(call.clone()));
+                if !usage_first {
+                    assert!(
+                        tokio::time::timeout(Duration::from_millis(25), update.as_mut())
+                            .await
+                            .is_err()
+                    );
+                    assert_eq!(
+                        bgs_state::ThreadGoalStatus::Active,
+                        runtime
+                            .thread_goals()
+                            .get_thread_goal(thread_id)
+                            .await?
+                            .expect("goal")
+                            .status
+                    );
+                }
+                if !usage_first {
+                    assert!(response.next().await.expect("terminal response").is_ok());
+                    // Native must record the usage before the mutation proceeds.
+                    assert!(
+                        tokio::time::timeout(Duration::from_millis(25), update.as_mut())
+                            .await
+                            .is_err()
+                    );
+                    harness
+                        .record_token_usage("turn-1", &input_token_usage(48))
+                        .await;
+                }
+                let output = tokio::time::timeout(Duration::from_secs(1), update).await??;
+                let result = output.code_mode_result(&call.payload);
+                assert_eq!(json!(48), result["goal"]["tokensUsed"]);
+                assert_eq!(json!(status), result["goal"]["status"]);
+                drop(response);
+                // A duplicate checkpoint and the later final answer cannot charge this goal again.
+                harness
+                    .record_token_usage("turn-1", &input_token_usage(48))
+                    .await;
+                let mut final_answer =
+                    harness.model_request(Box::pin(futures::stream::iter([Ok(completed_usage(
+                        Some(input_token_usage(48)),
+                    ))])));
+                assert!(final_answer.next().await.expect("final response").is_ok());
+                harness
+                    .record_token_usage("turn-1", &input_token_usage(96))
+                    .await;
+                harness.stop_turn("turn-1").await;
+                let goal = runtime
+                    .thread_goals()
+                    .get_thread_goal(thread_id)
+                    .await?
+                    .expect("goal");
+                assert_eq!(48, goal.tokens_used);
+            }
+        }
+    }
+    Ok(())
+}
+
+#[tokio::test]
+async fn goal_mutation_exits_on_failed_or_cancelled_response_and_allows_missing_usage()
+-> anyhow::Result<()> {
+    for end in ["eof", "error", "drop", "cancel", "missing-usage"] {
+        let runtime = test_runtime().await?;
+        let thread_id = test_thread_id()?;
+        seed_thread_metadata(runtime.as_ref(), thread_id).await?;
+        let harness = GoalExtensionHarness::new(runtime.clone(), thread_id).await?;
+        harness.start_turn("turn-1", &TokenUsage::default()).await;
+        let tools = harness.tools();
+        tool_by_name(&tools, "create_goal")
+            .handle(tool_call(
+                "create_goal",
+                "create",
+                json!({"objective":"finish fixture"}),
+            ))
+            .await?;
+        let stream: ModelResponseStream = match end {
+            "eof" => Box::pin(futures::stream::empty()),
+            "error" => Box::pin(futures::stream::iter([Err(ModelResponseError::Stream(
+                "fixture disconnect".into(),
+            ))])),
+            "missing-usage" => Box::pin(futures::stream::iter([Ok(completed_usage(None))])),
+            _ => Box::pin(futures::stream::pending()),
+        };
+        let mut response = harness.model_request(stream);
+        let call = tool_call("update_goal", "complete", json!({"status":"complete"}));
+        let mut update = Box::pin(tool_by_name(&tools, "update_goal").handle(call));
+        assert!(
+            tokio::time::timeout(Duration::from_millis(25), update.as_mut())
+                .await
+                .is_err()
+        );
+        match end {
+            "drop" => drop(response),
+            "cancel" => {
+                let turn_store = ExtensionData::new("turn-1");
+                for contributor in harness.registry.turn_lifecycle_contributors() {
+                    contributor
+                        .on_turn_abort(bgs_extension_api::TurnAbortInput {
+                            reason: bgs_protocol::protocol::TurnAbortReason::Interrupted,
+                            session_store: &harness.session_store,
+                            thread_store: &harness.thread_store,
+                            turn_store: &turn_store,
+                        })
+                        .await;
+                }
+                drop(response);
+            }
+            _ => {
+                let _ = response.next().await;
+            }
+        }
+        let result = tokio::time::timeout(Duration::from_secs(1), update).await?;
+        if end == "missing-usage" {
+            assert!(result.is_ok());
+        } else {
+            assert!(result.is_err());
+        }
+        let goal = runtime
+            .thread_goals()
+            .get_thread_goal(thread_id)
+            .await?
+            .expect("goal");
+        assert_eq!(0, goal.tokens_used);
+        assert_eq!(
+            if end == "missing-usage" {
+                bgs_state::ThreadGoalStatus::Complete
+            } else {
+                bgs_state::ThreadGoalStatus::Active
+            },
+            goal.status
+        );
+    }
+    Ok(())
+}
+
+#[tokio::test]
+async fn pending_goal_update_cannot_mutate_a_replacement_goal() -> anyhow::Result<()> {
+    let runtime = test_runtime().await?;
+    let thread_id = test_thread_id()?;
+    seed_thread_metadata(runtime.as_ref(), thread_id).await?;
+    let harness = GoalExtensionHarness::new(runtime.clone(), thread_id).await?;
+    harness.start_turn("turn-1", &TokenUsage::default()).await;
+    let tools = harness.tools();
+    tool_by_name(&tools, "create_goal")
+        .handle(tool_call(
+            "create_goal",
+            "create",
+            json!({"objective":"old scope"}),
+        ))
+        .await?;
+    let mut response = harness.model_request(Box::pin(futures::stream::iter([Ok(
+        completed_usage(Some(input_token_usage(48))),
+    )])));
+    let mut update = Box::pin(tool_by_name(&tools, "update_goal").handle(tool_call(
+        "update_goal",
+        "complete",
+        json!({"status":"complete"}),
+    )));
+    assert!(
+        tokio::time::timeout(Duration::from_millis(25), update.as_mut())
+            .await
+            .is_err()
+    );
+    harness
+        .goal_service
+        .clear_thread_goal(runtime.as_ref(), thread_id, std::future::ready(Ok(())))
+        .await?;
+    let outcome = harness
+        .goal_service
+        .set_thread_goal(
+            runtime.as_ref(),
+            GoalSetRequest {
+                thread_id,
+                objective: GoalObjectiveUpdate::Set("new scope"),
+                status: Some(ThreadGoalStatus::Active),
+                token_budget: GoalTokenBudgetUpdate::Keep,
+                max_goal_token_budget: None,
+            },
+            std::future::ready(Ok(())),
+        )
+        .await?;
+    outcome.apply_runtime_effects(&harness.goal_service).await;
+    assert!(response.next().await.expect("terminal").is_ok());
+    harness
+        .record_token_usage("turn-1", &input_token_usage(48))
+        .await;
+    assert!(
+        tokio::time::timeout(Duration::from_secs(1), update)
+            .await?
+            .is_err()
+    );
+    let goal = runtime
+        .thread_goals()
+        .get_thread_goal(thread_id)
+        .await?
+        .expect("replacement goal");
+    assert_eq!("new scope", goal.objective);
+    assert_eq!(bgs_state::ThreadGoalStatus::Active, goal.status);
+    assert_eq!(0, goal.tokens_used);
+    Ok(())
+}
+
+#[tokio::test]
+async fn goal_creation_baseline_excludes_its_generating_response() -> anyhow::Result<()> {
+    let runtime = test_runtime().await?;
+    let thread_id = test_thread_id()?;
+    seed_thread_metadata(runtime.as_ref(), thread_id).await?;
+    let harness = GoalExtensionHarness::new(runtime.clone(), thread_id).await?;
+    harness.start_turn("turn-1", &TokenUsage::default()).await;
+    let tools = harness.tools();
+    let mut response = harness.model_request(Box::pin(futures::stream::iter([Ok(
+        completed_usage(Some(input_token_usage(48))),
+    )])));
+    let call = tool_call("create_goal", "create", json!({"objective":"new scope"}));
+    let mut create = Box::pin(tool_by_name(&tools, "create_goal").handle(call.clone()));
+    assert!(
+        tokio::time::timeout(Duration::from_millis(25), create.as_mut())
+            .await
+            .is_err()
+    );
+    assert!(response.next().await.expect("terminal").is_ok());
+    harness
+        .record_token_usage("turn-1", &input_token_usage(48))
+        .await;
+    let output = tokio::time::timeout(Duration::from_secs(1), create).await??;
+    assert_eq!(
+        json!(0),
+        output.code_mode_result(&call.payload)["goal"]["tokensUsed"]
+    );
+    harness
+        .record_token_usage("turn-1", &input_token_usage(96))
+        .await;
+    harness.stop_turn("turn-1").await;
+    assert_eq!(
+        48,
+        runtime
+            .thread_goals()
+            .get_thread_goal(thread_id)
+            .await?
+            .expect("goal")
+            .tokens_used
+    );
+    Ok(())
+}
+
+fn completed_usage(token_usage: Option<TokenUsage>) -> ResponseEvent {
+    ResponseEvent::Completed {
+        response_id: "fixture-response".into(),
+        token_usage,
+        usage_metadata: None,
+        end_turn: None,
+    }
+}
 
 #[tokio::test]
 async fn installed_goal_tools_create_goal_and_fill_empty_preview() -> anyhow::Result<()> {
@@ -1792,6 +2088,19 @@ impl GoalExtensionHarness {
             goal_service: Arc::clone(&self.goal_service),
             sink: Arc::clone(&self.sink),
         })
+    }
+
+    fn model_request(&self, upstream: ModelResponseStream) -> ModelResponseStream {
+        let mut metadata = None;
+        self.registry.model_request_contributors()[0]
+            .request(ModelRequestInput {
+                kind: ModelRequestKind::Generation,
+                thread_id: self.thread_store.level_id(),
+                client_metadata: &mut metadata,
+                model: "fixture",
+            })
+            .expect("goal request contributor")
+            .intercept(upstream)
     }
 
     fn tools(&self) -> Vec<Arc<dyn for<'call> ToolExecutor<ToolCall<'call>>>> {

@@ -24,6 +24,7 @@ bgs-rollout = { workspace = true }
 bgs-state = { workspace = true }
 bgs-tools = { workspace = true }
 bgs-utils-template = { workspace = true }
+futures = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 tokio = { workspace = true, features = ["sync"] }

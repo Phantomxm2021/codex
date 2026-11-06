@@ -3631,6 +3631,7 @@ dependencies = [
  "bgs-utils-absolute-path",
  "bgs-utils-template",
  "pretty_assertions",
+ "futures",
  "serde",
  "serde_json",
  "tempfile",

@@ -213,6 +213,11 @@ impl GoalToolExecutor {
         validate_goal_budget(request.token_budget, self.max_goal_token_budget)
             .map_err(FunctionCallError::RespondToModel)?;
 
+        self.accounting_state
+            .wait_for_model_request_usage()
+            .await
+            .map_err(|message| FunctionCallError::RespondToModel(message.to_string()))?;
+
         let goal = self
             .state_db
             .thread_goals()
@@ -259,6 +264,25 @@ impl GoalToolExecutor {
             ));
         }
 
+        // Waiting for usage permits external clear/replacement. Keep the original scope.
+        let expected_goal_id = self
+            .state_db
+            .thread_goals()
+            .get_thread_goal(self.thread_id)
+            .await
+            .map_err(|err| {
+                FunctionCallError::RespondToModel(format!("failed to read goal: {err}"))
+            })?
+            .ok_or_else(|| {
+                FunctionCallError::RespondToModel(
+                    "cannot update goal because this thread has no goal".to_string(),
+                )
+            })?
+            .goal_id;
+        self.accounting_state
+            .wait_for_model_request_usage()
+            .await
+            .map_err(|message| FunctionCallError::RespondToModel(message.to_string()))?;
         self.account_active_goal_progress(
             match args.status {
                 ThreadGoalStatus::Complete => bgs_state::GoalAccountingMode::ActiveOrComplete,
@@ -271,6 +295,7 @@ impl GoalToolExecutor {
             },
             invocation.call_id.as_str(),
             BudgetLimitedGoalDisposition::ClearActive,
+            expected_goal_id.as_str(),
         )
         .await?;
         let previous_status = self
@@ -285,7 +310,7 @@ impl GoalToolExecutor {
                     objective: None,
                     status: Some(state_status_from_protocol(args.status)),
                     token_budget: None,
-                    expected_goal_id: None,
+                    expected_goal_id: Some(expected_goal_id),
                 },
             )
             .await
@@ -332,6 +357,7 @@ impl GoalToolExecutor {
         mode: bgs_state::GoalAccountingMode,
         event_id: &str,
         budget_limited_goal_disposition: BudgetLimitedGoalDisposition,
+        expected_goal_id: &str,
     ) -> Result<Option<ThreadGoal>, FunctionCallError> {
         let Some(turn_id) = self.accounting_state.current_turn_id() else {
             return Ok(None);
@@ -348,6 +374,11 @@ impl GoalToolExecutor {
         let Some(snapshot) = self.accounting_state.progress_snapshot(turn_id.as_str()) else {
             return Ok(None);
         };
+        if snapshot.expected_goal_id != expected_goal_id {
+            return Err(FunctionCallError::RespondToModel(
+                "Goal changed while waiting for response usage; no status was changed".to_string(),
+            ));
+        }
         let previous_status = self
             .current_goal_status_for_metrics(Some(snapshot.expected_goal_id.as_str()))
             .await?;
