@@ -2170,7 +2170,7 @@ foo = "xyzzy"
             .join("PhantomLab")
             .join("BGS");
         assert_eq!(windows_codex_system_dir(), expected);
-        assert!(windows_codex_system_dir().ends_with(Path::new("OpenAI").join("BGS")));
+        assert!(windows_codex_system_dir().ends_with(Path::new("PhantomLab").join("BGS")));
     }
 
     #[cfg(windows)]
@@ -2191,7 +2191,7 @@ foo = "xyzzy"
             windows_system_config_toml_file()
                 .expect("config.toml path")
                 .as_path()
-                .ends_with(Path::new("OpenAI").join("BGS").join("config.toml"))
+                .ends_with(Path::new("PhantomLab").join("BGS").join("config.toml"))
         );
     }
 }
