@@ -16,7 +16,7 @@ impl TestCodexExecBuilder {
         );
         cmd.current_dir(self.cwd.path())
             .env("BGS_HOME", self.home.path())
-            .env("CODEX_SQLITE_HOME", self.home.path())
+            .env("BGS_SQLITE_HOME", self.home.path())
             .env(CODEX_API_KEY_ENV_VAR, "dummy");
         cmd
     }

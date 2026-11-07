@@ -48,7 +48,7 @@ use std::os::unix::fs::OpenOptionsExt;
 #[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
 
-/// Filename that stores the message history inside `~/.codex`.
+/// Filename that stores the message history inside `~/.bgs`.
 const HISTORY_FILENAME: &str = "history.jsonl";
 const HISTORY_READ_BUFFER_SIZE: usize = 8192;
 

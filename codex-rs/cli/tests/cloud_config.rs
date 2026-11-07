@@ -496,7 +496,7 @@ async fn startup_config_loads_managed_policy_or_reports_cloud_failure() -> Resul
         std::fs::write(&history_path, b"history must not be repaired")?;
         let output = fixture
             .command(&["app-server", "--print-startup-config"])?
-            .env("CODEX_SQLITE_HOME", sqlite_home.path())
+            .env("BGS_SQLITE_HOME", sqlite_home.path())
             .env(
                 "CODEX_REFRESH_TOKEN_URL_OVERRIDE",
                 format!("{}/refresh", fixture.server.uri()),
@@ -569,7 +569,7 @@ async fn startup_config_sign_out_reloads_policy_without_starting_runtime() -> Re
         let value = successful_json(
             fixture
                 .command(&["app-server", "--print-startup-config", "--startup-sign-out"])?
-                .env("CODEX_SQLITE_HOME", sqlite_home.path())
+                .env("BGS_SQLITE_HOME", sqlite_home.path())
                 .env(
                     "CODEX_REVOKE_TOKEN_URL_OVERRIDE",
                     format!("{}/revoke", fixture.server.uri()),

@@ -343,7 +343,7 @@ fn prepare_aliases_in_home(
     existing_path: Option<OsString>,
 ) -> std::io::Result<(Arg0PathEntryGuard, OsString)> {
     std::fs::create_dir_all(codex_home)?;
-    // Windows and WSL can share CODEX_HOME without sharing a lock namespace.
+    // Windows and WSL can share BGS_HOME without sharing a lock namespace.
     // Keep each OS outside the legacy `tmp/arg0` root so older clients cannot
     // delete these helpers while their owning process is still running.
     let temp_root = codex_home

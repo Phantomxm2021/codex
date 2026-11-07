@@ -248,7 +248,7 @@ trust_level = "trusted"
     );
     let mut env: HashMap<String, String> = std::env::vars().collect();
     env.insert("BGS_HOME".into(), home.display().to_string());
-    env.insert("CODEX_SQLITE_HOME".into(), home.display().to_string());
+    env.insert("BGS_SQLITE_HOME".into(), home.display().to_string());
     env.insert("NO_PROXY".into(), "127.0.0.1,localhost".into());
     env.insert("no_proxy".into(), "127.0.0.1,localhost".into());
     env.insert("TERM".into(), "xterm-256color".into());

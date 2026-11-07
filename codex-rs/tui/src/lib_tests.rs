@@ -739,7 +739,7 @@ fn resolve_remote_addr_accepts_secure_websocket_url() {
 
 #[test]
 fn resolve_remote_addr_accepts_default_socket() -> color_eyre::Result<()> {
-    let codex_home = find_codex_home().wrap_err("failed to resolve CODEX_HOME")?;
+    let codex_home = find_codex_home().wrap_err("failed to resolve BGS_HOME")?;
     assert_eq!(
         resolve_remote_addr("unix://")?,
         RemoteAppServerEndpoint::UnixSocket {

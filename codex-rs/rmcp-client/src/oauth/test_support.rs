@@ -29,7 +29,7 @@ pub(crate) async fn warm_http_client(
     Ok(())
 }
 
-/// Serializes tests that mutate process-wide CODEX_HOME.
+/// Serializes tests that mutate process-wide BGS_HOME.
 ///
 /// Keep OAuth tests on this one guard instead of defining per-module helpers; otherwise
 /// concurrently running test modules can point File/Secrets storage at different homes.

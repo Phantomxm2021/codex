@@ -17,7 +17,7 @@ use owo_colors::OwoColorize;
 #[command(name = "codex-state-logs")]
 #[command(about = "Tail Codex logs from the dedicated logs SQLite DB with simple filters")]
 struct Args {
-    /// Path to CODEX_HOME. Defaults to $CODEX_HOME or ~/.codex.
+    /// Path to BGS_HOME. Defaults to $BGS_HOME or ~/.bgs.
     #[arg(long, env = "BGS_HOME")]
     codex_home: Option<PathBuf>,
 

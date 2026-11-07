@@ -40,7 +40,7 @@ Settings:
 
     User authorization and preferences persist across turns. Do not request permission again when the user h... any guidelines provided in skills or external files. [hash=911f91c92c72882c]
 
-    <OMITTED 155 LINES; ~4935 TOKENS; hash=31ec21804b115fbf>
+    <OMITTED 155 LINES; ~4934 TOKENS; hash=7a0d27318dead726>
 
     - Skill naming: If a plugin contributes skills, those skill entries are prefixed with plugin_name: in the Skills list.
     - MCP naming: Plugin-provided MCP tools keep standard MCP identifiers such as mcp__server__tool; use tool provenance to tell which plugin they come from.
@@ -62,7 +62,7 @@ Settings:
         - imagegen: Generate or edit raster images when the task benefits from AI-created bitmap visuals such as...ctly in HTML/CSS/canvas. (file: r1/imagegen/SKILL.md) [hash=dcccaed407aafb03]
         - openai-docs: Use for Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, ...merely mention Codex. (file: r1/openai-docs/SKILL.md) [hash=1c1693bbc4dfd0f7]
         - skill-creator: Create or update a Codex skill with appropriately scoped instructions and any needed supporting resources. (file: r1/skill-creator/SKILL.md)
-        - skill-installer: Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo pat...g private repos). (file: r1/skill-installer/SKILL.md) [hash=80e87da510d34d88]
+        - skill-installer: Install Codex skills into $BGS_HOME/skills from a curated list or a GitHub repo path....g private repos). (file: r1/skill-installer/SKILL.md) [hash=e88a2ec2a2f6211b]
         - browser-testing: Run browser tests for web applications. (file: r0/browser-testing/SKILL.md)
         - code-review: Review code changes for correctness. (file: r0/code-review/SKILL.md)
         - release-notes: Draft release notes from recent commits. (file: r0/release-notes/SKILL.md)
@@ -184,7 +184,7 @@ Settings: same as window 1
 
     User authorization and preferences persist across turns. Do not request permission again when the user h... any guidelines provided in skills or external files. [hash=911f91c92c72882c]
 
-    <OMITTED 155 LINES; ~4935 TOKENS; hash=31ec21804b115fbf>
+    <OMITTED 155 LINES; ~4934 TOKENS; hash=7a0d27318dead726>
 
     - Skill naming: If a plugin contributes skills, those skill entries are prefixed with plugin_name: in the Skills list.
     - MCP naming: Plugin-provided MCP tools keep standard MCP identifiers such as mcp__server__tool; use tool provenance to tell which plugin they come from.
@@ -216,7 +216,7 @@ Settings: same as window 1
         - imagegen: Generate or edit raster images when the task benefits from AI-created bitmap visuals such as...ctly in HTML/CSS/canvas. (file: r1/imagegen/SKILL.md) [hash=dcccaed407aafb03]
         - openai-docs: Use for Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, ...merely mention Codex. (file: r1/openai-docs/SKILL.md) [hash=1c1693bbc4dfd0f7]
         - skill-creator: Create or update a Codex skill with appropriately scoped instructions and any needed supporting resources. (file: r1/skill-creator/SKILL.md)
-        - skill-installer: Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo pat...g private repos). (file: r1/skill-installer/SKILL.md) [hash=80e87da510d34d88]
+        - skill-installer: Install Codex skills into $BGS_HOME/skills from a curated list or a GitHub repo path....g private repos). (file: r1/skill-installer/SKILL.md) [hash=e88a2ec2a2f6211b]
         - code-review: Review code changes for correctness. (file: r0/code-review/SKILL.md)
         - incident-summary: Summarize incidents and follow-up actions. (file: r0/incident-summary/SKILL.md)
         - release-notes: Draft release notes grouped by feature and bug fix. (file: r0/release-notes/SKILL.md)
@@ -319,7 +319,7 @@ Settings: same as window 1
 
     User authorization and preferences persist across turns. Do not request permission again when the user h... any guidelines provided in skills or external files. [hash=911f91c92c72882c]
 
-    <OMITTED 155 LINES; ~4935 TOKENS; hash=31ec21804b115fbf>
+    <OMITTED 155 LINES; ~4934 TOKENS; hash=7a0d27318dead726>
 
     - Skill naming: If a plugin contributes skills, those skill entries are prefixed with plugin_name: in the Skills list.
     - MCP naming: Plugin-provided MCP tools keep standard MCP identifiers such as mcp__server__tool; use tool provenance to tell which plugin they come from.
@@ -460,7 +460,7 @@ Settings: same as window 1
 
     User authorization and preferences persist across turns. Do not request permission again when the user h... any guidelines provided in skills or external files. [hash=911f91c92c72882c]
 
-    <OMITTED 155 LINES; ~4935 TOKENS; hash=31ec21804b115fbf>
+    <OMITTED 155 LINES; ~4934 TOKENS; hash=7a0d27318dead726>
 
     - Skill naming: If a plugin contributes skills, those skill entries are prefixed with plugin_name: in the Skills list.
     - MCP naming: Plugin-provided MCP tools keep standard MCP identifiers such as mcp__server__tool; use tool provenance to tell which plugin they come from.

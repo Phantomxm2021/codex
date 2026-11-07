@@ -352,7 +352,7 @@ fn lock_sandbox_dir(
     dacl_inheritance: DaclInheritance,
     setup_mode: SetupMode,
 ) -> Result<()> {
-    // ProvisionOnly accepts another user's CODEX_HOME; keep its ACL mutation
+    // ProvisionOnly accepts another user's BGS_HOME; keep its ACL mutation
     // bound to a no-reparse handle without changing interactive setup behavior.
     let directory = match setup_mode {
         SetupMode::Full | SetupMode::InteractiveProvision | SetupMode::ReadAclsOnly => {

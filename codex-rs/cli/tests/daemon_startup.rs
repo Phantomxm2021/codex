@@ -234,7 +234,7 @@ async fn daemon_startup(command: &str) -> Result<()> {
     }
     env.insert("BGS_HOME".into(), home.path().display().to_string());
     env.insert(
-        "CODEX_SQLITE_HOME".into(),
+        "BGS_SQLITE_HOME".into(),
         home.path().display().to_string(),
     );
     env.insert("TERM".into(), "xterm-256color".into());

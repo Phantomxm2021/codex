@@ -10,6 +10,9 @@ The public executable is `bgs`; internal Cargo names and the companion
 
 The runtime reads `BGS_HOME`, defaulting to `~/.bgs`. BeeGameStudio supplies
 an owner-private `.runtime/app/bgs` home. Existing sessions are not rewritten.
+SQLite overrides use `BGS_SQLITE_HOME`; TUI recording uses
+`BGS_TUI_RECORD_SESSION` and `BGS_TUI_SESSION_LOG_PATH`. Their Codex-named
+counterparts are not read. No existing databases or logs are migrated.
 Project configuration uses `.bgs`, system configuration `/etc/bgs`, and macOS
 managed preferences `com.phantomlab.bgs`; Codex configuration is not loaded.
 Protocol fields, MCP metadata, model/service identifiers and third-party plugin
