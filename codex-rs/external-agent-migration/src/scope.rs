@@ -56,10 +56,10 @@ impl MigrationScope {
 
     fn repository(root: PathBuf) -> io::Result<Option<Self>> {
         for relative_path in [
-            ".codex",
-            ".codex/config.toml",
-            ".codex/agents",
-            ".codex/hooks",
+            ".bgs",
+            ".bgs/config.toml",
+            ".bgs/agents",
+            ".bgs/hooks",
             ".agents",
             ".agents/skills",
         ] {

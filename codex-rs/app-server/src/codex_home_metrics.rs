@@ -1,6 +1,6 @@
 //! Measures local session storage once at standalone app-server startup.
 //!
-//! The background scan only visits sessions and archived_sessions under CODEX_HOME.
+//! The background scan only visits sessions and archived_sessions under BGS_HOME.
 //! It sums regular-file lengths without reading file contents or following symlinks.
 //! Incomplete scans emit no samples, and shutdown cancels the scan.
 //! The compression tag reflects the effective startup config, not compression completion.

@@ -103,8 +103,8 @@ async fn root_metadata_symlinks_cannot_reopen_approved_denials() {
     let script = r#"
         set -eu
         if cat /private/reopened/secret >/dev/null 2>&1 ||
-           cat /.codex/secret >/dev/null 2>&1 || cat /.git/secret >/dev/null 2>&1; then exit 21; fi
-        if (printf bad > /.codex/changed) 2>/dev/null; then exit 22; fi
+           cat /.bgs/secret >/dev/null 2>&1 || cat /.git/secret >/dev/null 2>&1; then exit 21; fi
+        if (printf bad > /.bgs/changed) 2>/dev/null; then exit 22; fi
         printf good > /.agents/allowed
         printf good > /tmp/marker
         printf 'root-metadata-denials-held\n'
@@ -125,7 +125,7 @@ async fn root_metadata_symlinks_cannot_reopen_approved_denials() {
 
     let script = r#"
         set -eu
-        printf safe > /.codex/allowed
+        printf safe > /.bgs/allowed
         if cat /.git/secret >/dev/null 2>&1; then exit 23; fi
     "#;
     let output = run(&private_denied, "/private", "/tmp/public", script);
@@ -139,7 +139,7 @@ async fn root_metadata_symlinks_cannot_reopen_approved_denials() {
         set -eu
         rm /private
         ln -s /tmp/public /private
-        cat /.codex/secret
+        cat /.bgs/secret
     "#;
     let output = run(&private_denied, "/real-private", "/private", script);
     assert!(!output.status.success(), "{output:?}");
@@ -154,21 +154,21 @@ async fn root_metadata_symlinks_cannot_reopen_approved_denials() {
         .push(path_entry("/private/reopened", FileSystemAccessMode::Write));
     let script = r#"
         set -eu
-        test "$(cat /.codex/secret)" = private
+        test "$(cat /.bgs/secret)" = private
         if cat /private/sibling >/dev/null 2>&1; then exit 24; fi
     "#;
     let output = run(&reopened, "/private", "/private/reopened", script);
     assert_eq!(output.status.code(), Some(0), "{output:?}");
 
     let output = run(
-        &approved("/.codex/secret"),
+        &approved("/.bgs/secret"),
         "/private",
         "/private/reopened",
         "true",
     );
     assert!(!output.status.success(), "{output:?}");
     assert!(String::from_utf8_lossy(&output.stderr).contains(
-        "cannot enforce sandbox deny-read path /.codex/secret because it crosses writable symlink /.codex"
+        "cannot enforce sandbox deny-read path /.bgs/secret because it crosses writable symlink /.codex"
     ), "{output:?}");
     assert!(output.stdout.is_empty(), "{output:?}");
 }

@@ -336,7 +336,7 @@ mod tests {
             })
             .map(|detail| {
                 detail
-                    .replace(&temp.path().display().to_string(), "CODEX_HOME")
+                    .replace(&temp.path().display().to_string(), "BGS_HOME")
                     .replace('\\', "/")
             })
             .collect::<Vec<_>>()

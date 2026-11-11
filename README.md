@@ -1,104 +1,25 @@
-# BGS CLI
+# BGS runtime
 
-BeeGameStudio's source distribution, maintained by PhantomLab and based on
-[OpenAI Codex](https://github.com/openai/codex). BGS branding is maintained as
-Git commits on the `bgs/0.163.0` branch while official releases remain the update source.
+BGS is a PhantomLab distribution based on OpenAI Codex. LICENSE and NOTICE
+retain upstream attribution. Native execution, Goal accounting, history,
+model metadata and wire protocols follow the selected upstream release.
 
-Build from the parent BeeGameStudio repository:
+Build from BeeGameStudio with `bun run bgs:build`, then `bun run bgs:verify`.
+The public executable is `bgs`; internal Cargo names and the companion
+`codex-code-mode-host` retain upstream names under `codex-rs/`.
 
-```sh
-bun run bgs:build
-bun run bgs:verify
-```
+The runtime reads `BGS_HOME`, defaulting to `~/.bgs`. BeeGameStudio supplies
+an owner-private `.runtime/app/bgs` home. Existing sessions are not rewritten.
+SQLite overrides use `BGS_SQLITE_HOME`; TUI recording uses
+`BGS_TUI_RECORD_SESSION` and `BGS_TUI_SESSION_LOG_PATH`. Their Codex-named
+counterparts are not read. No existing databases or logs are migrated.
+Project configuration uses `.bgs`, system configuration `/etc/bgs`, and macOS
+managed preferences `com.phantomlab.bgs`; Codex configuration is not loaded.
+Protocol fields, MCP metadata, model/service identifiers and third-party plugin
+formats retain upstream names.
 
-The executable is `dist/bgs-runtime/bgs`. See [BGS.md](BGS.md) and the parent
-repository's `docs/bgs-runtime-upgrades.md` for the merge, verification and release
-workflow. Official installers below produce the upstream product, not this BGS build.
-The original [LICENSE](LICENSE) and [NOTICE](NOTICE) are retained.
-
-<details>
-<summary>Upstream documentation (reference)</summary>
-
-<p align="center"><strong>Codex CLI</strong> is a coding agent from OpenAI that runs locally on your computer.
-<p align="center">
-  <img src="https://github.com/openai/codex/blob/main/.github/codex-cli-splash.png" alt="Codex CLI splash" width="80%" />
-</p>
-</br>
-If you want Codex in your code editor (VS Code, Cursor, Windsurf), <a href="https://developers.openai.com/codex/ide">install in your IDE.</a>
-</br>If you want the desktop app experience, run <code>codex app</code> or visit <a href="https://chatgpt.com/codex?app-landing-page=true">the Codex App page</a>.
-</br>If you are looking for the <em>cloud-based agent</em> from OpenAI, <strong>Codex Web</strong>, go to <a href="https://chatgpt.com/codex">chatgpt.com/codex</a>.</p>
-
----
-
-## Quickstart
-
-### Installing and running Codex CLI
-
-Run the following on Mac or Linux to install Codex CLI:
-
-```shell
-curl -fsSL https://chatgpt.com/codex/install.sh | sh
-```
-
-Run the following on Windows to install Codex CLI:
-
-```shell
-powershell -ExecutionPolicy ByPass -c "irm https://chatgpt.com/codex/install.ps1 | iex"
-```
-
-The standalone installers download from `https://releases.openai.com/codex` by default and fall back to GitHub Releases if a metadata or asset download is unavailable. To force GitHub Releases, set `CODEX_INSTALLER_USE_RELEASES_OPENAI_COM` to `false` (`0` and `no` are also accepted):
-
-```shell
-curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_INSTALLER_USE_RELEASES_OPENAI_COM=false sh
-```
-
-```powershell
-$env:CODEX_INSTALLER_USE_RELEASES_OPENAI_COM='false'; irm https://chatgpt.com/codex/install.ps1 | iex
-```
-
-Codex CLI can also be installed via the following package managers:
-
-```shell
-# Install using npm
-npm install -g @openai/codex
-```
-
-```shell
-# Install using Homebrew
-brew install --cask codex
-```
-
-Then simply run `codex` to get started.
-
-<details>
-<summary>You can also go to the <a href="https://github.com/openai/codex/releases/latest">latest GitHub Release</a> and download the appropriate binary for your platform.</summary>
-
-Each GitHub Release contains many executables, but in practice, you likely want one of these:
-
-- macOS
-  - Apple Silicon/arm64: `codex-aarch64-apple-darwin.tar.gz`
-  - x86_64 (older Mac hardware): `codex-x86_64-apple-darwin.tar.gz`
-- Linux
-  - x86_64: `codex-x86_64-unknown-linux-musl.tar.gz`
-  - arm64: `codex-aarch64-unknown-linux-musl.tar.gz`
-
-Each archive contains a single entry with the platform baked into the name (e.g., `codex-x86_64-unknown-linux-musl`), so you likely want to rename it to `codex` after extracting it.
-
-</details>
-
-### Using Codex with your ChatGPT plan
-
-Run `codex` and select **Sign in with ChatGPT**. We recommend signing into your ChatGPT account to use Codex as part of your Plus, Pro, Business, Edu, or Enterprise plan. [Learn more about what's included in your ChatGPT plan](https://help.openai.com/en/articles/11369540-codex-in-chatgpt).
-
-You can also use Codex with an API key, but this requires [additional setup](https://developers.openai.com/codex/auth#sign-in-with-an-api-key).
-
-## Docs
-
-- [**Codex Documentation**](https://developers.openai.com/codex)
-- [**Contributing**](./docs/contributing.md)
-- [**Installing & building**](./docs/install.md)
-- [**Open source fund**](./docs/open-source-fund.md)
-
-This repository is licensed under the [Apache-2.0 License](LICENSE).
-
-</details>
+Official binary self-replacement is disabled for this source-built package.
+Merge upstream into `bgs/source-VERSION`, review its branding/packaging-only
+diff, then run `scripts/brand-bgs.py` to generate the distribution. Do not add
+native behavior patches without explicit user authorization. See the parent
+`docs/bgs-runtime-upgrades.md` for provenance, validation and deployment.

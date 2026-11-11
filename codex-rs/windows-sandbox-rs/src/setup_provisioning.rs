@@ -352,7 +352,7 @@ fn lock_sandbox_dir(
     dacl_inheritance: DaclInheritance,
     setup_mode: SetupMode,
 ) -> Result<()> {
-    // ProvisionOnly accepts another user's CODEX_HOME; keep its ACL mutation
+    // ProvisionOnly accepts another user's BGS_HOME; keep its ACL mutation
     // bound to a no-reparse handle without changing interactive setup behavior.
     let directory = match setup_mode {
         SetupMode::Full | SetupMode::InteractiveProvision | SetupMode::ReadAclsOnly => {
@@ -482,7 +482,7 @@ pub fn main() -> Result<()> {
     let ret = real_main(&mut setup_mode);
     if let Err(e) = &ret {
         // Best-effort: log unexpected top-level errors.
-        if let Ok(codex_home) = std::env::var("CODEX_HOME") {
+        if let Ok(codex_home) = std::env::var("BGS_HOME") {
             let sbx_dir = sandbox_dir(Path::new(&codex_home));
             let _ = std::fs::create_dir_all(&sbx_dir);
             // An unparsed payload must not enable writes to an existing log.
@@ -1502,7 +1502,7 @@ mod tests {
         let temp = tempfile::tempdir().expect("tempdir");
         let codex_home = temp.path().join("codex-home");
         let workspace = temp.path().join("workspace");
-        let protected_dir = workspace.join(".codex");
+        let protected_dir = workspace.join(".bgs");
         let nested_root = protected_dir.join("nested-root");
         fs::create_dir_all(&codex_home).expect("create codex home");
         fs::create_dir_all(&workspace).expect("create workspace");

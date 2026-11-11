@@ -386,7 +386,7 @@ impl PtyCodex {
             .env("TERM_PROGRAM", "kitty")
             .env_remove("TERM_PROGRAM_VERSION")
             .env("OPENAI_API_KEY", "focus-palette-test")
-            .env("CODEX_HOME", codex_home.path())
+            .env("BGS_HOME", codex_home.path())
             .stdin(stdin)
             .stdout(stdout)
             .stderr(slave.try_clone()?)

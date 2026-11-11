@@ -236,13 +236,13 @@ async fn setup_gcp_validates_the_auth_override_relative_to_the_startup_directory
     let auth = toml::Value::try_from(json!({"command": script, "cwd": "."}))?;
     let config_path = home.path().join("config.toml");
     std::fs::write(&config_path, "")?;
-    // The same command succeeds in CODEX_HOME but fails in the catalog's startup context.
+    // The same command succeeds in BGS_HOME but fails in the catalog's startup context.
     std::fs::write(startup.path().join("fail"), "")?;
     let mut server = TestAppServer::builder()
         .with_codex_home(startup.path())
         .with_env_overrides(CLEARED_AUTH_ENV)
         .with_env_overrides(&[(
-            "CODEX_HOME",
+            "BGS_HOME",
             Some(home.path().to_str().context("non-UTF-8 CODEX_HOME")?),
         )])
         .with_args(&["-c", &format!("model_providers.gcp.auth={auth}")])
