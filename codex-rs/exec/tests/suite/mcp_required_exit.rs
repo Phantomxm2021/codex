@@ -20,7 +20,7 @@ async fn exits_non_zero_when_required_mcp_server_fails_to_initialize() -> anyhow
     let project = test.cwd_path().join("repo");
     let cwd = project.join("subdir");
     fs::create_dir_all(&cwd)?;
-    fs::create_dir(project.join(".codex"))?;
+    fs::create_dir(project.join(".bgs"))?;
     fs::create_dir(project.join(".git"))?;
     fs::write(project.join(".git/HEAD"), "ref: refs/heads/main\n")?;
 
@@ -43,7 +43,7 @@ async fn exits_non_zero_when_required_mcp_server_fails_to_initialize() -> anyhow
 
     expect_mcp_failure(&[]);
     // The same server in project config requires explicit consent, even with write access.
-    fs::rename(&user_config, project.join(".codex/config.toml"))?;
+    fs::rename(&user_config, project.join(".bgs/config.toml"))?;
     let first = run(&["--sandbox", "workspace-write"]).success();
     let stderr = std::str::from_utf8(&first.get_output().stderr)?;
     let warning = stderr

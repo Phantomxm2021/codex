@@ -608,9 +608,9 @@ async fn external_editor_writable_directory_rejected_snapshot() -> Result<()> {
     let codex_home = app.chat_widget.config_ref().codex_home.clone();
     let fallback_home = dirs::home_dir()
         .expect("home directory")
-        .join(".codex")
+        .join(".bgs")
         .abs();
-    let workspace_codex_home = app.chat_widget.config_ref().cwd.join(".codex");
+    let workspace_codex_home = app.chat_widget.config_ref().cwd.join(".bgs");
     let permission_profile = PermissionProfile::workspace_write_with(
         &[codex_home, fallback_home, workspace_codex_home],
         codex_protocol::permissions::NetworkSandboxPolicy::Restricted,
@@ -10499,7 +10499,7 @@ async fn feedback_saved_receipt_shows_the_full_archive_path() {
         FeedbackCategory::Bug,
         /*include_logs*/ false,
         Ok(crate::app_event::FeedbackReceipt::Saved {
-            path: "/home/dev/.codex/feedback/codex-diagnostics-2026-11-09T23-53-00Z-a1b2c3d4.zip"
+            path: "/home/dev/.bgs/feedback/codex-diagnostics-2026-11-09T23-53-00Z-a1b2c3d4.zip"
                 .into(),
         }),
     )
@@ -12997,7 +12997,7 @@ async fn clear_only_ui_reset_preserves_chat_session_state() {
 async fn clear_only_ui_reset_allows_active_skill_warning_to_render_again() {
     let mut app = make_test_app().await;
     let error = SkillErrorInfo {
-        path: test_path_buf("/tmp/project/.codex/skills/abc/SKILL.md"),
+        path: test_path_buf("/tmp/project/.bgs/skills/abc/SKILL.md"),
         message: "invalid description".to_string(),
     };
 

@@ -514,7 +514,7 @@ async fn pre_tool_use_hook_runs_only_on_the_executor_that_owns_the_command(
     let manager = test.thread_manager.environment_manager();
 
     // Give both executors the same hook and workspace. Each ExecServerProcess has
-    // a private CODEX_HOME, so the hook input file identifies where it actually ran.
+    // a private BGS_HOME, so the hook input file identifies where it actually ran.
     let mut executors = Vec::new();
     let mut selections = Vec::new();
     let mut input_files = HashMap::new();
@@ -546,11 +546,11 @@ async fn pre_tool_use_hook_runs_only_on_the_executor_that_owns_the_command(
         config.environment_hooks = serde_json::from_value(json!({
             "PreToolUse": [{"matcher": "^Bash$", "hooks": [{
                 "type": "command", "timeout": 10,
-                "command": format!(r#"cat > "$CODEX_HOME/pre-tool-use-input.json" || exit 1
+                "command": format!(r#"cat > "$BGS_HOME/pre-tool-use-input.json" || exit 1
                     bash -c 'exec 3<>/dev/tcp/127.0.0.1/{port} && read -r <&3' || exit 1
                     echo owner-verdict >&2
                     exit {exit_code}"#),
-                "command_windows": format!(r#"ForEach-Object {{ [IO.File]::WriteAllText("$env:CODEX_HOME/pre-tool-use-input.json", $_) }}
+                "command_windows": format!(r#"ForEach-Object {{ [IO.File]::WriteAllText("$env:BGS_HOME/pre-tool-use-input.json", $_) }}
                     $client = [Net.Sockets.TcpClient]::new("127.0.0.1", {port})
                     $null = $client.GetStream().ReadByte()
                     $client.Close()
