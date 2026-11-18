@@ -530,7 +530,7 @@ async fn replacement_uses_server_defaults_and_preserves_explicit_launch_settings
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn plan_implementation_reads_approved_plan_file_in_fresh_session() -> Result<()> {
     let (mut app, mut events, _ops) = make_test_app_with_channels().await;
-    // Match the canonical CODEX_HOME used at launch.
+    // Match the canonical BGS_HOME used at launch.
     app.config.codex_home = app.config.codex_home.canonicalize()?;
     let model = responses::start_mock_server().await;
     app_test_support::MockResponsesConfig::new(&model.uri())
@@ -797,9 +797,9 @@ async fn replacement_failure_keeps_current_task_and_restores_input() -> Result<(
             let destination = server.backend_id();
             let mut backends = BackendSessions::from_initial(source, vec![server]);
             let destination_cwd = tempdir()?;
-            std::fs::create_dir(destination_cwd.path().join(".codex"))?;
+            std::fs::create_dir(destination_cwd.path().join(".bgs"))?;
             std::fs::write(
-                destination_cwd.path().join(".codex/hooks.json"),
+                destination_cwd.path().join(".bgs/hooks.json"),
                 r#"{"hooks":{"SessionStart":[{"hooks":[{"type":"command","command":"x"}]}]}}"#,
             )?;
             // Model a destination whose trust was saved before thread/start failed.

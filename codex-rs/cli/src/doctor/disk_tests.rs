@@ -61,7 +61,7 @@ fn disk_capacity_thresholds_produce_complete_diagnostics() {
             "sufficient free disk space (6.0 GiB)",
         ),
     ] {
-        let issues = ["CODEX_HOME", "worktree"]
+        let issues = ["BGS_HOME", "worktree"]
             .into_iter()
             .filter(|_| status != "ok")
             .map(|label| {
@@ -106,7 +106,7 @@ fn disk_measurement_errors_produce_complete_warning_diagnostics() {
         Err(io::ErrorKind::PermissionDenied.into())
     });
 
-    let issues = ["CODEX_HOME", "worktree"]
+    let issues = ["BGS_HOME", "worktree"]
         .into_iter()
         .map(|label| {
             json!({

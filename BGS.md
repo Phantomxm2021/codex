@@ -1,16 +1,25 @@
-# BGS distribution
+# BGS runtime
 
-This branch is BeeGameStudio's distribution of OpenAI Codex, maintained by PhantomLab.
-The upstream source, licenses, protocol identifiers, model/provider identities and
-agent execution behavior are retained. Display branding and product update entry
-points are modified. The upstream LICENSE and NOTICE continue to apply.
+BGS is a PhantomLab distribution based on OpenAI Codex. LICENSE and NOTICE
+retain upstream attribution. Native execution, Goal accounting, history,
+model metadata and wire protocols follow the selected upstream release.
 
-Maintain branding as ordinary Git commits. Merge a selected upstream release tag
-into a temporary branch based on this BGS branch; never reset the branch to upstream.
-Build/package through `bun run bgs:build` in the parent BGS repository. The binary
-is shipped as `bgs`; the internal Cargo target remains `codex` for compatibility.
-The BGS repository's `docs/bgs-runtime-upgrades.md` is the upgrade/runbook authority.
+Build from BeeGameStudio with `bun run bgs:build`, then `bun run bgs:verify`.
+The public executable is `bgs`; internal Cargo names and the companion
+`codex-code-mode-host` retain upstream names under `codex-rs/`.
 
-Official package-manager self-update is disabled because it would replace this
-build with an unbranded binary. Updating upstream functionality requires merging
-source, checking the BGS branding and integration, and producing a new BGS build.
+The runtime reads `BGS_HOME`, defaulting to `~/.bgs`. BeeGameStudio supplies
+an owner-private `.runtime/app/bgs` home. Existing sessions are not rewritten.
+SQLite overrides use `BGS_SQLITE_HOME`; TUI recording uses
+`BGS_TUI_RECORD_SESSION` and `BGS_TUI_SESSION_LOG_PATH`. Their Codex-named
+counterparts are not read. No existing databases or logs are migrated.
+Project configuration uses `.bgs`, system configuration `/etc/bgs`, and macOS
+managed preferences `com.phantomlab.bgs`; Codex configuration is not loaded.
+Protocol fields, MCP metadata, model/service identifiers and third-party plugin
+formats retain upstream names.
+
+Official binary self-replacement is disabled for this source-built package.
+Merge upstream into `bgs/source-VERSION`, review its branding/packaging-only
+diff, then run `scripts/brand-bgs.py` to generate the distribution. Do not add
+native behavior patches without explicit user authorization. See the parent
+`docs/bgs-runtime-upgrades.md` for provenance, validation and deployment.
