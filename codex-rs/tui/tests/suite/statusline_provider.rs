@@ -74,7 +74,7 @@ async fn statusline_reads_the_selected_stdio_resource_on_the_displayed_thread() 
             "\n{preference}"
         )?;
         if mode == Setup::ProjectShadow {
-            let project = cwd.join(".codex");
+            let project = cwd.join(".bgs");
             fs::create_dir(&project)?;
             register_provider(&project.join("config.toml"), &shadow, &barrier)?;
         }

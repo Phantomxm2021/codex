@@ -235,7 +235,7 @@ async fn proxy_fd_pressure_preserves_socks_and_mount_cleanup() -> io::Result<()>
         return Ok(());
     }
     let temp = tempfile::tempdir()?;
-    let protected = temp.path().join(".codex");
+    let protected = temp.path().join(".bgs");
     timeout(SANDBOX_TIMEOUT, async {
         for (http_connections, fd_limit, open_socks) in [(3, 20, true), (8, 16, false)] {
             let command = managed_command(temp.path(), &PermissionProfile::workspace_write());

@@ -674,7 +674,7 @@ mod tests {
     fn windows_helper_binds_executable_and_workspace_grants() {
         const CHILD: &str = "CODEX_TEST_WINDOWS_HELPER_GRANTS_CHILD";
         if std::env::var_os(CHILD).is_none() {
-            // Preparing the token wrapper persists capability SIDs under CODEX_HOME.
+            // Preparing the token wrapper persists capability SIDs under BGS_HOME.
             let home = tempfile::tempdir().expect("isolated Codex home");
             let output = std::process::Command::new(std::env::current_exe().expect("test binary"))
                 .args([
@@ -682,7 +682,7 @@ mod tests {
                     "fs_sandbox::tests::windows_helper_binds_executable_and_workspace_grants",
                 ])
                 .env(CHILD, "1")
-                .env("CODEX_HOME", home.path())
+                .env("BGS_HOME", home.path())
                 .output()
                 .expect("run isolated Windows helper test");
             assert!(

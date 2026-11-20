@@ -284,7 +284,7 @@ async fn queue_attachments_resolve_relative_paths_against_thread_cwd() -> Result
 
     let (mut app, codex_home, _server) = queue_app(vec![blocked_turn_response()?]).await?;
     let workspace = TempDir::new()?;
-    // The test app-server starts in CODEX_HOME.
+    // The test app-server starts in BGS_HOME.
     let server_image = codex_home.path().join("sample.png");
     let workspace_image = workspace.path().join("sample.png");
     std::fs::write(&server_image, STANDARD.decode(RED_PNG)?)?;

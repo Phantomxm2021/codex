@@ -94,13 +94,13 @@ pub fn create_command_args(args: CreateMxcCommandArgsParams<'_>) -> Result<Vec<S
         },
         env,
     )?;
-    // The workload environment can omit or override the host's CODEX_HOME.
+    // The workload environment can omit or override the host's BGS_HOME.
     #[cfg(windows)]
-    let codex_home = match std::env::var("CODEX_HOME").as_deref() {
+    let codex_home = match std::env::var("BGS_HOME").as_deref() {
         Ok(home) if !home.is_empty() => std::fs::canonicalize(home)
             .ok()
             .filter(|home| home.is_dir()),
-        _ => AbsolutePathBufGuard::home_directory().map(|home| home.join(".codex")),
+        _ => AbsolutePathBufGuard::home_directory().map(|home| home.join(".bgs")),
     }
     .and_then(|home| AbsolutePathBuf::from_absolute_path(home).ok());
     #[cfg(not(windows))]

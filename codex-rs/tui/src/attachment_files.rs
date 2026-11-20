@@ -13,7 +13,7 @@ pub(crate) async fn create_attachment_dir(
     codex_home: Option<&AppServerPath>,
 ) -> Result<AppServerPath> {
     let codex_home =
-        codex_home.context("App server did not report $CODEX_HOME; cannot create attachment")?;
+        codex_home.context("App server did not report $BGS_HOME; cannot create attachment")?;
     let path = codex_home
         .join(ATTACHMENT_DIR)
         .join(Uuid::new_v4().to_string());

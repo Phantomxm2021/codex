@@ -293,7 +293,7 @@ fn a_project_setting_only_the_provider_preserves_the_user_tui_value() -> anyhow:
     let dir = TempDir::new()?;
     let project = ConfigLayerEntry::new(
         ConfigLayerSource::Project {
-            dot_codex_folder: test_user_config_path(&dir, ".codex"),
+            dot_codex_folder: test_user_config_path(&dir, ".bgs"),
         },
         toml::toml! { [tui] status_line_provider = "default" }.into(),
     );
@@ -324,7 +324,7 @@ fn layer_iterators_preserve_precedence_and_disabled_layers() {
         profile: None,
     };
     let project_source = ConfigLayerSource::Project {
-        dot_codex_folder: test_user_config_path(&temp_dir, ".codex"),
+        dot_codex_folder: test_user_config_path(&temp_dir, ".bgs"),
     };
     let session_source = ConfigLayerSource::SessionFlags;
     let empty_config = TomlValue::Table(toml::map::Map::new());
